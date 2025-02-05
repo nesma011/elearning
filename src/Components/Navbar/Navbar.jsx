@@ -7,26 +7,61 @@ import { userContext } from "../../Context/UserContext";
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const { token, settoken } = useContext(userContext); 
-  let navigate = useNavigate();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // تحقق من التوكن المخزن في Local Storage عند تحميل الصفحة
-    const storedToken = localStorage.getItem("token");
-    if (storedToken) {
-      settoken(storedToken);
+    const storedAccessToken = localStorage.getItem("access_token");
+    if (storedAccessToken) {
+      try {
+        const tokenParts = storedAccessToken.split('.');
+        if (tokenParts.length === 3) {
+          const payload = JSON.parse(atob(tokenParts[1]));
+          const currentTime = Math.floor(Date.now() / 1000);
+          
+          if (payload.exp > currentTime) {
+            settoken(storedAccessToken);
+          } else {
+            localStorage.removeItem("access_token");
+            localStorage.removeItem("refresh_token");
+            settoken(null);
+          }
+        }
+      } catch (error) {
+        console.error("Token validation error:", error);
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
+        settoken(null);
+      }
     }
   }, [settoken]);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
     settoken(null); 
     navigate("/login");
+  };
+
+  const isTokenValid = () => {
+    const storedAccessToken = localStorage.getItem("access_token");
+    if (!storedAccessToken) return false;
+
+    try {
+      const tokenParts = storedAccessToken.split('.');
+      if (tokenParts.length !== 3) return false;
+
+      const payload = JSON.parse(atob(tokenParts[1]));
+      const currentTime = Math.floor(Date.now() / 1000);
+      
+      return payload.exp > currentTime;
+    } catch (error) {
+      return false;
+    }
   };
 
   return (
     <nav className="bg-gray-100 shadow-lg shadow-blue-200 dark:bg-gray-900 fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
       <div className="max-w-screen-xl flex items-center justify-between mx-auto px-4 py-2">
-        
         <NavLink to="/" className="flex items-center gap-2">
           <img src={logo} className="w-10" alt="Logo" />
           <h1 className="text-2xl font-semibold text-blue-600"> 
@@ -60,7 +95,7 @@ export default function Navbar() {
         </button>
 
         <div className="hidden md:flex space-x-4 ml-auto">
-          {!token ? (
+          {!isTokenValid() ? (
             <>
               <NavLink
                 to="/login"
@@ -112,7 +147,7 @@ export default function Navbar() {
               </li>
             ))}
 
-            {!token ? (
+            {!isTokenValid() ? (
               <>
                 <li>
                   <NavLink

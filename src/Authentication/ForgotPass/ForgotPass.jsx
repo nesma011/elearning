@@ -25,7 +25,7 @@ export default function ForgotPass() {
       try {
         // API call for password reset
         const response = await axios.post(
-          'https://ecommerce.routemisr.com/api/v1/auth/forgotPassword', 
+          'https://ahmedmahmoud10.pythonanywhere.com/password-reset/', 
           { email: values.email }
         );
 

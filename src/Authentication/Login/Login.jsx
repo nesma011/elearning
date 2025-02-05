@@ -38,26 +38,41 @@ export default function Login() {
     validationSchema,
     onSubmit: async (values) => {
       setLoading(true);
+      console.log('Submitting values:', values); 
       setErrorApi(null);
       try {
         const { data } = await axios.post(
-          'https://ecommerce.routemisr.com/api/v1/auth/signin',
+          'https://ahmedmahmoud10.pythonanywhere.com/login/',
           values
         );
-        if (data.message === 'success') {
-          settoken(data.token);
-          localStorage.setItem('token', data.token);
-          navigate('/');
+        console.log(data);  
+      
+        if (data.access) {
+          console.log('Login Successful');
+          settoken(data.access); 
+          localStorage.setItem('access_token', data.access);
+          localStorage.setItem('refresh_token', data.refresh);
+      
+          console.log('Access token saved:', localStorage.getItem('access_token'));  
+          console.log('Refresh token saved:', localStorage.getItem('refresh_token'));          
+      
+          navigate('/classes');
+        } else {
+          setErrorApi('Login failed: Invalid response');
         }
+      
       } catch (error) {
         const errorMessage = error.response
           ? error.response.data.message
           : error.message;
         setErrorApi(errorMessage);
-      } finally {
+      }
+       finally {
         setLoading(false);
       }
-    },
+    }
+    
+    ,
   });
 
   return (
@@ -97,7 +112,7 @@ export default function Login() {
         <form onSubmit={formicLogin.handleSubmit} className="mt-10 bg-white my-6 p-10 w-1/2 mx-auto rounded-lg shadow-lg">
         {loading && (
           <div className="flex justify-center mb-5">
-            <BallTriangle height={80} width={80} color="#db2777" visible={true} />
+            <BallTriangle height={80} width={80} color="#1d4ed8" visible={true} />
           </div>
         )}
           
