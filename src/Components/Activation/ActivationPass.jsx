@@ -18,9 +18,11 @@ export default function ActivationPass() {
     
         try {
             const response = await fetch(`https://ahmedmahmoud10.pythonanywhere.com/password-reset-confirm/${id}/${token}/`, {
-                method: 'POST', // Changed to POST
+                method: 'POST', 
                 headers: {
-                    'Content-Type': 'application/json' // Added Content-Type header
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
                 },
                 body: JSON.stringify({
                     new_password: newPassword, 
