@@ -6,7 +6,7 @@ export default function Activation() {
     useEffect(() => {
         async function activateAccount() {
             try {
-                const response = await fetch(`https://ahmedmahmoud10.pythonanywhere.com/activate/${id}/tk:${token}/`, {
+                const response = await fetch(`https://ahmedmahmoud10.pythonanywhere.com/activate/${id}/${token}/`, {
                     method: 'GET'
                 });
 
