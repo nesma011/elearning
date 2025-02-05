@@ -9,7 +9,7 @@ export default function ActivationPage() {
   useEffect(() => {
     async function activateAccount() {
       try {
-        const response = await fetch("https://your-api.com/api/activate", {
+        const response = await fetch("https://alex-medlearn.netlify.app", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
