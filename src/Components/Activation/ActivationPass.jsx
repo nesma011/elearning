@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 export default function ActivationPass() {
     const { id, token } = useParams();
     const navigate = useNavigate();
-    const [message, setMessage] = useState("Activating your account...");
+    const [message, setMessage] = useState("Processing...");
 
     useEffect(() => {
         async function activateAccount() {
@@ -16,22 +16,22 @@ export default function ActivationPass() {
                 const data = await response.json();
 
                 if (response.ok) {
-                    setMessage("🎉 Your account has been successfully activated! Redirecting...");
+                    setMessage("🎉 Your Pass has been successfully renewed! Redirecting...");
                     setTimeout(() => {
                         navigate("/resetpass");
                     }, 3000);
                 } else {
-                    setMessage(`❌ Activation failed: ${data.error || "An error occurred"}`);
+                    setMessage(`❌ Resetting Pass failed: ${data.error || "An error occurred"}`);
                 }
             } catch (error) {
-                setMessage(`❌ Activation failed: ${error.message || "Unknown connection error"}`);
+                setMessage(`❌ Resetting Pass failed: ${error.message || "Unknown connection error"}`);
             }
         }
 
         if (id && token) {
             activateAccount();
         } else {
-            setMessage("❌ Invalid activation link. Please check your email for the correct link.");
+            setMessage("❌ Invalid Resetting Pass link. Please check your email for the correct link.");
         }
     }, [id, token, navigate]);
 
