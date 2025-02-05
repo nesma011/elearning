@@ -7,7 +7,6 @@ import ForgotPass from './Authentication/ForgotPass/ForgotPass'
 import Login from './Authentication/Login/Login'
 import Logout from './Authentication/Logout/Logout'
 import Register from './Authentication/Register/Register'
-import ResetPass from './Authentication/RestPass/ResetPass'
 import Classes from './Components/Classes/Classes'
 import Activation from "./Components/Activation/Activation"; 
 import ActivationPass from './Components/Activation/ActivationPass'
@@ -25,10 +24,9 @@ export default function App() {
         { path: "register", element: <Register /> },
         { path: "logout", element: <Logout /> },
         { path: "forgotpass", element: <ForgotPass /> },
-        { path: "resetpass", element: <ResetPass /> },
         { path: "classes", element: <Classes /> },
         {path:"activate/:id/:token" ,element:<Activation/>}, 
-        {path:"password-reset/:id/:token" ,element:<ActivationPass/>} 
+        {path:"password-reset-confirm/:id/:token" ,element:<ActivationPass/>} 
 
 
 
