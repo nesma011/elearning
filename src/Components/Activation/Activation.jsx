@@ -6,8 +6,7 @@ export default function Activation() {
     useEffect(() => {
         async function activateAccount() {
             try {
-                // تغيير الرابط للباك إند
-                const response = await fetch(`https://ahmedmahmoud10.pythonanywhere.com/activate/${id}/${token}/`, {
+                const response = await fetch(`https://ahmedmahmoud10.pythonanywhere.com/activate/${id}/tk:${token}/`, {
                     method: 'GET'
                 });
 
