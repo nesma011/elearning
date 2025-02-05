@@ -9,7 +9,7 @@ export default function ActivationPass() {
     useEffect(() => {
         async function activateAccount() {
             try {
-                const response = await fetch(`https://ahmedmahmoud10.pythonanywhere.com/password-reset-confirm/${id}/${token}/`, {
+                const response = await fetch(`https://ahmedmahmoud10.pythonanywhere.com/password-reset/${id}/${token}/`, {
                     method: 'GET'
                 });
 

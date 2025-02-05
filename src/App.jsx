@@ -28,7 +28,7 @@ export default function App() {
         { path: "resetpass", element: <ResetPass /> },
         { path: "classes", element: <Classes /> },
         {path:"activate/:id/:token" ,element:<Activation/>}, 
-        {path:"password-reset-confirm/:id/:token" ,element:<ActivationPass/>} 
+        {path:"password-reset/:id/:token" ,element:<ActivationPass/>} 
 
 
 
