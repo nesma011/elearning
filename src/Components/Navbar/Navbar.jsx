@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { FiMenu, FiX } from "react-icons/fi";
 import logo from "../../assets/logo.webp";
@@ -7,11 +7,20 @@ import { userContext } from "../../Context/UserContext";
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const { token, settoken } = useContext(userContext); 
-    let navigate =useNavigate();
+  let navigate = useNavigate();
+
+  useEffect(() => {
+    // تحقق من التوكن المخزن في Local Storage عند تحميل الصفحة
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      settoken(storedToken);
+    }
+  }, [settoken]);
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     settoken(null); 
-    navigate("/login")
+    navigate("/login");
   };
 
   return (
