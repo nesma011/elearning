@@ -1,25 +1,18 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-
 export default function Activation() {
     const { id, token } = useParams();
     const navigate = useNavigate();
     const [message, setMessage] = useState("Activating your account...");
-    
+
     useEffect(() => {
         async function activateAccount() {
             try {
-    
+                // تغيير الرابط للباك إند
                 const response = await fetch(`https://ahmedmahmoud10.pythonanywhere.com/activate/${id}/${token}/`, {
                     method: 'GET'
                 });
-    
-                console.log('Response Status:', response.status);
-                console.log('Response Headers:', Object.fromEntries(response.headers.entries()));
-    
-                const data = await response.text(); 
-                console.log('Response Data:', data);
-    
+
+                const data = await response.text();
+
                 if (response.ok) {
                     setMessage("🎉 Your account has been successfully activated! Redirecting...");
                     setTimeout(() => {
@@ -29,16 +22,11 @@ export default function Activation() {
                     setMessage(`❌ Activation failed: ${data || "An error occurred"}`);
                 }
             } catch (error) {
-                console.error('Detailed Error:', error);
                 setMessage(`❌ Activation failed: ${error.message || "Unknown connection error"}`);
             }
         }
-    
-        if (id && token) {
-            activateAccount();
-        } else {
-            setMessage("❌ Invalid activation link.");
-        }
+
+        activateAccount();
     }, [id, token, navigate]);
 
     return (
