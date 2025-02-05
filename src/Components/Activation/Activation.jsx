@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
@@ -14,7 +13,7 @@ export default function Activation() {
                     method: 'GET'
                 });
 
-                const data = await response.text();
+                const data = await response.json();
 
                 if (response.ok) {
                     setMessage("🎉 Your account has been successfully activated! Redirecting...");
@@ -22,14 +21,18 @@ export default function Activation() {
                         navigate("/classes");
                     }, 3000);
                 } else {
-                    setMessage(`❌ Activation failed: ${data || "An error occurred"}`);
+                    setMessage(`❌ Activation failed: ${data.error || "An error occurred"}`);
                 }
             } catch (error) {
                 setMessage(`❌ Activation failed: ${error.message || "Unknown connection error"}`);
             }
         }
 
-        activateAccount();
+        if (id && token) {
+            activateAccount();
+        } else {
+            setMessage("❌ Invalid activation link. Please check your email for the correct link.");
+        }
     }, [id, token, navigate]);
 
     return (
