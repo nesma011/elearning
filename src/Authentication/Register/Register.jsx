@@ -94,6 +94,7 @@ export default function Register() {
         );
     
         if (data.message === 'success') {
+          console.log("token","id")
           settoken(data.token);
           localStorage.setItem("token", data.token);
           navigate('/classes');

@@ -26,7 +26,7 @@ export default function App() {
         { path: "forgotpass", element: <ForgotPass /> },
         { path: "resetpass", element: <ResetPass /> },
         { path: "classes", element: <Classes /> },
-        {path:"activate/:token/:id" ,element:<Activation/>} 
+        {path:"activate/:id/:token" ,element:<Activation/>} 
 
 
 
