@@ -9,9 +9,6 @@ export default function Activation() {
     useEffect(() => {
         async function activateAccount() {
             try {
-                console.log('Full Activation URL:', `https://ahmedmahmoud10.pythonanywhere.com/activate/${id}/${token}/`);
-                console.log('ID:', id);
-                console.log('Token:', token);
     
                 const response = await fetch(`https://ahmedmahmoud10.pythonanywhere.com/activate/${id}/${token}/`, {
                     method: 'GET'
