@@ -9,71 +9,84 @@ import { NavLink } from "react-router-dom";
 import logo from "../../assets/logo.webp"
 
 export default function Login() {
-  let { settoken } = useContext(userContext);
-  const navigate = useNavigate();
-  const [errorApi, setErrorApi] = useState(null);
-  const [loading, setLoading] = useState(false);
+let { settoken } = useContext(userContext);
+const navigate = useNavigate();
+const [errorApi, setErrorApi] = useState(null);
+const [loading, setLoading] = useState(false);
 
-  // Form validation schema
-  const validationSchema = yup.object().shape({
-    email: yup
-      .string()
-      .email('E-mail is invalid')
-      .required('E-mail is required'),
-    password: yup
-      .string()
-      .matches(
-        /^[a-zA-Z0-9]{6,10}$/,
-        'Password should be at least 6 characters, numbers, and not more than 10 characters'
-      )
-      .required('Password is required'),
-  });
+// Function to get device ID
+const getDeviceId = () => {
+  let deviceId = localStorage.getItem('device_id');
+  if (!deviceId) {
+    deviceId = crypto.randomUUID(); // Generate a unique device ID
+    localStorage.setItem('device_id', deviceId);
+  }
+  return deviceId;
+};
 
-  // Formik setup
-  const formicLogin = useFormik({
-    initialValues: {
-      email: '',
-      password: '',
-    },
-    validationSchema,
-    onSubmit: async (values) => {
-      setLoading(true);
-      console.log('Submitting values:', values); 
-      setErrorApi(null);
-      try {
-        const { data } = await axios.post(
-          'https://ahmedmahmoud10.pythonanywhere.com/login/',
-          values
-        );
-        console.log(data);  
+// Form validation schema
+const validationSchema = yup.object().shape({
+  email: yup
+    .string()
+    .email('E-mail is invalid')
+    .required('E-mail is required'),
+  password: yup
+    .string()
+    .matches(
+      /^[a-zA-Z0-9]{6,10}$/,
+      'Password should be at least 6 characters, numbers, and not more than 10 characters'
+    )
+    .required('Password is required'),
+});
+
+// Formik setup
+const formicLogin = useFormik({
+  initialValues: {
+    email: '',
+    password: '',
+  },
+  validationSchema,
+  onSubmit: async (values) => {
+    setLoading(true);
+    console.log('Submitting values:', values);
+    setErrorApi(null);
+    try {
+      const device_id = getDeviceId();
+      const { data } = await axios.post(
+        'https://ahmedmahmoud10.pythonanywhere.com/login/',
+        { ...values, device_id } // Send device_id with login request
+      );
+      console.log(data);
+
+      if (data.access) {
+        console.log('Login Successful');
+        settoken(data.access);
+        localStorage.setItem('access_token', data.access);
+        localStorage.setItem('refresh_token', data.refresh);
+
+        console.log('Access token saved:', localStorage.getItem('access_token'));
+        console.log('Refresh token saved:', localStorage.getItem('refresh_token'));
+
+        navigate('/classes');
+      } else {
+        setErrorApi('Login failed: Invalid response');
+      }
+    } catch (error) {
+      const errorMessage = error.response
+        ? error.response.data.message
+        : error.message;
       
-        if (data.access) {
-          console.log('Login Successful');
-          settoken(data.access); 
-          localStorage.setItem('access_token', data.access);
-          localStorage.setItem('refresh_token', data.refresh);
-      
-          console.log('Access token saved:', localStorage.getItem('access_token'));  
-          console.log('Refresh token saved:', localStorage.getItem('refresh_token'));          
-      
-          navigate('/classes');
-        } else {
-          setErrorApi('Login failed: Invalid response');
-        }
-      
-      } catch (error) {
-        const errorMessage = error.response
-          ? error.response.data.message
-          : error.message;
+      if (error.response && error.response.status === 403) {
+        setErrorApi('Your account is blocked due to multiple device logins. Contact admin to restore access.');
+      } else {
         setErrorApi(errorMessage);
       }
-       finally {
-        setLoading(false);
-      }
+    } finally {
+      setLoading(false);
     }
-    
-    ,
-  });
+  },
+});
+
 
   return (
 

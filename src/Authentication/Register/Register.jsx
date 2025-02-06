@@ -15,6 +15,15 @@ export default function Register() {
   const [errorApi, setErrorApi] = useState(null);
   const [loading, setLoading] = useState(false);
   const [selectedCode, setSelectedCode] = useState("+20"); // Default Egypt Code
+
+  const getDeviceId = () => {
+    let deviceId = localStorage.getItem('device_id');
+    if (!deviceId) {
+      deviceId = crypto.randomUUID(); // Generate a unique device ID
+      localStorage.setItem('device_id', deviceId);
+    }
+    return deviceId;
+  };
   
   // Form validation schema
   const validationSchema = yup.object().shape({
@@ -68,6 +77,7 @@ export default function Register() {
       setLoading(true);
       setErrorApi(null);
       try {
+        const device_id = getDeviceId();
         const fullPhoneNumber = "+" + selectedCode.replace('+', '') + values.phone_number;
         const payload = { 
           email: values.email,
@@ -75,29 +85,19 @@ export default function Register() {
           phone_number: fullPhoneNumber.trim(),
           password: values.password,
           country: values.country.toUpperCase(), 
-          birth_date: formatDate(values.birth_date)
+          birth_date: formatDate(values.birth_date),
+          device_id
       };
-  /*       console.log('Values before submission:', {
-          email: values.email,
-          username: values.username,
-          phone_number: fullPhoneNumber,
-          password: values.password,
-          country: values.country,
-          birth_date: formatDate(values.birth_date)
-      });
- */
-/*         console.log('Sending payload:', payload); // For debugging
- */
         const { data } = await axios.post(
           'https://ahmedmahmoud10.pythonanywhere.com/register/',
-          payload
+         { payload ,device_id }
         );
     
         if (data.message === 'success') {
           console.log("token","id")
           settoken(data.token);
           localStorage.setItem("token", data.token);
-          navigate('/classes');
+          navigate('/login');
         }
       } catch (error) {
         /* console.log('Full error:', error);

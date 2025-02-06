@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Layout from './Components/Layout/Layout'
 import Home from './Components/Home/Home'
@@ -10,9 +10,14 @@ import Register from './Authentication/Register/Register'
 import Classes from './Components/Classes/Classes'
 import Activation from "./Components/Activation/Activation"; 
 import ActivationPass from './Components/Activation/ActivationPass'
-
+import useAuthCheck from './Custom Hooks/useAuthCheck'
+  import { userContext } from './Context/UserContext'
 
 export default function App() {
+let { settoken } = useContext(userContext);
+
+  useAuthCheck(settoken);
+  
   let paths =createBrowserRouter ([
     {
       path:"",
