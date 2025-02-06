@@ -5,14 +5,15 @@ import { useFormik } from 'formik';
 import logo from "../../assets/logo.webp"
 import axios from 'axios';
 import * as yup from 'yup';
-import { useNavigate } from 'react-router-dom';
+/* import { useNavigate } from 'react-router-dom';
+ */
 import { BallTriangle } from 'react-loader-spinner';
 import { toast } from 'react-toastify';
 
 
 export default function Register() {
-  const navigate = useNavigate();
-  const [errorApi, setErrorApi] = useState(null);
+/*   const navigate = useNavigate();
+ */  const [errorApi, setErrorApi] = useState(null);
   const [loading, setLoading] = useState(false);
   const [selectedCode, setSelectedCode] = useState("+20"); // Default Egypt Code
 
@@ -98,13 +99,13 @@ export default function Register() {
     
         if (data.message.includes("Account created successfully")) {
           toast.success('Registration successful! Please check your email to activate your account.', {
-            position: 'top-right',
-            autoClose: 3000,
+            position: "top-right",
+            autoClose: 10000,
           });
+      
+          await new Promise(resolve => setTimeout(resolve, 1000));
           
-          setTimeout(() => {
-            navigate('/login');
-          }, 3500);
+          window.location.href = '/login'; 
         }
           
       
@@ -289,6 +290,7 @@ export default function Register() {
             <NavLink to="/login" className="text-blue-700 px-3 underline">Log in</NavLink>.
           </p>
         </div>
+
       </form>
     </section>
   </>)

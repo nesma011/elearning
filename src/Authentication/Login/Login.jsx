@@ -2,7 +2,6 @@ import React, { useContext, useState } from 'react';
 import { useFormik } from 'formik';
 import axios from 'axios';
 import * as yup from 'yup';
-import { useNavigate } from 'react-router-dom';
 import { BallTriangle } from 'react-loader-spinner';
 import { userContext } from '../../Context/UserContext';
 import { NavLink } from "react-router-dom";
@@ -12,7 +11,6 @@ import { toast } from 'react-toastify';
 
 export default function Login() {
   let { settoken } = useContext(userContext);
-  const navigate = useNavigate();
   const [errorApi, setErrorApi] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -43,62 +41,65 @@ const getDeviceId = () => {
 
   // Formik setup
  // Formik setup
-const formicLogin = useFormik({
+ const formicLogin = useFormik({
   initialValues: {
     email: '',
     password: '',
   },
   validationSchema,
-  onSubmit: async (values, { event }) => {
-    event.preventDefault();
+  onSubmit: async (values) => {
+    console.log('Starting login submission...')
     setLoading(true);
+    setErrorApi(null); // Reset any previous errors
+    
     try {
       const device_id = getDeviceId();
+      console.log('Sending login request with:', { ...values, device_id }); 
+      
       const response = await axios.post(
         'https://ahmedmahmoud10.pythonanywhere.com/login/',
-       {
-
-        ...values, 
-        device_id: device_id
-       }  
+        {
+          email: values.email,
+          password: values.password,
+          device_id: device_id
+        }
       );
       
-      // Log the entire response for debugging
-      console.log('Login Response:', response);
+      console.log('Login Response:', response.data);
 
       if (response.data.access && response.data.refresh) {
         localStorage.clear();
-           toast.success('Account Created successfully!', {
-                    position: 'top-right',
-                    autoClose: 5000,
-                  });
         
         localStorage.setItem('access_token', response.data.access);
         localStorage.setItem('refresh_token', response.data.refresh);
-        settoken(response.data.access);
+        
+        console.log('Access Token:', localStorage.getItem('access_token'));
+        console.log('Refresh Token:', localStorage.getItem('refresh_token'));
+        
+        toast.success('Logged in successfully!', {
+          position: 'top-right',
+          autoClose: 10000,
+        });
 
-        // Verify tokens were saved
-        const savedAccess = localStorage.getItem('access_token');
-        const savedRefresh = localStorage.getItem('refresh_token');
-        console.log('Tokens saved successfully:', !!savedAccess && !!savedRefresh);
-
-        navigate('/classes');
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        window.location.href = '/classes';
       } else {
-        setErrorApi('Login failed: Missing tokens in response');
+        throw new Error('Login failed: Missing tokens in response');
       }
     } catch (error) {
-      // Enhanced error logging
-      console.error('Login Error:', {
-        status: error.response?.status,
-        data: error.response?.data,
-        message: error.message
-      });
+      console.error('Login Error:', error);
       
-      if (error.response && error.response.status === 403) {
-        setErrorApi('Your account is blocked due to multiple device logins. Contact admin to restore access.');
-      } else {
-        setErrorApi(errorMessage);
-      }
+      const errorMessage = error.response?.data?.message || 
+                          error.message || 
+                          'Login failed. Please try again.';
+      
+      setErrorApi(errorMessage);
+      
+      toast.error(errorMessage, {
+        position: 'top-right',
+        autoClose: 10000,
+      });
     } finally {
       setLoading(false);
     }
@@ -140,7 +141,10 @@ const formicLogin = useFormik({
           <h2 className="font-extrabold text-2xl text-blue-500">Please Log In</h2>
         </div>
 
-        <form onSubmit={formicLogin.handleSubmit} className="mt-10 bg-white my-6 p-10 w-1/2 mx-auto rounded-lg shadow-lg">
+        <form  onSubmit={(e) => {
+          e.preventDefault(); 
+          formicLogin.handleSubmit(e)}}
+        className="mt-10 bg-white my-6 p-10 w-1/2 mx-auto rounded-lg shadow-lg">
         {loading && (
           <div className="flex justify-center mb-5">
             <BallTriangle height={80} width={80} color="#1d4ed8" visible={true} />
