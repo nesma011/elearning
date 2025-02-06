@@ -9,12 +9,12 @@ import { NavLink } from "react-router-dom";
 import logo from "../../assets/logo.webp"
 
 export default function Login() {
-let { settoken } = useContext(userContext);
-const navigate = useNavigate();
-const [errorApi, setErrorApi] = useState(null);
-const [loading, setLoading] = useState(false);
+  let { settoken } = useContext(userContext);
+  const navigate = useNavigate();
+  const [errorApi, setErrorApi] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-// Function to get device ID
+  // Function to get device ID
 const getDeviceId = () => {
   let deviceId = localStorage.getItem('device_id');
   if (!deviceId) {
@@ -23,23 +23,23 @@ const getDeviceId = () => {
   }
   return deviceId;
 };
+  // Form validation schema
+  const validationSchema = yup.object().shape({
+    email: yup
+      .string()
+      .email('E-mail is invalid')
+      .required('E-mail is required'),
+    password: yup
+      .string()
+      .matches(
+        /^[a-zA-Z0-9]{6,10}$/,
+        'Password should be at least 6 characters, numbers, and not more than 10 characters'
+      )
+      .required('Password is required'),
+  });
 
-// Form validation schema
-const validationSchema = yup.object().shape({
-  email: yup
-    .string()
-    .email('E-mail is invalid')
-    .required('E-mail is required'),
-  password: yup
-    .string()
-    .matches(
-      /^[a-zA-Z0-9]{6,10}$/,
-      'Password should be at least 6 characters, numbers, and not more than 10 characters'
-    )
-    .required('Password is required'),
-});
-
-// Formik setup
+  // Formik setup
+ // Formik setup
 const formicLogin = useFormik({
   initialValues: {
     email: '',
@@ -48,33 +48,45 @@ const formicLogin = useFormik({
   validationSchema,
   onSubmit: async (values) => {
     setLoading(true);
-    console.log('Submitting values:', values);
-    setErrorApi(null);
     try {
       const device_id = getDeviceId();
-      const { data } = await axios.post(
+      const response = await axios.post(
         'https://ahmedmahmoud10.pythonanywhere.com/login/',
-        { ...values, device_id } // Send device_id with login request
+       {
+
+        ...values, 
+        device_id: device_id
+       }  
       );
-      console.log(data);
+      
+      // Log the entire response for debugging
+      console.log('Login Response:', response);
 
-      if (data.access) {
-        console.log('Login Successful');
-        settoken(data.access);
-        localStorage.setItem('access_token', data.access);
-        localStorage.setItem('refresh_token', data.refresh);
+      if (response.data.access && response.data.refresh) {
+        // Clear any existing tokens first
+        localStorage.clear();
+        
+        // Set new tokens
+        localStorage.setItem('access_token', response.data.access);
+        localStorage.setItem('refresh_token', response.data.refresh);
+        settoken(response.data.access);
 
-        console.log('Access token saved:', localStorage.getItem('access_token'));
-        console.log('Refresh token saved:', localStorage.getItem('refresh_token'));
+        // Verify tokens were saved
+        const savedAccess = localStorage.getItem('access_token');
+        const savedRefresh = localStorage.getItem('refresh_token');
+        console.log('Tokens saved successfully:', !!savedAccess && !!savedRefresh);
 
         navigate('/classes');
       } else {
-        setErrorApi('Login failed: Invalid response');
+        setErrorApi('Login failed: Missing tokens in response');
       }
     } catch (error) {
-      const errorMessage = error.response
-        ? error.response.data.message
-        : error.message;
+      // Enhanced error logging
+      console.error('Login Error:', {
+        status: error.response?.status,
+        data: error.response?.data,
+        message: error.message
+      });
       
       if (error.response && error.response.status === 403) {
         setErrorApi('Your account is blocked due to multiple device logins. Contact admin to restore access.');

@@ -88,16 +88,19 @@ export default function Register() {
           birth_date: formatDate(values.birth_date),
           device_id
       };
-        const { data } = await axios.post(
-          'https://ahmedmahmoud10.pythonanywhere.com/register/',
-         { payload ,device_id }
-        );
+      const { data } = await axios.post(
+        'https://ahmedmahmoud10.pythonanywhere.com/register/',
+        {
+          ...payload,
+          device_id: device_id
+        }
+      );
     
         if (data.message === 'success') {
           console.log("token","id")
           settoken(data.token);
-          localStorage.setItem("token", data.token);
           navigate('/login');
+          localStorage.setItem("token", data.token);
         }
       } catch (error) {
         /* console.log('Full error:', error);
