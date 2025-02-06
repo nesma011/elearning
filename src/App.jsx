@@ -12,12 +12,14 @@ import Activation from "./Components/Activation/Activation";
 import ActivationPass from './Components/Activation/ActivationPass'
 import useAuthCheck from './Custom Hooks/useAuthCheck'
   import { userContext } from './Context/UserContext'
+  import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function App() {
 let { settoken } = useContext(userContext);
 
   useAuthCheck(settoken);
-  
+
   let paths =createBrowserRouter ([
     {
       path:"",
@@ -43,6 +45,7 @@ let { settoken } = useContext(userContext);
   ])
   return (
 <>
+<ToastContainer />
 <RouterProvider router={paths}/>
   </>
   )

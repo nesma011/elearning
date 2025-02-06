@@ -7,6 +7,8 @@ import { BallTriangle } from 'react-loader-spinner';
 import { userContext } from '../../Context/UserContext';
 import { NavLink } from "react-router-dom";
 import logo from "../../assets/logo.webp"
+import { toast } from 'react-toastify';
+
 
 export default function Login() {
   let { settoken } = useContext(userContext);
@@ -64,10 +66,12 @@ const formicLogin = useFormik({
       console.log('Login Response:', response);
 
       if (response.data.access && response.data.refresh) {
-        // Clear any existing tokens first
         localStorage.clear();
+           toast.success('Account Created successfully!', {
+                    position: 'top-right',
+                    autoClose: 5000,
+                  });
         
-        // Set new tokens
         localStorage.setItem('access_token', response.data.access);
         localStorage.setItem('refresh_token', response.data.refresh);
         settoken(response.data.access);

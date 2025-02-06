@@ -7,10 +7,10 @@ import axios from 'axios';
 import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import { BallTriangle } from 'react-loader-spinner';
-import { userContext } from '../../Context/UserContext';
+import { toast } from 'react-toastify';
+
 
 export default function Register() {
-  let { settoken } = useContext(userContext)
   const navigate = useNavigate();
   const [errorApi, setErrorApi] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -87,28 +87,32 @@ export default function Register() {
           country: values.country.toUpperCase(), 
           birth_date: formatDate(values.birth_date),
           device_id
-      };
-      const { data } = await axios.post(
-        'https://ahmedmahmoud10.pythonanywhere.com/register/',
-        {
-          ...payload,
-          device_id: device_id
-        }
-      );
-    
+        };
+  
+        const { data } = await axios.post(
+          'https://ahmedmahmoud10.pythonanywhere.com/register/',
+          {
+            ...payload,
+            device_id: device_id
+          }
+        );
+      
         if (data.message === 'success') {
-          console.log("token","id")
-          settoken(data.token);
+          toast.success('Registration successful! Please check your email to activate your account.', {
+            position: 'top-right',
+            autoClose: 5000,
+          });
+
           navigate('/login');
-          localStorage.setItem("token", data.token);
         }
       } catch (error) {
-        /* console.log('Full error:', error);
-        console.log('Error response data:', error.response?.data);
-        console.log('Error status:', error.response?.status);
-        console.log('Error headers:', error.response?.headers); */
-        const errorMessage = error.response?.data?.message || 'Registration failed. Please try again.';
+        const errorMessage = error.response?.data?.message || 'Registration failed. Please contactUs .';
         setErrorApi(errorMessage);
+        
+        toast.error(errorMessage, {
+          position: 'top-right',
+          autoClose: 5000,
+        });
       } finally {
         setLoading(false);
       }
