@@ -49,7 +49,8 @@ const formicLogin = useFormik({
     password: '',
   },
   validationSchema,
-  onSubmit: async (values) => {
+  onSubmit: async (values, { event }) => {
+    event.preventDefault();
     setLoading(true);
     try {
       const device_id = getDeviceId();

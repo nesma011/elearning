@@ -88,30 +88,35 @@ export default function Register() {
           birth_date: formatDate(values.birth_date),
           device_id
         };
-  
+    
         const { data } = await axios.post(
           'https://ahmedmahmoud10.pythonanywhere.com/register/',
-          {
-            ...payload,
-            device_id: device_id
-          }
+          payload
         );
       
-        if (data.message === 'success') {
+        console.log('Response:', data); 
+    
+        if (data.message.includes("Account created successfully")) {
           toast.success('Registration successful! Please check your email to activate your account.', {
             position: 'top-right',
-            autoClose: 5000,
+            autoClose: 3000,
           });
-
-          navigate('/login');
+          
+          setTimeout(() => {
+            navigate('/login');
+          }, 3500);
         }
+          
+      
       } catch (error) {
-        const errorMessage = error.response?.data?.message || 'Registration failed. Please contactUs .';
+        console.error('Error:', error); 
+        
+        const errorMessage = error.response?.data?.message || 'Registration failed. Please contact us.';
         setErrorApi(errorMessage);
         
         toast.error(errorMessage, {
           position: 'top-right',
-          autoClose: 5000,
+          autoClose: 3000,
         });
       } finally {
         setLoading(false);
