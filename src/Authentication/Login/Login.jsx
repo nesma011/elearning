@@ -20,6 +20,7 @@ const getDeviceId = () => {
   if (!deviceId) {
     deviceId = crypto.randomUUID(); // Generate a unique device ID
     localStorage.setItem('device_id', deviceId);
+    console.log(deviceId);
   }
   return deviceId;
 };
