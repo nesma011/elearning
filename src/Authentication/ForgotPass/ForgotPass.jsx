@@ -4,6 +4,8 @@ import logo from "../../assets/logo.webp"
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import axios from 'axios'
+import { toast } from 'react-toastify';
+
 
 export default function ForgotPass() {
   let navigate = useNavigate()
@@ -31,6 +33,10 @@ export default function ForgotPass() {
 
         // If successful, navigate to reset pass page
         if (response.data.statusMsg === 'success') {
+          toast.success('Check Your Mail To Reset Password', {
+                      position: "top-right",
+                      autoClose: 10000,
+                    });
           navigate('/resetpass', { 
             state: { email: values.email } 
           });
