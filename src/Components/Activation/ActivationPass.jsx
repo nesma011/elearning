@@ -21,8 +21,7 @@ export default function ActivationPass() {
                 method: 'POST', 
                 headers: {
                     'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'Access-Control-Allow-Origin': '*'
+                    'Accept': 'application/json'
                 },
                 body: JSON.stringify({
                     new_password: newPassword, 
