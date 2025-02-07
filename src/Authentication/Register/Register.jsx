@@ -194,9 +194,9 @@ export default function Register() {
 
         <div className="my-4">
           <label htmlFor="phone_number" className="block text-sm font-medium text-gray-700">Mobile</label>
-           <div className='flex items-center gap-x-2'>
+           <div className='flex flex-col sm:flex-row gap-2'>
             <select
-              className="border-2 py-2 px-3 border-gray-900 rounded-lg bg-white text-gray-700 focus:ring-2 focus:ring-blue-400"
+              className="border-2 w-full sm:w-auto py-2 px-3 border-gray-900 rounded-lg bg-white text-gray-700 focus:ring-2 focus:ring-blue-400"
               value={selectedCode}
               onChange={(e) => setSelectedCode(e.target.value)}
             >
