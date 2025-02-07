@@ -17,14 +17,10 @@ import 'react-toastify/dist/ReactToastify.css';
 
 export default function App() {
 let { settoken } = useContext(userContext);
-const accessToken = localStorage.getItem("access_token");
 
 
-if (accessToken) {
   useAuthCheck(settoken); 
-} else {
-  console.log("🚫 No access token, skipping useAuthCheck");
-}
+
 
   let paths =createBrowserRouter ([
     {
