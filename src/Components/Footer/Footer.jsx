@@ -26,12 +26,26 @@ export default function Footer() {
           {/* Social Media Icons */}
           <ul className="flex items-center justify-center gap-5 flex-wrap">
           <li> <NavLink to="https://www.facebook.com/share/18aNvC8sCJ/"><i class="fa-brands fa-facebook text-blue-700 text-2xl"></i></NavLink> </li>
-          <li> <i class="fa-solid fa-envelope text-blue-700 text-sm "></i>alexmedlearn200@gmail.com </li>
-          <li><i class="fa-solid fa-phone text-blue-700 text-sm px-1"></i> +201229733297</li>
+          <li className="flex items-center gap-2 hover:text-blue-800 transition-colors">
+      <i className="fa-solid fa-envelope text-blue-700 text-sm"></i>
+      <a 
+        href="mailto:alexmedlearn200@gmail.com"
+        className="hover:underline"
+      >
+        alexmedlearn200@gmail.com
+      </a>
+    </li>          <li><i class="fa-solid fa-phone text-blue-700 text-sm px-1"></i> +201229733297</li>
           <li> <NavLink to="https://t.me/ddfffgry"><i class="fa-brands fa-telegram text-blue-700 text-2xl"></i></NavLink> </li>
 
-          <li> <i class="fa-solid fa-envelope text-blue-700 text-sm "></i>alexmedlearn915@gmail.com </li>
-
+          <li className="flex items-center gap-2 hover:text-blue-800 transition-colors">
+      <i className="fa-solid fa-envelope text-blue-700 text-sm"></i>
+      <a 
+        href="mailto:alexmedlearn915@gmail.com"
+        className="hover:underline"
+      >
+        alexmedlearn915@gmail.com
+      </a>
+    </li>
           </ul>
         </div>
       </div>
