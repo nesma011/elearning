@@ -39,7 +39,6 @@ const getDeviceId = () => {
       .required('Password is required'),
   });
 
-  // Formik setup
  // Formik setup
  const formicLogin = useFormik({
   initialValues: {
@@ -58,23 +57,19 @@ const getDeviceId = () => {
       
       const response = await axios.post(
         'https://ahmedmahmoud10.pythonanywhere.com/login/',
-        {
-          email: values.email,
-          password: values.password,
-          device_id: device_id
-        }
+        { ...values, device_id },
+         { headers: {
+          'Content-Type': 'application/json',
+        }}
       );
       
       console.log('Login Response:', response.data);
 
       if (response.data.access && response.data.refresh) {
-        localStorage.clear();
-        
         localStorage.setItem('access_token', response.data.access);
         localStorage.setItem('refresh_token', response.data.refresh);
-        
-        console.log('Access Token:', localStorage.getItem('access_token'));
-        console.log('Refresh Token:', localStorage.getItem('refresh_token'));
+        console.log('Access Token saved:', response.data.access);  
+      
         
         toast.success('Logged in successfully!', {
           position: 'top-right',
