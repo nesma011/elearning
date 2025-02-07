@@ -19,12 +19,12 @@ export default function Home() {
 
   return (
     <>
-      <div className="relative w-screen h-screen overflow-hidden flex justify-center items-center bg-gray-900" style={{ overflowX: 'hidden' }}>
+      <div className="relative min-h-screen overflow-hidden flex justify-center items-center bg-gray-900" style={{ overflowX: 'hidden' }}>
         {isOpen && rectangles.map((rect, index) => (
           <motion.div
             key={index}
             className="absolute inset-0 bg-white z-10"
-            style={{ width: '100vw', height: '100vh', maxWidth: '100vw', maxHeight: '100vh' }}
+            style={{ width: '100%', height: '100vh', maxWidth: '100%', maxHeight: '100vh' }}
             initial={rect.initial}
             animate={rect.animate}
             transition={{ 
