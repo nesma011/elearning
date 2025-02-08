@@ -6,7 +6,7 @@ import Darkmode from '../../Darkmode'
 
 export default function Sidebar() {
   return (
-    <aside className="flex h-screen overflow-y-auto flex-col justify-between w-72 border-e bg-white dark:bg-gray-900 dark:text-white">
+    <aside className="flex left-0 h-full overflow-y-auto flex-col justify-between w-72 border-e bg-white dark:bg-gray-900 dark:text-white">
     <div className="px-4 py-6">
     <NavLink to="/classes" className="flex-col justify-center items-center gap-2">
             <img src={logo} className="w-28 ms-16" alt="Logo" />
@@ -56,15 +56,6 @@ export default function Sidebar() {
                   className="block rounded-lg px-4 py-2 dark:text-gray-400 font-medium text-gray-700  text-lg hover:bg-gray-100 dark:hover:bg-gray-800  hover:text-gray-700"
                 >
                   Create Test
-                </NavLink>
-              </li>
-  
-              <li>
-                <NavLink
-                  to=''
-                  className="block rounded-lg px-4 py-2 dark:text-gray-400 font-medium text-gray-700  text-lg hover:bg-gray-100 dark:hover:bg-gray-800  hover:text-gray-700"
-                >
-                 Create Test With ID List
                 </NavLink>
               </li>
             </ul>
