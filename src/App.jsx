@@ -14,9 +14,12 @@ import useAuthCheck from './Custom Hooks/useAuthCheck'
   import { userContext } from './Context/UserContext'
   import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { ThemeProvider } from './Context/ThemeContext';
+
 
 export default function App() {
 let { settoken } = useContext(userContext);
+
 
 
   useAuthCheck(settoken); 
@@ -47,9 +50,12 @@ let { settoken } = useContext(userContext);
   ])
   return (
 <>
+<ThemeProvider>
 
 <ToastContainer />
+
 <RouterProvider router={paths}/>
+</ThemeProvider>
   </>
   )
 }

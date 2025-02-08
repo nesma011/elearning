@@ -69,16 +69,16 @@ export default function Navbar() {
           </h1>
         </NavLink>
 
-        <div className="hidden md:flex flex-grow justify-center space-x-8">
+        <div className="hidden md:flex flex-grow  justify-center space-x-8">
           {["Home", "Contact"].map((item, index) => (
             <NavLink
               key={index}
               to={item === "Home" ? "/" : `/${item.toLowerCase()}`}
               className={({ isActive }) =>
-                `text-xl font-medium transition-all duration-300 ${
+                `text-xl font-medium  transition-all duration-300 ${
                   isActive
-                    ? "text-blue-700 border-b-2 border-blue-700"
-                    : "text-gray-900 hover:text-blue-800"
+                    ? "text-blue-700   border-b-2 border-blue-700"
+                    : "text-gray-900 dark:text-white hover:text-blue-800"
                 }`
               }
             >
@@ -136,16 +136,16 @@ export default function Navbar() {
       {isOpen && (
         <div className="md:hidden absolute top-16 left-0 w-full bg-white dark:bg-gray-900 shadow-lg">
           <ul className="flex flex-col items-center space-y-4 py-4">
-            {["Home", "About"].map((item, index) => (
-              <li key={index}>
-                <NavLink
-                  to={item === "Home" ? "/" : `/${item.toLowerCase()}`}
-                  className="text-xl font-medium text-gray-900 hover:text-blue-800"
-                >
-                  {item}
-                </NavLink>
-              </li>
-            ))}
+          {["Home", "Contact"].map((item, index) => (
+  <li key={index}>
+    <NavLink
+      to={item === "Home" ? "/" : `/${item.toLowerCase()}`}
+      className="text-xl font-medium text-gray-900 hover:text-blue-800"
+    >
+      {item}
+    </NavLink>
+  </li>
+))}
 
             {!isTokenValid() ? (
               <>

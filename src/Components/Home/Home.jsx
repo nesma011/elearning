@@ -1,6 +1,8 @@
 import React from 'react';
 import { motion } from "framer-motion";
 import { useState } from "react";
+import Navbar from '../Navbar/Navbar';
+import Footer from '../Footer/Footer';
 /* import ScrollToTopButton from '../ScrollToTopButton/ScrollToTopButton';
  */
 
@@ -19,6 +21,7 @@ export default function Home() {
 
   return (
     <>
+      <Navbar/>
       <div className="relative min-h-screen overflow-hidden flex justify-center items-center bg-gray-900" style={{ overflowX: 'hidden' }}>
         {isOpen && rectangles.map((rect, index) => (
           <motion.div
@@ -36,8 +39,7 @@ export default function Home() {
           />
         ))}
       </div>
-
-      {/* <ScrollToTopButton/> */}
+       <Footer/>
     </>
   );
 }

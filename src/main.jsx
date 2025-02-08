@@ -7,6 +7,7 @@ import "../axios-config.js"
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
+
     <App />
   </StrictMode>,
 )
