@@ -7,6 +7,8 @@ import { userContext } from '../../Context/UserContext';
 import { NavLink } from "react-router-dom";
 import logo from "../../assets/logo.webp"
 import { toast } from 'react-toastify';
+import Navbar from '../../Components/Navbar/Navbar';
+import Footer from '../../Components/Footer/Footer';
 
 
 export default function Login() {
@@ -104,6 +106,7 @@ const getDeviceId = () => {
 
 return (
   <>
+  <Navbar/>
     {errorApi && (
       <div
         className="fixed z-50 flex items-center justify-center p-4 mb-4 text-sm text-red-800 transform -translate-x-1/2 border border-red-300 rounded-lg bg-red-50 top-16 left-1/2"
@@ -203,6 +206,7 @@ return (
         </div>
       </form>
     </section>
+    <Footer/>
   </>
 );
 
