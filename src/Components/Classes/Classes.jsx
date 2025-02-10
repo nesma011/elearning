@@ -11,8 +11,9 @@ export default function Classes() {
   const [error, setError] = useState(null); 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+
   useEffect(() => {
-    fetch("https://api.example.com/years") 
+   fetch("https://ahmedmahmoud10.pythonanywhere.com/all_grade/") 
       .then((response) => {
         if (!response.ok) {
           throw new Error("error to fetch data");
