@@ -13,15 +13,23 @@ export default function Classes() {
 
 
   useEffect(() => {
-   fetch("https://ahmedmahmoud10.pythonanywhere.com/all_grade/") 
+    const token = localStorage.getItem("token"); 
+  
+    fetch("https://ahmedmahmoud10.pythonanywhere.com/all_grade/", {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    })
       .then((response) => {
         if (!response.ok) {
-          throw new Error("error to fetch data");
+          throw new Error("Error fetching data");
         }
         return response.json();
       })
       .then((data) => {
-        setYears(data); 
+        setYears(data);
         setLoading(false);
       })
       .catch((error) => {
@@ -29,6 +37,7 @@ export default function Classes() {
         setLoading(false);
       });
   }, []);
+  
 
   return (
     <>
