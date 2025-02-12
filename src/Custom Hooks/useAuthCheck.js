@@ -37,7 +37,6 @@ const useAuthCheck = (settoken) => {
 
     refreshAuthToken();
 
-    // Refresh token every 4 minutes
     const interval = setInterval(refreshAuthToken, 4 * 60 * 1000);
     return () => clearInterval(interval);
   }, [settoken]);

@@ -1,3 +1,20 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.watermark {
+    position: fixed;
+    background: rgba(0, 0, 0, 0.6); /* خلفية شبه سوداء */
+    width: 150px;
+    height: 50px;
+    z-index: 9999;
+    pointer-events: none;
+    animation: moveWatermark 2s infinite alternate;
+}
+
+/* حركة العلامة المائية */
+@keyframes moveWatermark {
+    0% { transform: translateY(0px) translateX(0px); }
+    100% { transform: translateY(20px) translateX(20px); }
+}
