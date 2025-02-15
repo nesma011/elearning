@@ -18,7 +18,7 @@ export default function Activation() {
                 if (response.ok) {
                     setMessage("🎉 Your account has been successfully activated! Redirecting...");
                     setTimeout(() => {
-                        navigate("/classes");
+                        navigate("/login");
                     }, 3000);
                 } else {
                     setMessage(`❌ Activation failed: ${data.error || "An error occurred"}`);
