@@ -12,7 +12,7 @@ export default function MyLectures() {
       try {
         const response = await axios.get("https://ahmedmahmoud10.pythonanywhere.com/lecture_data_view/", {
           headers: {
-            "Authorization": `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM5Mzk3MDI1LCJpYXQiOjE3MzkxODEwMjUsImp0aSI6IjA5YmFhYjkzNTJlMjRkNTE5NTE3ZGNiMGM0ODg1NTI4IiwidXNlcl9pZCI6NjJ9.jeJgAEzWPOOGo5awJCxaOrvmDew_Budjk56FxsUsA24`,
+            "Authorization": `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQwMjM1MTc1LCJpYXQiOjE3Mzk2MzAwNzksImp0aSI6ImZkNmYwZGJlZTI4MDQ3NjE5ZjQwNDU4ZTgxMjM3ZTY1IiwidXNlcl9pZCI6NjZ9.YuRi4yXQMwvo8lZ9DDHkE9X6gd8cF73KOISq6FT8KX4`,
         },
         });
         setlectures(response.data.lectures);
