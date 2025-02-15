@@ -17,9 +17,9 @@ const SecureScreen = () => {
             }
         };
 
-        const disableRightClick = (e) => {
+      /*   const disableRightClick = (e) => {
             e.preventDefault();
-        };
+        }; */
 
         const preventViewSource = (e) => {
             if (e.ctrlKey && (e.key === "u" || e.key === "U")) {
@@ -42,15 +42,15 @@ const SecureScreen = () => {
         // ✅ تشغيل الأحداث
         document.addEventListener("keydown", preventPrintScreen);
         document.addEventListener("keydown", preventWinScreenshot);
-        document.addEventListener("contextmenu", disableRightClick);
-        document.addEventListener("keydown", preventViewSource);
+/*         document.addEventListener("contextmenu", disableRightClick);
+ */        document.addEventListener("keydown", preventViewSource);
 
         // ✅ تنظيف الأحداث عند الخروج
         return () => {
             document.removeEventListener("keydown", preventPrintScreen);
             document.removeEventListener("keydown", preventWinScreenshot);
-            document.removeEventListener("contextmenu", disableRightClick);
-            document.removeEventListener("keydown", preventViewSource);
+/*             document.removeEventListener("contextmenu", disableRightClick);
+ */            document.removeEventListener("keydown", preventViewSource);
             document.body.removeChild(antiScreenshotLayer);
         };
     }, []);
