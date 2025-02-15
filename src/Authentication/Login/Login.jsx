@@ -80,7 +80,7 @@ const getDeviceId = () => {
 
         await new Promise(resolve => setTimeout(resolve, 1000));
         
-        window.location.href = '/home';
+        window.location.href = '/classes';
       } else {
         throw new Error('Login failed: Missing tokens in response');
       }
