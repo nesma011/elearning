@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   RadarChart,
   Radar,
@@ -9,21 +9,22 @@ import {
   Tooltip,
 } from 'recharts';
 import { useParams } from 'react-router-dom';
+import { userContext } from '../../Context/UserContext';
 
 const RadarScore = () => {
   const { yearId } = useParams();
   const [analytics, setAnalytics] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+ const [token]= useContext(userContext)
   
-  // API base URL from environment variables
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/analyticsSystem/${yearId}`, {
       headers: {
         Authorization:
-          'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQwODQ2NjQ4LCJpYXQiOjE3NDAyNDE4NDYsImp0aSI6IjU0ZTVkNWJlN2Q3ZDRkMjk4OTYzNjhmYmJmNTlkMjkxIiwidXNlcl9pZCI6NjZ9.sZRJuReyOg4ZaIK-Z4cMhcgS2svPKOLbaAcF4I1oSF4',
+          `Bearer ${token}`,
       },
     })
       .then((res) => {
@@ -33,21 +34,11 @@ const RadarScore = () => {
         return res.json();
       })
       .then((data) => {
-        /*
-          نتوقع أن الشكل يكون:
-          {
-            "performance": [
-              { "name": "Endocrinology", "rate": 0.0, ... },
-              { "name": "Gastroenterology", "rate": 0, ... },
-              ...
-            ]
-          }
-        */
+       
         if (data && Array.isArray(data.performance)) {
-          // نهيئ البيانات بما يناسب الرسم الشبكي
           const formattedData = data.performance.map((item) => ({
             name: item.name,
-            value: item.rate || 0, // إذا كان الحقل "rate" يمثل نسبة مئوية
+            value: item.rate || 0,
           }));
           setAnalytics(formattedData);
         } else {
@@ -62,7 +53,6 @@ const RadarScore = () => {
       });
   }, [yearId, API_BASE_URL]);
 
-  // أثناء التحميل
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64 bg-white">
@@ -71,7 +61,6 @@ const RadarScore = () => {
     );
   }
 
-  // في حال وجود خطأ
   if (error) {
     return (
       <div className="flex justify-center items-center h-64 bg-white">
@@ -80,7 +69,6 @@ const RadarScore = () => {
     );
   }
 
-  // إذا لم توجد بيانات
   if (!analytics || analytics.length === 0) {
     return (
       <div className="flex justify-center items-center h-64 bg-white">
@@ -89,17 +77,14 @@ const RadarScore = () => {
     );
   }
 
-  // إذا كانت قيمة rate من 0 إلى 100، استخدمي:
   const maxValue = 100;
 
   return (
     <div className="bg-white text-black rounded shadow">
-      {/* الشريط العلوي */}
       <div className="bg-gray-800 text-white p-2">
         <h2 className="font-bold text-lg">Your Radar</h2>
       </div>
 
-      {/* رسم الرادار */}
       <div className="flex items-center justify-center p-4">
         <RadarChart
           cx={200}

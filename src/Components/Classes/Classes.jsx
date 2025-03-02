@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
 import Nav from "../Nav/Nav";
 import Welcome from "../WelcomeMsg/Welcome";
+import { userContext } from "../../Context/UserContext";
 export default function Classes() {
   const [years, setYears] = useState([]); 
   const [selectedYear, setSelectedYear] = useState(null);
@@ -11,15 +12,14 @@ export default function Classes() {
   const [error, setError] = useState(null); 
   const navigate = useNavigate();
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
+   const {token} =useContext(userContext)
 
   useEffect(() => {
-/*     const token = localStorage.getItem("token"); 
- */  
+ 
     fetch(`${API_BASE_URL}/all_grade/`, {
       method: "GET",
       headers: {
-        "Authorization": `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQwODQ2NjQ4LCJpYXQiOjE3NDAyNDE4NDYsImp0aSI6IjU0ZTVkNWJlN2Q3ZDRkMjk4OTYzNjhmYmJmNTlkMjkxIiwidXNlcl9pZCI6NjZ9.sZRJuReyOg4ZaIK-Z4cMhcgS2svPKOLbaAcF4I1oSF4`,
+        "Authorization": `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     })
