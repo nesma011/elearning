@@ -5,11 +5,12 @@ export default function Activation() {
     const { id, token } = useParams();
     const navigate = useNavigate();
     const [message, setMessage] = useState("Activating your account...");
-
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+    
     useEffect(() => {
         async function activateAccount() {
             try {
-                const response = await fetch(`https://ahmedmahmoud10.pythonanywhere.com/activate/${id}/${token}/`, {
+                const response = await fetch(`${API_BASE_URL}/activate/${id}/${token}/`, {
                     method: 'GET'
                 });
 

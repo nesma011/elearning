@@ -15,6 +15,7 @@ export default function Login() {
   let { settoken } = useContext(userContext);
   const [errorApi, setErrorApi] = useState(null);
   const [loading, setLoading] = useState(false);
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   // Function to get device ID
 const getDeviceId = () => {
@@ -58,7 +59,7 @@ const getDeviceId = () => {
       console.log('Sending login request with:', { ...values, device_id }); 
       
       const response = await axios.post(
-        'https://ahmedmahmoud10.pythonanywhere.com/login/',
+        `${API_BASE_URL}/login/`,
         { ...values, device_id },
          { headers: {
           'Content-Type': 'application/json',

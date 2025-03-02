@@ -17,7 +17,9 @@ export default function Register() {
 /*   const navigate = useNavigate();
  */  const [errorApi, setErrorApi] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [selectedCode, setSelectedCode] = useState("+20"); // Default Egypt Code
+  const [selectedCode, setSelectedCode] = useState("+20");
+const userData = { username: username, email: email }; 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   const getDeviceId = () => {
     let deviceId = localStorage.getItem('device_id');
@@ -93,7 +95,7 @@ export default function Register() {
         };
     
         const { data } = await axios.post(
-          'https://ahmedmahmoud10.pythonanywhere.com/register/',
+          `${API_BASE_URL}/register/`,
           payload
         );
       
@@ -102,10 +104,11 @@ export default function Register() {
         if (data.message.includes("Account created successfully")) {
           toast.success('Registration successful! Please check your email to activate your account.', {
             position: "top-right",
-            autoClose: 10000,
+            autoClose: 50000,
           });
+          localStorage.setItem("user", JSON.stringify(userData));
       
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          await new Promise(resolve => setTimeout(resolve, 5000));
           
           window.location.href = '/login'; 
         }

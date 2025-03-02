@@ -48,8 +48,14 @@ const Resources = () => {
   <motion.div
     key={resource.id}
     className="p-8 rounded-xl cursor-pointer transition-all shadow-md text-xl font-semibold flex flex-col items-center bg-gray-100 text-gray-700 hover:bg-blue-300 hover:text-white"
-    onClick={() => navigate(`/systems/${yearId}/${resource.id}`)}
-    whileTap={{ scale: 0.9 }}
+    onClick={() => {
+      if (resource.name === "Question Bank") {
+        console.log("Navigating with yearId:", yearId);
+        navigate(`/questionBank/${yearId}`);
+      } else {
+        navigate(`/systems/${yearId}/${resource.id}`);
+      }
+    }}    whileTap={{ scale: 0.9 }}
   >
     {resource.icon}
     <p className="mt-4">{resource.name}</p>

@@ -2,6 +2,8 @@ import { useEffect } from "react";
 import axios from "axios";
 
 const useAuthCheck = (settoken) => {
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  
   useEffect(() => {
     const refreshAuthToken = async () => {
       const refreshToken = localStorage.getItem("refresh_token");
@@ -10,7 +12,7 @@ const useAuthCheck = (settoken) => {
 
       try {
         const { data } = await axios.post(
-          "https://ahmedmahmoud10.pythonanywhere.com/refresh/",
+          `${API_BASE_URL}/refresh/`,
           { refresh: refreshToken },  
           {
             headers: {

@@ -6,13 +6,15 @@ import Welcome from "../WelcomeMsg/Welcome";
 export default function MyLectures() {
   const [lectures, setlectures] = useState([]);
   const [loading, setLoading] = useState(true);
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 
   useEffect(() => {
     const fetchlectures = async () => {
       try {
-        const response = await axios.get("https://ahmedmahmoud10.pythonanywhere.com/lecture_data_view/", {
+        const response = await axios.get(`${API_BASE_URL}/lecture_data_view/`, {
           headers: {
-            "Authorization": `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQwMjM1MTc1LCJpYXQiOjE3Mzk2MzAwNzksImp0aSI6ImZkNmYwZGJlZTI4MDQ3NjE5ZjQwNDU4ZTgxMjM3ZTY1IiwidXNlcl9pZCI6NjZ9.YuRi4yXQMwvo8lZ9DDHkE9X6gd8cF73KOISq6FT8KX4`,
+            "Authorization": `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQwODQ2NjQ4LCJpYXQiOjE3NDAyNDE4NDYsImp0aSI6IjU0ZTVkNWJlN2Q3ZDRkMjk4OTYzNjhmYmJmNTlkMjkxIiwidXNlcl9pZCI6NjZ9.sZRJuReyOg4ZaIK-Z4cMhcgS2svPKOLbaAcF4I1oSF4`,
         },
         });
         setlectures(response.data.lectures);

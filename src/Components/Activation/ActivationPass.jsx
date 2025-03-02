@@ -7,6 +7,7 @@ export default function ActivationPass() {
     const [message, setMessage] = useState("Processing...");
     const [newPassword, setNewPassword] = useState("");
     const [confirmNewPassword, setConfirmNewPassword] = useState("");
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -17,7 +18,7 @@ export default function ActivationPass() {
         }
     
         try {
-            const response = await fetch(`https://ahmedmahmoud10.pythonanywhere.com/password-reset-confirm/${id}/${token}/`, {
+            const response = await fetch(`${API_BASE_URL}/password-reset-confirm/${id}/${token}/`, {
                 method: 'POST', 
                 headers: {
                     'Content-Type': 'application/json',

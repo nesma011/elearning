@@ -13,8 +13,30 @@
     animation: moveWatermark 2s infinite alternate;
 }
 
-/* حركة العلامة المائية */
 @keyframes moveWatermark {
     0% { transform: translateY(0px) translateX(0px); }
     100% { transform: translateY(20px) translateX(20px); }
 }
+
+@keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+  .animate-gradient {
+    background-size: 200% 200%;
+    animation: gradient 5s infinite linear;
+  }
+
+  @keyframes borderColorChange {
+    0% { border-color: #ff5733; } 
+    25% { border-color: #33ff57; } 
+    50% { border-color: #3357ff; } 
+    75% { border-color: #ff33a1; } 
+    100% { border-color: #ff5733; } 
+  }
+  
+  .animate-border {
+    animation: borderColorChange 4s infinite linear;
+  }

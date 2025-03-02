@@ -7,9 +7,10 @@ import { FaEnvelope, FaTelegramPlane, FaFacebook, FaPhone } from "react-icons/fa
 
 export default function ContactUs() {
   const [contact, setContact] = useState(null);
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
-    fetch("https://ahmedmahmoud10.pythonanywhere.com/support/")
+    fetch(`${API_BASE_URL}/support/`)
       .then((res) => res.json())
       .then((data) => setContact(data[0]))
       .catch((err) => console.error("Error fetching contact details:", err));

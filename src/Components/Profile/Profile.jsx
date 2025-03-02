@@ -7,6 +7,7 @@ import Nav from "../Nav/Nav";
 
 const Profile = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   const menuItems = [
     { name: "My Books", path: "/mybooks" },
@@ -22,7 +23,7 @@ const Profile = () => {
   const handleDeleteAccount = async () => {
     if (window.confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
       try {
-        const response = await fetch("https://ahmedmahmoud10.pythonanywhere.com/delete-user/", {
+        const response = await fetch(`${API_BASE_URL}/delete-user/`, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",

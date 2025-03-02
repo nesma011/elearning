@@ -9,6 +9,7 @@ import { toast } from 'react-toastify';
 
 export default function ForgotPass() {
   let navigate = useNavigate()
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   // Validation Schema
   const validationSchema = Yup.object().shape({
@@ -27,7 +28,7 @@ export default function ForgotPass() {
       try {
         // API call for password reset
         const response = await axios.post(
-          'https://ahmedmahmoud10.pythonanywhere.com/password-reset/', 
+          `${API_BASE_URL}/password-reset/`, 
           { email: values.email }
         );
 

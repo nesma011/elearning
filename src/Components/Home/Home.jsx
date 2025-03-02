@@ -4,9 +4,9 @@ import Footer from "../Footer/Footer";
 
 const Home = () => {
   const [data, setData] = useState([]);
-
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   useEffect(() => {
-    fetch("https://ahmedmahmoud10.pythonanywhere.com/media/")
+    fetch(`${API_BASE_URL}/media/`)
       .then((res) => res.json())
       .then((data) => setData(data))
       .catch((error) => console.error("Error fetching data:", error));
