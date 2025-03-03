@@ -112,8 +112,8 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
     
           await new Promise(resolve => setTimeout(resolve, 5000));
           
-          window.location.href = '/login'; 
-        }
+/*           window.location.href = '/login'; 
+ */        }
       } catch (error) {
         console.error('Error:', error); 
     
