@@ -86,11 +86,11 @@ const RadarScore = () => {
 
       <div className="flex items-center justify-center p-4">
         <RadarChart
-          cx={200}
-          cy={200}
-          outerRadius={100}
-          width={200}
-          height={200}
+          cx={150}
+          cy={150}
+          outerRadius={300}
+          width={350}
+          height={350}
           data={analytics}
         >
           <PolarGrid stroke="#e5e5e5" />
