@@ -121,10 +121,7 @@ export default function Test() {
   }, [mode, timeLeft, isPaused, testData?.test_id]);
 
 
-  useEffect(() => {
-    if (window.blueTextCounter) window.blueTextCounter = 0;
-  }, [currentQuestion.id]);
-
+ 
 
   // ========== Check if all questions answered ==========
   useEffect(() => {
