@@ -89,7 +89,7 @@ const RadarScore = () => {
           cx={150}
           cy={150}
           outerRadius={100}
-          width={400}
+          width={600}
           height={400}
           data={analytics}
         >
