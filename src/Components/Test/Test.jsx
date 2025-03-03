@@ -62,23 +62,9 @@ export default function Test() {
   let token = localStorage.getItem("access_token")
 
 
-  const processExplanationContent = (content) => {
-   
-    let blueTextCounter = 0;
-    
-    const processedContent = content.replace(
-      /<span style="color: blue;">(.*?)<\/span>|<span class="text-blue-\d+">(.*?)<\/span>|<font color="blue">(.*?)<\/font>/g,
-      (match, group1, group2, group3) => {
-        blueTextCounter++;
-        const textContent = group1 || group2 || group3;
-        const imageKey = `text_image${blueTextCounter}`;
-        
-        return `<span class="cursor-pointer text-blue-500 font-medium hover:underline" data-img="${imageKey}">${textContent}</span>`;
-      }
-    );
-    
-    return processedContent;
-  };
+  useEffect(() => {
+    if (window.blueTextCounter) window.blueTextCounter = 0;
+  }, [currentQuestion.id]);
 
   // ========== Timer Initialization ==========
   useEffect(() => {
@@ -973,57 +959,97 @@ export default function Test() {
                 </>
               )}
   
-=              {!separateView && results[currentQuestion.id] && (
-                <div className="mt-4 p-3 border-t w-full">
-                  <h3 className="font-bold text-2xl text-blue-600">Explanation:</h3>
-                  
-                  {/* Main explanation image if available */}
-                  {results[currentQuestion.id].image && (
-                    <div className="mt-2 flex justify-center">
-                      <img
-                        src={results[currentQuestion.id].image}
-                        alt="Explanation diagram"
-                        className="w-full max-w-[750px] h-auto max-h-[500px] object-contain cursor-pointer"
-                        onClick={() => openModal(results[currentQuestion.id].image)}
-                      />
-                    </div>
-                  )}
-                  
-                  <div className="text-gray-700 mt-4">
-                    {parse(
-                      processExplanationContent(results[currentQuestion.id].content),
-                      {
-                        replace: (domNode) => {
-                          if (
-                            domNode.type === 'tag' &&
-                            domNode.name === 'span' &&
-                            domNode.attribs &&
-                            domNode.attribs['data-img']
-                          ) {
-                            const imageKey = domNode.attribs['data-img'];
-                            return (
-                              <span
-                                className="cursor-pointer text-blue-500 font-medium hover:underline transition-colors"
-                                onClick={() => {
-                                  
-                                  const imageUrl = results[currentQuestion.id][imageKey];
-                                  if (imageUrl) {
-                                    openModal(imageUrl);
-                                  } else {
-                                    console.warn(`Image not found for key: ${imageKey}`);
-                                  }
-                                }}
-                              >
-                                {domToReact(domNode.children)}
-                              </span>
-                            );
-                          }
-                        }
-                      }
-                    )}
-                  </div>
-                </div>
-              )}
+=            {!separateView && results[currentQuestion.id] && (
+  <div className="mt-4 p-3 border-t w-full">
+    <h3 className="font-bold text-2xl text-blue-600">Explanation:</h3>
+    {results[currentQuestion.id].image && (
+      <img
+        src={results[currentQuestion.id].image}
+        alt="explanation"
+        className="w-[750px] h-[500px] mt-2 mx-auto cursor-pointer"
+        onClick={() => openModal(results[currentQuestion.id].image)}
+      />
+    )}
+    <div className="text-gray-700 mt-2">
+      {parse(results[currentQuestion.id].content, {
+        replace: (domNode) => {
+          // التعامل مع العناصر التي تحتوي على سمة data-img (الطريقة الأصلية)
+          if (
+            domNode.type === 'tag' &&
+            domNode.name === 'span' &&
+            domNode.attribs &&
+            domNode.attribs['data-img']
+          ) {
+            return (
+              <span
+                className="cursor-pointer text-blue-500 underline"
+                onClick={() => openModal(domNode.attribs['data-img'])}
+              >
+                {domToReact(domNode.children)}
+              </span>
+            );
+          }
+          
+          // إضافة: التعامل مع النص الأزرق (بأي تنسيق)
+          if (domNode.type === 'tag') {
+            // التحقق من وجود فئات أو أنماط للون الأزرق
+            const hasBlueClass = domNode.attribs && domNode.attribs.class && 
+              (domNode.attribs.class.includes('text-blue') || domNode.attribs.class.includes('blue'));
+              
+            const hasBlueStyle = domNode.attribs && domNode.attribs.style && 
+              (domNode.attribs.style.includes('color: blue') || domNode.attribs.style.includes('color:blue'));
+              
+            const hasBlueColor = domNode.attribs && domNode.attribs.color && domNode.attribs.color === 'blue';
+            
+            // إذا كان النص أزرق وليس لديه بالفعل وظيفة النقر
+            if ((hasBlueClass || hasBlueStyle || hasBlueColor) && !domNode.attribs.onClick) {
+              // استخراج النص
+              const nodeText = domToReact(domNode.children);
+              const textContent = typeof nodeText === 'string' ? nodeText.trim() : String(nodeText).trim();
+              
+              // تحديد أي صورة مرتبطة مع هذا النص
+              let imageIndex = 0;
+              // البحث عن فهرس الصورة باستخدام نص المحتوى - يمكن تعديل هذا المنطق
+              const blueTexts = results[currentQuestion.id].blueTexts || [];
+              for (let i = 0; i < blueTexts.length; i++) {
+                if (blueTexts[i] === textContent) {
+                  imageIndex = i + 1;
+                  break;
+                }
+              }
+              
+              // إذا لم يتم العثور عليه بالنص، استخدم ترتيب العناصر الزرقاء
+              if (imageIndex === 0) {
+                // تتبع العناصر الزرقاء المكتشفة
+                if (!window.blueTextCounter) window.blueTextCounter = 0;
+                window.blueTextCounter++;
+                imageIndex = window.blueTextCounter;
+              }
+              
+              const imageKey = `text_image${imageIndex}`;
+              
+              return (
+                <span
+                  className="cursor-pointer text-blue-500 underline"
+                  onClick={() => {
+                    const imageUrl = results[currentQuestion.id][imageKey];
+                    if (imageUrl) {
+                      openModal(imageUrl);
+                    } else {
+                      console.warn(`Image not found for key: ${imageKey}`);
+                    }
+                  }}
+                >
+                  {domToReact(domNode.children)}
+                </span>
+              );
+            }
+          }
+        }
+      })}
+    </div>
+  </div>
+)}
               
             </div>
           ) : (
