@@ -486,7 +486,6 @@ export default function Test() {
     }
   };
 
-  // ========== وظيفة تفعيل الهايلايت عند تظليل النص ==========
   const handleTextSelection = () => {
     if (!highlightOn || hideHighlights) return;
 
@@ -522,7 +521,6 @@ export default function Test() {
       ? testData.questions[currentQuestionIndex]
       : null;
 
-  // تعريف questionResult لاستخدامه في عرض الشرح
   const questionResult = currentQuestion ? results[currentQuestion.id] : null;
 
   const totalTimeUsed = mode === 'timed'
@@ -535,9 +533,7 @@ export default function Test() {
       onMouseUp={handleTextSelection}
       className="min-h-screen bg-gray-50"
     >
-      {/* ====== NAVBAR الأساسي ====== */}
       <nav className="bg-blue-800 w-full px-4 py-2 flex flex-col sm:flex-row sm:justify-between items-center">
-        {/* Left section */}
         <div className="flex flex-col text-white mb-2 sm:mb-0">
           <span className="text-xl font-semibold">
             Item {currentQuestionIndex + 1} of {testData.questions?.length}
@@ -777,6 +773,16 @@ export default function Test() {
                           ★
                         </span>
                       )}
+
+                      <div className="flex items-center">
+                      <p className="flex-1">{currentQuestion.text}</p>
+                      {isMarked && (
+                        <span className="ml-2 text-xl font-bold text-blue-500">
+                          🚩
+                        </span>
+                      )}
+                    </div>
+                    
                     </div>
                   );
                 })
