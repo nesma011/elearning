@@ -21,7 +21,7 @@ export default function QuestionBank() {
 
       {/* Main Content */}
       <div className="flex-1 md:ml-72">
-        <Nav className="md:ml-72" />
+        <Nav className="md:ml-72 md:left-72" />
         <main className="flex-1">
           <Welcome />
 
