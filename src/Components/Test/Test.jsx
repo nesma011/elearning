@@ -426,7 +426,6 @@ export default function Test() {
   const handleMarkChange = async (e) => {
     const checked = e.target.checked;
     setIsMarked(checked);
-    console.log("isMarked set to:", checked);
 
     if (checked && currentQuestion) {
       try {
@@ -775,15 +774,12 @@ export default function Test() {
                         </span>
                       )}
 
-                      <div className="flex items-center">
                       <p className="flex-1">{currentQuestion.text}</p>
                       {isMarked && (
                         <span className="ml-2 text-xl font-bold text-blue-500">
                           🚩
                         </span>
                       )}
-                    </div>
-                    
                     </div>
                   );
                 })
