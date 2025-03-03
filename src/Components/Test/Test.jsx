@@ -774,8 +774,8 @@ export default function Test() {
                         </span>
                       )}
 
-                      <p className="flex-1">{currentQuestion.text}</p>
-                      {isMarked && (
+                    
+                      {isMarked && currentQuestion.text && (
                         <span className="ml-2 text-xl font-bold text-blue-500">
                           🚩
                         </span>
