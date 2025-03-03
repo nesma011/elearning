@@ -817,237 +817,48 @@ export default function Test() {
           {error && <div className="text-red-500">Error: {error}</div>}
 
           <div>
-            {testData && currentQuestion ? (
-              <div className="mb-4 p-1 rounded flex flex-col items-start">
-                {currentQuestion.text && (
-                  <p
-                    className="mb-1 text-xl"
-                    style={{ 
-                      backgroundColor: hideHighlights ? 'transparent' : 'inherit' 
-                    }}
-                    dangerouslySetInnerHTML={{
-                      __html: submittedQuestions[currentQuestion.id]
-                        ? currentQuestion.text.replace(
-                            /<u>(.*?)<\/u>/g,
-                            '<span style="text-decoration: underline; text-decoration-color: #ed1212; text-decoration-thickness: 4px;">$1</span>'
-                          )
-                        : currentQuestion.text.replace(/<u>(.*?)<\/u>/g, '$1'),
-                    }}
-                  />
-                )}
-
-                {currentQuestion.image && (
-                  <img
-                    src={`${API_BASE_URL}${currentQuestion.image}`}
-                    alt="question"
-                    className="aspect-ratio max-w-[50%] max-h-[50vh] mt-2 mx-auto rounded-lg cursor-pointer"
-                    onClick={() => openModal(`${API_BASE_URL}${currentQuestion.image}`)}
-                  />
-                )}
-
-                {currentQuestion.audio && (
-                  <audio
-                    controls
-                    src={`${API_BASE_URL}${currentQuestion.audio}`}
-                    className="mt-2"
-                  >
-                    Your browser does not support the audio element.
-                  </audio>
-                )}
-
-                <div className="w-full border-2 my-8 border-blue-300 shadow-xl shadow-blue-400">
-                  {currentQuestion.answers && currentQuestion.answers.length > 0 && (
-                    <div className="mt-4 border border-gray-200 rounded-lg overflow-hidden">
-                      {currentQuestion.answers.map((answer) => {
-                        if (!answer || !answer.id) return null;
-                        
-                        const questionResult = results[currentQuestion.id];
-                        const isCorrectAnswer = questionResult?.correctAnswer === answer.id;
-                        const userAnswerId = selectedAnswers[currentQuestion.id];
-                        const isUserAnswer = userAnswerId === answer.id;
-
-                        return (
-                          <label 
-                            key={answer.id} 
-                            className="flex justify-between p-4 cursor-pointer hover:bg-gray-50"
-                          >
-                            <div className="flex items-center space-x-3">
-                              <input
-                                type="radio"
-                                name={`question-${currentQuestion.id}`}
-                                value={answer.id}
-                                checked={isUserAnswer}
-                                onChange={() => handleAnswerChange(currentQuestion.id, answer.id)}
-                                disabled={!!questionResult}
-                                className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                              />
-                              <span className="font-medium text-gray-700">{answer.letter}.</span>
-                              
-                              {answer.text && (
-                                <span className="text-gray-900 px-4 text-lg font-semibold">
-                                  {answer.text}
-                                </span>
-                              )}
-
-                              {answer.image && (
-                                <img
-                                  src={`${API_BASE_URL}${answer.image}`}
-                                  alt={`Option ${answer.letter}`}
-                                  className="mt-2 max-w-xs h-auto object-contain cursor-zoom-in"
-                                  onClick={() => openModal(`${API_BASE_URL}${answer.image}`)}
-                                />
-                              )}
-
-                              {answer.answer_json ? (
-                                <div className="mt-3 overflow-x-auto">
-                                  {Object.keys(answer.answer_json).length === 0 ? (
-                                    <div>No data available</div>
-                                  ) : (
-                                    <table className="min-w-full divide-y divide-gray-200">
-                                      <thead className="bg-gray-50">
-                                        <tr className="divide-x divide-gray-200">
-                                          {Object.keys(answer.answer_json).map((key) => (
-                                            <th
-                                              key={key}
-                                              className="px-6 py-3 text-left text-sm font-medium text-gray-900 uppercase tracking-wider"
-                                            >
-                                              {key}
-                                            </th>
-                                          ))}
-                                        </tr>
-                                      </thead>
-                                      <tbody className="bg-white divide-y divide-gray-200">
-                                        <tr className="divide-x divide-gray-200">
-                                          {Object.keys(answer.answer_json).map((key) => (
-                                            <td
-                                              key={key}
-                                              className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
-                                            >
-                                              {answer.answer_json[key]}
-                                            </td>
-                                          ))}
-                                        </tr>
-                                      </tbody>
-                                    </table>
-                                  )}
-                                </div>
-                              ) : (
-                                <div></div>
-                              )}
-                            </div>
-
-                            <div className="flex items-center justify-start">
-                              {questionResult && (
-                                <span
-                                  className={`ml-2 font-bold ${
-                                    isCorrectAnswer ? 'text-green-600' : 'text-red-500'
-                                  }`}
-                                >
-                                  {isCorrectAnswer ? '✓' : '✗'}
-                                </span>
-                              )}
-
-                              {questionResult?.rate_answer && (
-                                <div className="ml-4">
-                                  <span className="text-blue-600 font-semibold">
-                                    ({questionResult.rate_answer[answer.id]})%
-                                  </span>
-                                </div>
-                              )}
-                            </div>
-                          </label>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-
-                {currentQuestion.id && !results[currentQuestion.id] && (
-                  <>
-                    {mode === "timed" ? (
-                      <button
-                        onClick={() => saveAnswerTimeMode(currentQuestion.id)}
-                        className="mt-4 px-6 py-4 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-300"
-                      >
-                        Save
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => submitAnswer(currentQuestion.id)}
-                        className="mt-4 px-6 py-4 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-300"
-                      >
-                        Submit
-                      </button>
-                    )}
-                  </>
-                )}
-                
-
-                {/* (Explanation) */}
-                {!separateView && questionResult && (
-                  <div className="mt-4 p-3 border-t w-full">
-                    <h3 className="font-bold text-2xl text-blue-600">Explanation:</h3>
-                    
-                    {questionResult?.image && (
-                      <img
-                        src={questionResult.image}
-                        alt="explanation"
-                        className="w-[750px] h-[500px] mt-2 mx-auto cursor-pointer"
-                        onClick={() => openModal(questionResult.image)}
-                      />
-                    )}
-                    <div className="text-gray-700 mt-2">
-                    {(() => {
-                      const imagesArray = [
-                        questionResult?.text_image1,
-                        questionResult?.text_image2,
-                        questionResult?.text_image3,
-                        questionResult?.text_image4,
-                        questionResult?.text_image5,
-                        questionResult?.text_image6,
-                      ].filter((image) => image);
-                    
-                      console.log("Images Array:", imagesArray);
-                      console.log("Content to parse:", questionResult?.content);
-                      
-                      let underlineCounter = 0;
-                      
-                      if (!questionResult?.content) return null;
-                      
-                      return parse(questionResult.content, {
-                        replace: (domNode) => {
-                          console.log("Found node:", domNode);
-                          
-                          if (domNode.type === "tag" && domNode.name === "u") {
-                            console.log("Found underline tag:", domNode);
-                            const currentImage = imagesArray[underlineCounter];
-                            console.log("Current image:", currentImage);
-                            underlineCounter++;
-                            
-                            if (currentImage) {
-                              return (
-                                <u
-                                  className="cursor-pointer text-blue-500 "
-                                  onClick={() => openModal(currentImage)}
-                                >
-                                  {domToReact(domNode.children)}
-                                </u>
-                              );
-                            } else {
-                              return <u>{domToReact(domNode.children)}</u>;
-                            }
-                          }
-                          return undefined;
-                        },
-                      });
-                    })()}
-                    </div>
-                  </div>
-                )}
+          {currentQuestion.id && results[currentQuestion.id] && (
+            <div className="mt-4 p-2 bg-gray-200 rounded-lg shadow-md flex flex-col sm:flex-row items-center justify-between">
+              {/* Correct/Incorrect Status */}
+              <div className="flex items-center">
+                <span
+                  className={`font-bold text-xl mr-2 ${
+                    results[currentQuestion.id].status === "correct"
+                      ? "text-green-600"
+                      : "text-red-500"
+                  }`}
+                >
+                  {results[currentQuestion.id].status === "correct" ? "Correct" : "Incorrect"}
+                </span>
+                <span className="text-gray-700">
+                  Correct answer {results[currentQuestion.id].correctAnswerLetter}
+                </span>
               </div>
-            ) : (
-              <div>No question data available</div>
-            )}
+          
+=              <div className="flex items-center">
+                <span className="text-gray-700 mr-1">| </span>
+                <span className="font-semibold text-blue-600">
+                  {results[currentQuestion.id].rate_answer || "N/A"}% correctly
+                </span>
+              </div>
+          
+              {/* Time Spent (Only in Time Mode) */}
+              {mode === "timed" && totalTimeUsed !== null && (
+                <div className="flex items-center">
+                  <span className="text-gray-700 mr-1">| </span>
+                  <span className="font-semibold">
+                    Time spent {formatTime(totalTimeUsed)} {/* Use formatTime to display time */}
+                  </span>
+                </div>
+              )}
+          
+              {/* Version */}
+              <div className="flex items-center">
+                <span className="text-gray-700 mr-1">| </span>
+                <span className="font-semibold">2023 version</span>
+              </div>
+            </div>
+          )}
 
             {/* Block */}
             <button 
