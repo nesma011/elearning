@@ -349,9 +349,6 @@ export default function CreateTest() {
   const handleRequest = async (systemId) => {
     if (systemRequests[systemId] === "pending" || systemRequests[systemId] === "approved") return;
   
-    toast.info("Please wait for admin approval");
-    setSystemRequests(prev => ({ ...prev, [systemId]: "pending" }));
-  
     try {
       const response = await fetch(`${API_BASE_URL}/call-system/create/`, {
         method: 'POST',
@@ -370,12 +367,20 @@ export default function CreateTest() {
   
       const data = await response.json();
       console.log("Request successful:", data);
+  
+      if (data.open_user) {
+        setSystemRequests(prev => ({ ...prev, [systemId]: "approved" }));
+      } else {
+        toast.info("Please wait for admin approval");
+        setSystemRequests(prev => ({ ...prev, [systemId]: "pending" }));
+      }
     } catch (error) {
       console.error("Request error:", error);
       toast.error("Request failed, please try again");
       setSystemRequests(prev => ({ ...prev, [systemId]: undefined }));
     }
   };
+  
   const [isSubmitting, setIsSubmitting] = useState(false);
 
 
@@ -503,7 +508,6 @@ export default function CreateTest() {
           </nav>
 
           <div className="p-6 space-y-6">
-            {/* قسم اختيار نوع الاختبار واسم الاختبار */}
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
               <div className="flex items-center space-x-6 mb-6">
                 <div
@@ -571,7 +575,6 @@ export default function CreateTest() {
               </div>
             ) : (
               <>
-                {/* قسم المواد مع CheckBox الخاص بتحديد الكل وبجانب الـ CheckBox الخاص بالأسئلة الخاطئة وغير المُجاب عليها عرض العدد الديناميكي */}
                 <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
                   <div className="border-b pb-3 mb-4 border-gray-200 dark:border-gray-700">
                     <div className="flex items-center space-x-4 flex-wrap">
@@ -607,15 +610,7 @@ export default function CreateTest() {
                         <input
                           type="checkbox"
                           checked={showHighYield}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setShowHighYield(true);
-                              setShowIncorrect(false);
-                              setShowUnanswered(false);
-                            } else {
-                              setShowHighYield(false);
-                            }
-                          }}
+                          onChange={handleHighYieldFilter}
                           className="w-4 h-4"
                         />
                         <span className="text-yellow-500 font-semibold">High Yield Questions</span>
@@ -680,15 +675,17 @@ export default function CreateTest() {
                             )}
                           </div>
                           <div className="flex items-center space-x-2">
-                            {!system.open_user && (
-                              <button
-                                onClick={() => handleRequest(system.id)}
-                                disabled={systemRequests[system.id] === "pending"}
-                                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-300"
-                              >
-                                {systemRequests[system.id] === "pending" ? "Pending" : "Request"}
-                              </button>
-                            )}
+                          {system.open_user === true ? null : (
+                            <button
+                              onClick={() => handleRequest(system.id)}
+                              disabled={system.open_user === "waiting" || systemRequests[system.id] === "pending"}
+                              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-300"
+                            >
+                              {system.open_user === "waiting" || systemRequests[system.id] === "pending" ? "Pending" : "Request"}
+                            </button>
+                          )}
+                          
+                          
                             <button
                               onClick={() => toggleSubtitles(system.id)}
                               className="text-blue-500 mt-4"
