@@ -232,7 +232,7 @@ const Flashcards = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <div className="bg-gray-100 px-3 py-2 rounded-t-lg">
-                  <span className="font-medium">Front</span>
+                  <span className="font-medium"> Question </span>
                 </div>
                 <textarea
                   className="w-full border rounded-b-lg p-4 min-h-[300px] 
@@ -244,7 +244,7 @@ const Flashcards = () => {
               </div>
               <div>
                 <div className="bg-gray-100 px-3 py-2 rounded-t-lg">
-                  <span className="font-medium">Back</span>
+                  <span className="font-medium">Answer</span>
                 </div>
                 <textarea
                   className="w-full border rounded-b-lg p-4 min-h-[300px] 
