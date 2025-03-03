@@ -18,8 +18,8 @@ export default function Register() {
  */  const [errorApi, setErrorApi] = useState(null);
   const [loading, setLoading] = useState(false);
   const [selectedCode, setSelectedCode] = useState("+20");
-const userData = { username: username, email: email }; 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 
   const getDeviceId = () => {
     let deviceId = localStorage.getItem('device_id');
@@ -35,7 +35,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
     username: yup
       .string()
       .min(3, 'Name should be at least 3 characters')
-      .max(20, "Name shouldn't be more than 20 characters")
+      .max(30, "Name shouldn't be more than 20 characters")
       .required('Name is required'),
     email: yup
       .string()
@@ -94,11 +94,13 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
           device_id
         };
     
+        const userData = { username: values.username, email: values.email };
+    
         const { data } = await axios.post(
           `${API_BASE_URL}/register/`,
           payload
         );
-      
+    
         console.log('Response:', data); 
     
         if (data.message.includes("Account created successfully")) {
@@ -107,19 +109,17 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
             autoClose: 50000,
           });
           localStorage.setItem("user", JSON.stringify(userData));
-      
+    
           await new Promise(resolve => setTimeout(resolve, 5000));
           
           window.location.href = '/login'; 
         }
-          
-      
       } catch (error) {
         console.error('Error:', error); 
-        
+    
         const errorMessage = error.response?.data?.message || 'Registration failed. Please contact us.';
         setErrorApi(errorMessage);
-        
+    
         toast.error(errorMessage, {
           position: 'top-right',
           autoClose: 3000,
@@ -128,6 +128,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
         setLoading(false);
       }
     },
+    
   });
 
   return (<>

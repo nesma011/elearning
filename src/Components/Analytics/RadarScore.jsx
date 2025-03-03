@@ -9,14 +9,13 @@ import {
   Tooltip,
 } from 'recharts';
 import { useParams } from 'react-router-dom';
-import { userContext } from '../../Context/UserContext';
 
 const RadarScore = () => {
   const { yearId } = useParams();
   const [analytics, setAnalytics] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
- const [token]= useContext(userContext)
+  let token = localStorage.getItem("access_token")
   
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 

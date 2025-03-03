@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 
 import Nav from "../Nav/Nav";
 import Welcome from "../WelcomeMsg/Welcome";
-import { userContext } from "../../Context/UserContext";
 export default function Classes() {
   const [years, setYears] = useState([]); 
   const [selectedYear, setSelectedYear] = useState(null);
@@ -12,14 +11,15 @@ export default function Classes() {
   const [error, setError] = useState(null); 
   const navigate = useNavigate();
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-   const {token} =useContext(userContext)
+  let token = localStorage.getItem("access_token")
 
   useEffect(() => {
- 
+    console.log("Token being used:", token); 
+
     fetch(`${API_BASE_URL}/all_grade/`, {
       method: "GET",
       headers: {
-        "Authorization": `Bearer ${token}`,
+      "Authorization": `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     })
@@ -37,7 +37,7 @@ export default function Classes() {
         setError(error.message);
         setLoading(false);
       });
-  }, []);
+  }, [token]);
   
 
   return (

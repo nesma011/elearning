@@ -4,12 +4,14 @@ import { PieChart, Pie, Cell, Legend, Tooltip } from "recharts";
 const QuestionsPerformance = () => {
   const [performance, setPerformance] = useState(null);
   const [loading, setLoading] = useState(true);
+  let token = localStorage.getItem("access_token")
+
 
   useEffect(() => {
     fetch("https://ahmedmahmoud10.pythonanywhere.com/performance/question/", {
       headers: {
         Authorization:
-          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQwODQ2NjQ4LCJpYXQiOjE3NDAyNDE4NDYsImp0aSI6IjU0ZTVkNWJlN2Q3ZDRkMjk4OTYzNjhmYmJmNTlkMjkxIiwidXNlcl9pZCI6NjZ9.sZRJuReyOg4ZaIK-Z4cMhcgS2svPKOLbaAcF4I1oSF4",
+          `Bearer ${token}`,
       },
     })
       .then((res) => res.json())

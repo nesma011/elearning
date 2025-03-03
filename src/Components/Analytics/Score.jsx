@@ -1,13 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
 import { PieChart, Pie, Cell, Legend, Tooltip } from "recharts";
-import { userContext } from "../../Context/UserContext";
 
 const Score = () => {
   const [performance, setPerformance] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-  const [token]= useContext(userContext)
+  let token = localStorage.getItem("access_token")
 
 
   useEffect(() => {

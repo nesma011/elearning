@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 
 import Nav from "../Nav/Nav";
 import Welcome from "../WelcomeMsg/Welcome";
-import { userContext } from "../../Context/UserContext";
 
 const BooksList = () => {
   const [books, setBooks] = useState([]);
@@ -14,8 +13,8 @@ const BooksList = () => {
   const { systemId } = useParams();
  const navigate = useNavigate();
  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-let[token]= useContext(userContext)
-
+ let token = localStorage.getItem("access_token")
+ 
   useEffect(() => {
     const fetchBooks = async () => {
       try {

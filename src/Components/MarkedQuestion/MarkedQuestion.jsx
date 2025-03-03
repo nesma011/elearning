@@ -6,11 +6,13 @@ export default function MarkedQuestion() {
   const [marksBySystem, setMarksBySystem] = useState({});
   const [systemNames, setSystemNames] = useState([]);
   const [openSystems, setOpenSystems] = useState({});
-  const { yearId } = useParams()
+  const { yearId } = useParams();
+  let token = localStorage.getItem("access_token")
+
 
   const authToken =
-    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQwODQ2NjQ4LCJpYXQiOjE3NDAyNDE4NDYsImp0aSI6IjU0ZTVkNWJlN2Q3ZDRkMjk4OTYzNjhmYmJmNTlkMjkxIiwidXNlcl9pZCI6NjZ9.sZRJuReyOg4ZaIK-Z4cMhcgS2svPKOLbaAcF4I1oSF4";
-  const API_BASE_URL = "https://ahmedmahmoud10.pythonanywhere.com";
+    `Bearer ${token}`;
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     fetchMarks();
