@@ -426,6 +426,7 @@ export default function Test() {
   const handleMarkChange = async (e) => {
     const checked = e.target.checked;
     setIsMarked(checked);
+    console.log("isMarked set to:", checked);
 
     if (checked && currentQuestion) {
       try {
