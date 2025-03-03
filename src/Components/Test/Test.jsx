@@ -1020,44 +1020,40 @@ export default function Test() {
                     )}
                 
                     <div className="text-gray-700 mt-2">
-                      {parse(results[currentQuestion.id].content || '', {
-                        replace: (domNode) => {
-                          if (
-                            domNode.type === 'tag' &&
-                            domNode.name === 'u' &&
-                            domNode.attribs &&
-                            domNode.attribs['data-img']
-                          ) {
-                            return (
-                              <u
-                                className="cursor-pointer text-blue-500 underline"
-                                onClick={() => openModal(domNode.attribs['data-img'])}
-                              >
-                                {domToReact(domNode.children)}
-                              </u>
-                            );
-                          }
+                      {(() => {
+                        const imagesArray = [
+                          results[currentQuestion.id].text_image1,
+                          results[currentQuestion.id].text_image2,
+                          results[currentQuestion.id].text_image3,
+                          results[currentQuestion.id].text_image4,
+                          results[currentQuestion.id].text_image5,
+                          results[currentQuestion.id].text_image6,
+                        ];
+                        let underlineCounter = 0;
                 
-                           if (
-                             domNode.type === 'tag' &&
-                             domNode.name === 'span' &&
-                             domNode.attribs &&
-                             domNode.attribs['data-img']
-                           ) {
-                             return (
-                               <span
-                                 className="cursor-pointer text-blue-500 underline"
-                                 onClick={() => openModal(domNode.attribs['data-img'])}
-                               >
-                                 {domToReact(domNode.children)}
-                               </span>
-                             );
-                           }
-                        },
-                      })}
+                        return parse(results[currentQuestion.id].content || '', {
+                          replace: (domNode) => {
+                            if (domNode.type === 'tag' && domNode.name === 'u') {
+                              const currentImage = imagesArray[underlineCounter];
+                              underlineCounter++;
+                              if (currentImage) {
+                                return (
+                                  <u
+                                    className="cursor-pointer text-blue-500 underline"
+                                    onClick={() => openModal(currentImage)}
+                                  >
+                                    {domToReact(domNode.children)}
+                                  </u>
+                                );
+                              }
+                            }
+                          },
+                        });
+                      })()}
                     </div>
                   </div>
                 )}
+                
                 
               </div>
             ) : (
