@@ -63,7 +63,7 @@ export default function QuestionBank() {
                     <NavLink to="https://www.facebook.com/share/18aNvC8sCJ/">
                       <img src={face} alt="Facebook" className="w-10" />
                     </NavLink>
-                    <NavLink to="+201229733297">
+                    <NavLink to="https://wa.me/201229733297">
                       <img src={whats} alt="WhatsApp" className="w-10" />
                     </NavLink>
                     <NavLink to="https://t.me/ddfffgry">
