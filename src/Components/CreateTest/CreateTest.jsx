@@ -632,7 +632,7 @@ export default function CreateTest() {
                           />
                           <span>{subject.name}</span>
                           {subject.count_question && (
-                            <span className="text-green-600 mx-2">({subject.count_question || 0})</span>
+                            <span className="text-green-600 mx-2">({subject.count_question }) || 0</span>
                           )}
                         </div>
                       ))}
@@ -672,7 +672,7 @@ export default function CreateTest() {
                             />
                             <span>{system.name}</span>
                             {system.count_question && selectedSubjects.length > 0 && (
-                              <span className="text-green-600 mx-2">({system.count_question || 0})</span>
+                              <span className="text-green-600 mx-2">({system.count_question }) || 0 </span>
                             )}
                           </div>
                           <div className="flex items-center space-x-2">
