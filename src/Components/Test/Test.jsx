@@ -903,10 +903,9 @@ export default function Test() {
                             );
                           }
   
-                          // التعامل مع النص الأزرق بأي تنسيق
                           if (domNode.type === 'tag') {
                             const hasBlueClass = domNode.attribs && domNode.attribs.class && 
-                              (domNode.attribs.class.includes('text-blue') || domNode.attribs.class.includes('blue'));
+                              (domNode.attribs.class.includes('text-[#3498db]') || domNode.attribs.class.includes('blue'));
                             const hasBlueStyle = domNode.attribs && domNode.attribs.style && 
                               (domNode.attribs.style.includes('color: blue') || domNode.attribs.style.includes('color:blue'));
                             const hasBlueColor = domNode.attribs && domNode.attribs.color && domNode.attribs.color === 'blue';
