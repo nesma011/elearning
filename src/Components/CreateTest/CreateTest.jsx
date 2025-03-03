@@ -631,9 +631,8 @@ export default function CreateTest() {
                             className="w-4 h-4"
                           />
                           <span>{subject.name}</span>
-                          {subject.count_question && (
-                            <span className="text-green-600 mx-2">({subject.count_question }) || 0</span>
-                          )}
+                          <span className="text-green-600 mx-2">({subject.count_question || 0})</span>
+                          
                         </div>
                       ))}
                   </div>
@@ -671,9 +670,12 @@ export default function CreateTest() {
                               className="w-4 h-4"
                             />
                             <span>{system.name}</span>
-                            {system.count_question && selectedSubjects.length > 0 && (
-                              <span className="text-green-600 mx-2">({system.count_question }) || 0 </span>
+                            { selectedSubjects.length > 0 ? (
+                              <span className="text-green-600 mx-2">({system.count_question || 0})</span>
+                            ) : (
+                              <span className="text-green-600 mx-2">(0)</span>
                             )}
+                            
                           </div>
                           <div className="flex items-center space-x-2">
                           {system.open_user === true ? null : (
