@@ -6,8 +6,7 @@ export default function Nav() {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   return (
-// In your Nav component, change the nav className to:
-<nav className="h-16 flex-shrink-0 fixed top-0 bg-gray-100 right-0 md:left-72 left-0 dark:bg-gray-800 dark:text-white border-b flex items-center justify-between py-10 px-4"><NavLink to="/classes" className="flex justify-center items-center gap-2">
+<nav className="h-16 flex-shrink-0 fixed top-0 bg-gray-100 right-0  left-0 dark:bg-gray-800 dark:text-white border-b flex items-center justify-between py-10 px-4"><NavLink to="/classes" className="flex justify-center items-center gap-2">
          <img src={logo} className="w-16 ms-16" alt="Logo" />
          <h1 className="text-3xl font-semibold text-blue-600"> 
            <span className="text-3xl font-extrabold text-blue-600">ALEX</span>-MedLearn
