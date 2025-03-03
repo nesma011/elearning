@@ -20,26 +20,24 @@ export default function Test() {
   const [separateView, setSeparateView] = useState(false);       
   const [fontSize, setFontSize] = useState(16);                 
   const [showMoreMenu, setShowMoreMenu] = useState(false); 
-
   const [isFullScreen, setIsFullScreen] = useState(false);   
-
   const [timeLeft, setTimeLeft] = useState(null);
   const [isPaused, setIsPaused] = useState(false);
-  const [savedAnswers, setSavedAnswers] = useState({});
+  const [savedAnswers, setSavedAnswers] = useState(() => {
+    const saved = localStorage.getItem("selectedAnswers");
+    return saved ? JSON.parse(saved) : {};
+  });
   const [allQuestionsAnswered, setAllQuestionsAnswered] = useState(false);
   const [testData, setTestData] = useState(() => {
     const saved = localStorage.getItem("testData");
     return saved ? JSON.parse(saved) : { questions: [] };
   });
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalImageSrc, setModalImageSrc] = useState('');
   const [zoom, setZoom] = useState(1);
   const [activeComponent, setActiveComponent] = useState(null);
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
   const [selectedAnswers, setSelectedAnswers] = useState(() => {
     const saved = localStorage.getItem("selectedAnswers");
     return saved ? JSON.parse(saved) : {};
@@ -59,25 +57,18 @@ export default function Test() {
   const [isMarked, setIsMarked] = useState(false);
 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-  let token = localStorage.getItem("access_token")
+  const token = localStorage.getItem("access_token");
 
-
-  useEffect(() => {
-    if (window.blueTextCounter) window.blueTextCounter = 0;
-  }, [currentQuestion.id]);
-
-  // ========== Timer Initialization ==========
+  // ===== Timer Initialization =====
   useEffect(() => {
     if (mode === 'timed' && totalTime) {
       setTimeLeft(Math.floor(totalTime * 60)); 
     }
   }, [mode, totalTime]);
 
-  // ========== Timer Decrement ==========
+  // ===== Timer Decrement =====
   useEffect(() => {
-    if (mode !== 'timed') return;  
-    if (!timeLeft) return;         
-    if (isPaused) return;   
+    if (mode !== 'timed' || !timeLeft || isPaused) return;
 
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
@@ -93,7 +84,7 @@ export default function Test() {
     return () => clearInterval(timer);
   }, [mode, timeLeft, isPaused]);
 
-  // ========== Update the server with the current time periodically ==========
+  // ===== Update Test Time on Server =====
   useEffect(() => {
     if (mode !== 'timed' || !testData.test_id) return;
     
@@ -101,15 +92,12 @@ export default function Test() {
       if (!isPaused) {
         updateTestTime(testData.test_id, timeLeft);
       }
-    }, 10000); 
+    }, 5000);
     
     return () => clearInterval(updateTimeInterval);
   }, [mode, timeLeft, isPaused, testData?.test_id]);
 
-
- 
-
-  // ========== Check if all questions answered ==========
+  // ===== Check if all questions answered =====
   useEffect(() => {
     if (mode === 'timed' && testData.questions) {
       const answeredCount = Object.keys(savedAnswers).length;
@@ -117,14 +105,19 @@ export default function Test() {
     }
   }, [savedAnswers, testData.questions, mode]);
 
+  // ===== Remove highlights if not active =====
   useEffect(() => {
-  
     if (!highlightOn || hideHighlights) {
       document.querySelectorAll('span[data-highlight="true"]').forEach((span) => {
         span.outerHTML = span.innerHTML;
       });
     }
   }, [highlightOn, hideHighlights]);
+
+  // ===== Reset blue text counter on question change =====
+  useEffect(() => {
+    window.blueTextCounter = 0;
+  }, [currentQuestionIndex]);
 
   const formatTime = (seconds) => {
     if (seconds === null) return '';
@@ -157,7 +150,7 @@ export default function Test() {
     }
   };
 
-  // ========== تنقُّل الأسئلة ==========
+  // ===== Navigate between questions =====
   const goToNextQuestion = () => {
     if (currentQuestionIndex < testData.questions.length - 1) {
       const newIndex = currentQuestionIndex + 1;
@@ -247,7 +240,7 @@ export default function Test() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}` // ضعي التوكن هنا
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           id_question: questionId,
@@ -351,12 +344,12 @@ export default function Test() {
   };
 
   const handleEndBlock = async () => {
-          const storedTestData = localStorage.getItem("testData");
-    const testData = storedTestData ? JSON.parse(storedTestData) : null;
+    const storedTestData = localStorage.getItem("testData");
+    const parsedTestData = storedTestData ? JSON.parse(storedTestData) : null;
     
-    if (!testData || !testData.test_id) {
+    if (!parsedTestData || !parsedTestData.test_id) {
       toast.error("Test data is missing or invalid.");
-      console.error("testData:", testData);
+      console.error("testData:", parsedTestData);
       return;
     }
     
@@ -367,7 +360,7 @@ export default function Test() {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`,
         },
-        body: JSON.stringify({ test_id: testData.test_id }),
+        body: JSON.stringify({ test_id: parsedTestData.test_id }),
       });
   
       if (!response.ok) {
@@ -380,7 +373,7 @@ export default function Test() {
       
       if (data.message === "There are still unanswered questions.") {
         toast.error("There are still unanswered questions.");
-        navigate (`/createTest/${yearId}`)
+        navigate(`/createTest/${yearId}`);
         return;
       }
       
@@ -396,8 +389,6 @@ export default function Test() {
       toast.error("An error occurred. Please try again later.");
     }
   };
-  
-  
 
   const handleMarkChange = async (e) => {
     const checked = e.target.checked;
@@ -480,7 +471,7 @@ export default function Test() {
     selection.removeAllRanges();
   };
 
-  // ========== دالّة Report Qus (مثال بسيط) ==========
+  // ===== Report Question =====
   const reportQuestion = () => {
     alert("Question reported!");
   };
@@ -498,698 +489,595 @@ export default function Test() {
 
   return (
     <section
-    style={{ fontSize: `${fontSize}px` }}
-    onMouseUp={handleTextSelection}
-    className="min-h-screen bg-gray-50"
-  >
-    {/* ====== NAVBAR الأساسي ====== */}
-    <nav 
-      className="
-        bg-blue-800 w-full px-4 py-2 
-        flex flex-col sm:flex-row sm:justify-between items-center 
-        // Responsive tweak
-      "
+      style={{ fontSize: `${fontSize}px` }}
+      onMouseUp={handleTextSelection}
+      className="min-h-screen bg-gray-50"
     >
-      {/* Left section */}
-      <div className="flex flex-col text-white mb-2 sm:mb-0">
-        <span className="text-xl font-semibold">
-          Item {currentQuestionIndex + 1} of {testData.questions?.length}
-        </span>
-        <h2 className="text-xl pt-1 font-bold">
-          Question ID: {testData?.test_id || 'N/A'}
-        </h2>
+      {/* ===== NAVBAR ===== */}
+      <nav className="bg-blue-800 w-full px-4 py-2 flex flex-col sm:flex-row sm:justify-between items-center">
+        <div className="flex flex-col text-white mb-2 sm:mb-0">
+          <span className="text-xl font-semibold">
+            Item {currentQuestionIndex + 1} of {testData.questions?.length}
+          </span>
+          <h2 className="text-xl pt-1 font-bold">
+            Question ID: {testData?.test_id || 'N/A'}
+          </h2>
+        </div>
+  
+        <div className="flex flex-wrap items-center space-x-2"> 
+          <button
+            onClick={goToPreviousQuestion}
+            disabled={currentQuestionIndex === 0}
+            className="px-4 py-2 text-white text-4xl font-bold"
+          >
+            ←
+          </button>
+          <button
+            onClick={goToNextQuestion}
+            disabled={currentQuestionIndex === testData.questions.length - 1}
+            className="px-4 py-2 text-white text-4xl font-bold"
+          >
+            →
+          </button>
+  
+          <button
+            onClick={() => setActiveComponent(activeComponent === 'notes' ? null : 'notes')}
+            className={`flex items-center text-lg font-semibold px-4 py-2 text-white rounded-lg transition-all hover:bg-blue-500 ${activeComponent === 'notes' ? 'bg-blue-700' : ''}`}
+          >
+            📝 Add Note
+          </button>
+          <button
+            onClick={() => setActiveComponent(activeComponent === 'flashcards' ? null : 'flashcards')}
+            className={`flex items-center text-lg font-semibold px-4 py-2 text-white rounded-lg transition-all hover:bg-blue-500 ${activeComponent === 'flashcards' ? 'bg-blue-700' : ''}`}
+          >
+            🗂️ Flashcards
+          </button>
+  
+          <label className="text-white text-lg font-semibold mx-3">
+            <input type="checkbox" checked={isMarked} onChange={handleMarkChange} />
+            Mark
+          </label>
+  
+          <button
+            onClick={() => setActiveComponent(activeComponent === 'calculator' ? null : 'calculator')}
+            className={`flex items-center px-4 py-2 text-lg font-semibold text-white rounded-lg transition-all hover:bg-blue-500 ${activeComponent === 'calculator' ? 'bg-blue-700' : ''}`}
+          >
+            🔢 Calculator
+          </button>
+          <button
+            onClick={() => setActiveComponent(activeComponent === 'labvalues' ? null : 'labvalues')}
+            className={`flex items-center text-lg font-semibold px-4 py-2 text-white rounded-lg transition-all hover:bg-blue-500 ${activeComponent === 'labvalues' ? 'bg-blue-700' : ''}`}
+          >
+            🧪 Lab Values
+          </button>
+        </div>
+  
+        {mode === 'timed' && (
+          <div className="flex items-center mt-2 sm:mt-0">
+            <div className="bg-gray-300 text-black px-3 py-1 rounded flex items-center">
+              <span className="mr-2 font-semibold">{formatTime(timeLeft)}</span>
+              <button onClick={togglePause} className="font-semibold flex items-center gap-1">
+                {isPaused ? 'Resume' : 'Pause'} <span className="text-xl">||</span>
+              </button>
+            </div>
+          </div>
+        )}
+      </nav>
+  
+      {/* ===== Highlight Bar ===== */}
+      <div className="bg-blue-100 flex flex-wrap sm:flex-nowrap items-center justify-between px-4 py-2">
+        <div className="flex items-center space-x-4 mb-2 sm:mb-0">
+          <div className="flex items-center">
+            <label className="mr-2 font-semibold">Highlight</label>
+            <button
+              onClick={() => setHighlightOn(!highlightOn)}
+              className={`px-3 py-1 rounded ${highlightOn ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}
+            >
+              {highlightOn ? 'ON' : 'OFF'}
+            </button>
+          </div>
+  
+          <div className="flex items-center space-x-2">
+            <label className="font-semibold">Color:</label>
+            {['#FFFF00', '#00FF00', '#00BFFF', '#FF4500'].map((color) => (
+              <div
+                key={color}
+                onClick={() => setHighlightColor(color)}
+                className="w-6 h-6 rounded-full cursor-pointer border-2 border-gray-300"
+                style={{ backgroundColor: color }}
+              ></div>
+            ))}
+          </div>
+        </div>
+  
+        <div className="relative inline-block text-left">
+          <button
+            onClick={() => setShowMoreMenu(!showMoreMenu)}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            More
+          </button>
+          {showMoreMenu && (
+            <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+              <div className="py-1">
+                <div className="px-4 py-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Adjust Font Size: {fontSize}px
+                  </label>
+                  <input
+                    type="range"
+                    min="12"
+                    max="30"
+                    value={fontSize}
+                    onChange={(e) => setFontSize(parseInt(e.target.value))}
+                    className="w-full"
+                  />
+                </div>
+  
+                <button
+                  onClick={reportQuestion}
+                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >
+                  Report Qus
+                </button>
+  
+                <div className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                  <label className="flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={hideHighlights}
+                      onChange={() => setHideHighlights(!hideHighlights)}
+                      className="mr-2"
+                    />
+                    Hide Highlights
+                  </label>
+                </div>
+  
+                <div className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                  <label className="flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={separateView}
+                      onChange={() => setSeparateView(!separateView)}
+                      className="mr-2"
+                    />
+                    Separate View
+                  </label>
+                </div>
+  
+                <button
+                  onClick={toggleFullScreen}
+                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >
+                  Full screen
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
   
-      {/* Right section (buttons) */}
-      <div className="flex flex-wrap items-center space-x-2"> 
-        <button
-          onClick={goToPreviousQuestion}
-          disabled={currentQuestionIndex === 0}
-          className="px-4 py-2 text-white text-4xl font-bold"
-        >
-          ←
-        </button>
-        <button
-          onClick={goToNextQuestion}
-          disabled={currentQuestionIndex === testData.questions.length - 1}
-          className="px-4 py-2 text-white text-4xl font-bold"
-        >
-          →
-        </button>
+      <div className="flex">
+        {/* ===== Sidebar for Questions Navigation ===== */}
+        <div className="w-full sm:w-auto bg-gray-200 ps-6 pe-2 min-h-screen shadow-lg overflow-auto">
+          <div className="flex flex-col items-center py-4">
+            <div className="flex flex-col gap-4 max-h-[calc(100vh-200px)] overflow-y-auto">
+              {Array.isArray(testData.questions) && testData.questions.length > 0 ? (
+                testData.questions.map((question, index) => {
+                  if (!question || !question.id) return null;
+                  
+                  const questionResult = results?.[question.id];
+                  const isCorrectAnswer = questionResult?.correctAnswer === selectedAnswers[question.id];
+                  const isAnswerSaved = mode === 'timed' && savedAnswers[question.id];
+                  
+                  return (
+                    <div key={question.id} className="flex items-center gap-2">
+                      <button
+                        onClick={() => setCurrentQuestionIndex(index)}
+                        className={`w-16 h-10 rounded-lg flex items-center justify-center font-semibold text-lg transition-all
+                          ${currentQuestionIndex === index 
+                            ? 'bg-blue-600 text-white' 
+                            : 'bg-white text-gray-700 hover:bg-blue-100'}
+                          ${questionResult 
+                            ? 'border-2' 
+                            : isAnswerSaved 
+                            ? 'border-2 border-yellow-500' 
+                            : 'border border-gray-300'}
+                          ${isCorrectAnswer ? 'border-green-500' : questionResult ? 'border-red-500' : ''}
+                        `}
+                      >
+                        {index + 1}
+                      </button>
+                      
+                      {questionResult && (
+                        <span className={`text-xl font-bold ${isCorrectAnswer ? 'text-green-500' : 'text-red-500'}`}>
+                          {isCorrectAnswer ? '✓' : '✗'}
+                        </span>
+                      )}
   
-        <button
-          onClick={() => setActiveComponent(activeComponent === 'notes' ? null : 'notes')}
-          className={`flex items-center text-lg font-semibold px-4 py-2 text-white rounded-lg transition-all hover:bg-blue-500 ${
-            activeComponent === 'notes' ? 'bg-blue-700' : ''
-          }`}
-        >
-          📝 Add Note
-        </button>
-        <button
-          onClick={() => setActiveComponent(activeComponent === 'flashcards' ? null : 'flashcards')}
-          className={`flex items-center text-lg font-semibold px-4 py-2 text-white rounded-lg transition-all hover:bg-blue-500 ${
-            activeComponent === 'flashcards' ? 'bg-blue-700' : ''
-          }`}
-        >
-          🗂️ Flashcards
-        </button>
+                      {isAnswerSaved && !questionResult && (
+                        <span className="text-xl font-bold text-yellow-500">★</span>
+                      )}
+                    </div>
+                  );
+                })
+              ) : (
+                <div>No questions available</div>
+              )}
+            </div>
+          </div>
+        </div>
   
-        <label className="text-white text-lg font-semibold mx-3">
-          <input
-            type="checkbox"
-            checked={isMarked}
-            onChange={handleMarkChange}
-          />
-          Mark
-        </label>
+        {/* ===== Main Content Area ===== */}
+        <div className={`flex-1 p-4 sm:p-10 ${separateView ? 'grid grid-cols-1 sm:grid-cols-2 gap-4' : ''}`}>
+          {loading && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white p-6 rounded-lg shadow-lg">
+                <p className="text-xl font-bold">Loading...</p>
+              </div>
+            </div>
+          )}
+          {error && <div className="text-red-500">Error: {error}</div>}
   
-        <button
-          onClick={() => setActiveComponent(activeComponent === 'calculator' ? null : 'calculator')}
-          className={`flex items-center px-4 py-2 text-lg font-semibold text-white rounded-lg transition-all hover:bg-blue-500 ${
-            activeComponent === 'calculator' ? 'bg-blue-700' : ''
-          }`}
-        >
-          🔢 Calculator
-        </button>
-        <button
-          onClick={() => setActiveComponent(activeComponent === 'labvalues' ? null : 'labvalues')}
-          className={`flex items-center text-lg font-semibold px-4 py-2 text-white rounded-lg transition-all hover:bg-blue-500 ${
-            activeComponent === 'labvalues' ? 'bg-blue-700' : ''
-          }`}
-        >
-          🧪 Lab Values
-        </button>
+          <div>
+            {testData && currentQuestion ? (
+              <div className="mb-4 p-1 rounded flex flex-col items-start">
+                {currentQuestion.text && (
+                  <p
+                    className="mb-1 text-xl"
+                    style={{ backgroundColor: hideHighlights ? 'transparent' : 'inherit' }}
+                    dangerouslySetInnerHTML={{
+                      __html: submittedQuestions[currentQuestion.id]
+                        ? currentQuestion.text.replace(
+                            /<u>(.*?)<\/u>/g,
+                            '<span style="text-decoration: underline; text-decoration-color: #ed1212; text-decoration-thickness: 4px;">$1</span>'
+                          )
+                        : currentQuestion.text.replace(/<u>(.*?)<\/u>/g, '$1'),
+                    }}
+                  />
+                )}
+  
+                {currentQuestion.image && (
+                  <img
+                    src={`${API_BASE_URL}${currentQuestion.image}`}
+                    alt="question"
+                    className="aspect-ratio max-w-[50%] max-h-[50vh] mt-2 mx-auto rounded-lg cursor-pointer"
+                    onClick={() => openModal(`${API_BASE_URL}${currentQuestion.image}`)}
+                  />
+                )}
+  
+                {currentQuestion.audio && (
+                  <audio
+                    controls
+                    src={`${API_BASE_URL}${currentQuestion.audio}`}
+                    className="mt-2"
+                  >
+                    Your browser does not support the audio element.
+                  </audio>
+                )}
+  
+                <div className="w-full border-2 my-8 border-blue-300 shadow-xl shadow-blue-400">
+                  {currentQuestion.answers && currentQuestion.answers.length > 0 && (
+                    <div className="mt-4 border border-gray-200 rounded-lg overflow-hidden">
+                      {currentQuestion.answers.map((answer) => {
+                        if (!answer || !answer.id) return null;
+                        
+                        const questionResult = results[currentQuestion.id];
+                        const isCorrectAnswer = questionResult?.correctAnswer === answer.id;
+                        const userAnswerId = selectedAnswers[currentQuestion.id];
+                        const isUserAnswer = userAnswerId === answer.id;
+  
+                        return (
+                          <label key={answer.id} className="flex justify-between p-4 cursor-pointer hover:bg-gray-50">
+                            <div className="flex items-center space-x-3">
+                              <input
+                                type="radio"
+                                name={`question-${currentQuestion.id}`}
+                                value={answer.id}
+                                checked={isUserAnswer}
+                                onChange={() => handleAnswerChange(currentQuestion.id, answer.id)}
+                                disabled={!!questionResult}
+                                className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                              />
+                              <span className="font-medium text-gray-700">{answer.letter}.</span>
+                              {answer.text && (
+                                <span className="text-gray-900 px-4 text-lg font-semibold">
+                                  {answer.text}
+                                </span>
+                              )}
+                              {answer.image && (
+                                <img
+                                  src={`${API_BASE_URL}${answer.image}`}
+                                  alt={`Option ${answer.letter}`}
+                                  className="mt-2 max-w-xs h-auto object-contain cursor-zoom-in"
+                                  onClick={() => openModal(`${API_BASE_URL}${answer.image}`)}
+                                />
+                              )}
+  
+                              {answer.answer_json ? (
+                                <div className="mt-3 overflow-x-auto">
+                                  {Object.keys(answer.answer_json).length === 0 ? (
+                                    <div>No data available</div>
+                                  ) : (
+                                    <table className="min-w-full divide-y divide-gray-200">
+                                      <thead className="bg-gray-50">
+                                        <tr className="divide-x divide-gray-200">
+                                          {Object.keys(answer.answer_json).map((key) => (
+                                            <th
+                                              key={key}
+                                              className="px-6 py-3 text-left text-sm font-medium text-gray-900 uppercase tracking-wider"
+                                            >
+                                              {key}
+                                            </th>
+                                          ))}
+                                        </tr>
+                                      </thead>
+                                      <tbody className="bg-white divide-y divide-gray-200">
+                                        <tr className="divide-x divide-gray-200">
+                                          {Object.keys(answer.answer_json).map((key) => (
+                                            <td
+                                              key={key}
+                                              className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
+                                            >
+                                              {answer.answer_json[key]}
+                                            </td>
+                                          ))}
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                  )}
+                                </div>
+                              ) : (
+                                <div></div>
+                              )}
+                            </div>
+  
+                            <div className="flex items-center justify-start">
+                              {questionResult && (
+                                <span className={`ml-2 font-bold ${isCorrectAnswer ? 'text-green-600' : 'text-red-500'}`}>
+                                  {isCorrectAnswer ? '✓' : '✗'}
+                                </span>
+                              )}
+                              {questionResult?.rate_answer && (
+                                <div className="ml-4">
+                                  <span className="text-blue-600 font-semibold">
+                                    ({questionResult.rate_answer[answer.id]})%
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+  
+                {currentQuestion.id && !results[currentQuestion.id] && (
+                  <>
+                    {mode === "timed" ? (
+                      <button
+                        onClick={() => saveAnswerTimeMode(currentQuestion.id)}
+                        className="mt-4 px-6 py-4 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-300"
+                      >
+                        Save
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => submitAnswer(currentQuestion.id)}
+                        className="mt-4 px-6 py-4 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-300"
+                      >
+                        Submit
+                      </button>
+                    )}
+                  </>
+                )}
+  
+                {!separateView && results[currentQuestion.id] && (
+                  <div className="mt-4 p-3 border-t w-full">
+                    <h3 className="font-bold text-2xl text-blue-600">Explanation:</h3>
+                    {results[currentQuestion.id].image && (
+                      <img
+                        src={results[currentQuestion.id].image}
+                        alt="explanation"
+                        className="w-[750px] h-[500px] mt-2 mx-auto cursor-pointer"
+                        onClick={() => openModal(results[currentQuestion.id].image)}
+                      />
+                    )}
+                    <div className="text-gray-700 mt-2">
+                      {parse(results[currentQuestion.id].content, {
+                        replace: (domNode) => {
+                          if (
+                            domNode.type === 'tag' &&
+                            domNode.name === 'span' &&
+                            domNode.attribs &&
+                            domNode.attribs['data-img']
+                          ) {
+                            return (
+                              <span
+                                className="cursor-pointer text-blue-500 underline"
+                                onClick={() => openModal(domNode.attribs['data-img'])}
+                              >
+                                {domToReact(domNode.children)}
+                              </span>
+                            );
+                          }
+  
+                          // التعامل مع النص الأزرق بأي تنسيق
+                          if (domNode.type === 'tag') {
+                            const hasBlueClass = domNode.attribs && domNode.attribs.class && 
+                              (domNode.attribs.class.includes('text-blue') || domNode.attribs.class.includes('blue'));
+                            const hasBlueStyle = domNode.attribs && domNode.attribs.style && 
+                              (domNode.attribs.style.includes('color: blue') || domNode.attribs.style.includes('color:blue'));
+                            const hasBlueColor = domNode.attribs && domNode.attribs.color && domNode.attribs.color === 'blue';
+  
+                            if ((hasBlueClass || hasBlueStyle || hasBlueColor) && !domNode.attribs.onClick) {
+                              const nodeText = domToReact(domNode.children);
+                              const textContent = typeof nodeText === 'string' ? nodeText.trim() : String(nodeText).trim();
+                              let imageIndex = 0;
+                              const blueTexts = results[currentQuestion.id].blueTexts || [];
+                              for (let i = 0; i < blueTexts.length; i++) {
+                                if (blueTexts[i] === textContent) {
+                                  imageIndex = i + 1;
+                                  break;
+                                }
+                              }
+  
+                              if (imageIndex === 0) {
+                                if (!window.blueTextCounter) window.blueTextCounter = 0;
+                                window.blueTextCounter++;
+                                imageIndex = window.blueTextCounter;
+                              }
+  
+                              const imageKey = `text_image${imageIndex}`;
+  
+                              return (
+                                <span
+                                  className="cursor-pointer text-blue-500 underline"
+                                  onClick={() => {
+                                    const imageUrl = results[currentQuestion.id][imageKey];
+                                    if (imageUrl) {
+                                      openModal(imageUrl);
+                                    } else {
+                                      console.warn(`Image not found for key: ${imageKey}`);
+                                    }
+                                  }}
+                                >
+                                  {domToReact(domNode.children)}
+                                </span>
+                              );
+                            }
+                          }
+                        }
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div>No question data available</div>
+            )}
+  
+            {/* End Block Button */}
+            <button 
+              onClick={handleEndBlock} 
+              className="fixed bottom-4 right-4 z-50 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+            >
+              End Block
+            </button>
+  
+            {mode === "timed" && (
+              <button
+                onClick={handleSubmitTimeMode}
+                className="fixed bottom-16 right-4 z-50 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Submit Test
+              </button>
+            )}
+          </div>
+  
+          {/* ===== Separate View for Explanation ===== */}
+          {separateView && currentQuestion && results[currentQuestion.id] && (
+            <div className="border-l pl-4">
+              <h3 className="font-bold text-2xl text-blue-600">Explanation:</h3>
+              {results[currentQuestion.id].image && (
+                <img
+                  src={results[currentQuestion.id].image}
+                  alt="explanation"
+                  className="w-[750px] h-[500px] mt-2 mx-auto cursor-pointer"
+                  onClick={() => openModal(results[currentQuestion.id].image)}
+                />
+              )}
+              <div className="text-gray-700 mt-2">
+                {parse(results[currentQuestion.id].content, {
+                  replace: (domNode) => {
+                    if (
+                      domNode.type === 'tag' &&
+                      domNode.name === 'span' &&
+                      domNode.attribs &&
+                      domNode.attribs['data-img']
+                    ) {
+                      return (
+                        <span
+                          className="cursor-pointer text-blue-500 underline"
+                          onClick={() => openModal(domNode.attribs['data-img'])}
+                        >
+                          {domToReact(domNode.children)}
+                        </span>
+                      );
+                    }
+                  }
+                })}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
   
-      {mode === 'timed' && (
-        <div className="flex items-center mt-2 sm:mt-0">
-          <div className="bg-gray-300 text-black px-3 py-1 rounded flex items-center">
-            <span className="mr-2 font-semibold">
-              {formatTime(timeLeft)}
+      {/* ===== Image Zoom Modal ===== */}
+      {isModalOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50"
+          onClick={closeModal}
+        >
+          <div className="relative" onClick={(e) => e.stopPropagation()}>
+            <span 
+              className="absolute top-0 right-0 text-white text-4xl cursor-pointer p-2"
+              onClick={closeModal}
+            >
+              &times;
             </span>
-            <button onClick={togglePause} className="font-semibold flex items-center gap-1">
-              {isPaused ? 'Resume' : 'Pause'} 
-              <span className="text-xl">||</span>
+            <img 
+              src={modalImageSrc} 
+              alt="Zoomed" 
+              style={{ transform: `scale(${zoom})`, transition: 'transform 0.2s ease' }}
+              onWheel={handleWheel}
+              className="max-w-[90vw] max-h-[90vh]"
+            />
+          </div>
+        </div>
+      )}
+  
+      {/* ===== Modals for Notes, Flashcards, Calculator, LabValues ===== */}
+      {activeComponent === "notes" && (
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl w-full sm:w-96 max-w-full sm:max-w-[400px]">
+            <Notes onClose={() => setActiveComponent(null)} />
+            <button
+              onClick={() => setActiveComponent(null)}
+              className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+            >
+              Close
             </button>
           </div>
         </div>
       )}
-    </nav>
   
-    {/* Highlight bar */}
-    <div 
-      className="
-        bg-blue-100 flex flex-wrap sm:flex-nowrap 
-        items-center justify-between px-4 py-2
-        // Responsive tweak
-      "
-    >
-      <div className="flex items-center space-x-4 mb-2 sm:mb-0">
-        <div className="flex items-center">
-          <label className="mr-2 font-semibold">Highlight</label>
-          <button
-            onClick={() => setHighlightOn(!highlightOn)}
-            className={`px-3 py-1 rounded ${
-              highlightOn ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
-            }`}
-          >
-            {highlightOn ? 'ON' : 'OFF'}
-          </button>
-        </div>
-  
-        <div className="flex items-center space-x-2">
-          <label className="font-semibold">Color:</label>
-          {['#FFFF00', '#00FF00', '#00BFFF', '#FF4500'].map((color) => (
-            <div
-              key={color}
-              onClick={() => setHighlightColor(color)}
-              className="w-6 h-6 rounded-full cursor-pointer border-2 border-gray-300"
-              style={{ backgroundColor: color }}
-            ></div>
-          ))}
-        </div>
-      </div>
-  
-      <div className="relative inline-block text-left">
-        <button
-          onClick={() => setShowMoreMenu(!showMoreMenu)}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-        >
-          More
-        </button>
-        {showMoreMenu && (
-          <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
-            <div className="py-1">
-              {/* Adjust Font Size (Slider) */}
-              <div className="px-4 py-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Adjust Font Size: {fontSize}px
-                </label>
-                <input
-                  type="range"
-                  min="12"
-                  max="30"
-                  value={fontSize}
-                  onChange={(e) => setFontSize(parseInt(e.target.value))}
-                  className="w-full"
-                />
-              </div>
-  
-              {/* Report Qus */}
-              <button
-                onClick={reportQuestion}
-                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-              >
-                Report Qus
-              </button>
-  
-              {/* Hide Highlights */}
-              <div className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                <label className="flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={hideHighlights}
-                    onChange={() => setHideHighlights(!hideHighlights)}
-                    className="mr-2"
-                  />
-                  Hide Highlights
-                </label>
-              </div>
-  
-              {/* Separate View */}
-              <div className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                <label className="flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={separateView}
-                    onChange={() => setSeparateView(!separateView)}
-                    className="mr-2"
-                  />
-                  Separate View
-                </label>
-              </div>
-  
-              {/* Full screen */}
-              <button
-                onClick={toggleFullScreen}
-                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-              >
-                Full screen
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  
-    <div className="flex">
-      <div 
-        className="
-          w-full sm:w-auto bg-gray-200 ps-6 pe-2 
-          min-h-screen shadow-lg 
-          overflow-auto
-          // Responsive tweak
-        "
-      >
-        <div className="flex flex-col items-center py-4">
-          <div className="flex flex-col gap-4 max-h-[calc(100vh-200px)] overflow-y-auto">
-            {Array.isArray(testData.questions) && testData.questions.length > 0 ? (
-              testData.questions.map((question, index) => {
-                if (!question || !question.id) return null;
-                
-                const questionResult = results?.[question.id];
-                const isCorrectAnswer = questionResult?.correctAnswer === selectedAnswers[question.id];
-                const isAnswerSaved = mode === 'timed' && savedAnswers[question.id];
-                
-                return (
-                  <div key={question.id} className="flex items-center gap-2">
-                    <button
-                      onClick={() => setCurrentQuestionIndex(index)}
-                      className={`
-                        w-16 h-10 rounded-lg 
-                        flex items-center justify-center 
-                        font-semibold text-lg transition-all
-                        ${
-                          currentQuestionIndex === index 
-                            ? 'bg-blue-600 text-white' 
-                            : 'bg-white text-gray-700 hover:bg-blue-100'
-                        }
-                        ${
-                          questionResult 
-                            ? 'border-2' 
-                            : isAnswerSaved 
-                            ? 'border-2 border-yellow-500' 
-                            : 'border border-gray-300'
-                        }
-                        ${isCorrectAnswer ? 'border-green-500' : questionResult ? 'border-red-500' : ''}
-                      `}
-                    >
-                      {index + 1}
-                    </button>
-                    
-                    {questionResult && (
-                      <span
-                        className={`text-xl font-bold ${
-                          isCorrectAnswer ? 'text-green-500' : 'text-red-500'
-                        }`}
-                      >
-                        {isCorrectAnswer ? '✓' : '✗'}
-                      </span>
-                    )}
-  
-                    {isAnswerSaved && !questionResult && (
-                      <span className="text-xl font-bold text-yellow-500">
-                        ★
-                      </span>
-                    )}
-                  </div>
-                );
-              })
-            ) : (
-              <div>No questions available</div>
-            )}
-          </div>
-        </div>
-      </div>
-  
-      <div
-        className={`
-          flex-1 
-          p-4 sm:p-10 
-          ${separateView ? 'grid grid-cols-1 sm:grid-cols-2 gap-4' : ''}
-          // Responsive tweak
-        `}
-      >
-        {loading && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg">
-              <p className="text-xl font-bold">Loading...</p>
-            </div>
-          </div>
-        )}
-        {error && <div className="text-red-500">Error: {error}</div>}
-  
-        <div>
-          {testData && currentQuestion ? (
-            <div className="mb-4 p-1 rounded flex flex-col items-start">
-              {currentQuestion.text && (
-                <p
-                  className="mb-1 text-xl"
-                  style={{ 
-                    backgroundColor: hideHighlights ? 'transparent' : 'inherit' 
-                  }}
-                  dangerouslySetInnerHTML={{
-                    __html: submittedQuestions[currentQuestion.id]
-                      ? currentQuestion.text.replace(
-                          /<u>(.*?)<\/u>/g,
-                          '<span style="text-decoration: underline; text-decoration-color: #ed1212; text-decoration-thickness: 4px;">$1</span>'
-                        )
-                      : currentQuestion.text.replace(/<u>(.*?)<\/u>/g, '$1'),
-                  }}
-                />
-              )}
-  
-              {currentQuestion.image && (
-                <img
-                  src={`${API_BASE_URL}${currentQuestion.image}`}
-                  alt="question"
-                  className="aspect-ratio max-w-[50%] max-h-[50vh] mt-2 mx-auto rounded-lg cursor-pointer"
-                  onClick={() => openModal(`${API_BASE_URL}${currentQuestion.image}`)}
-                />
-              )}
-  
-              {currentQuestion.audio && (
-                <audio
-                  controls
-                  src={`${API_BASE_URL}${currentQuestion.audio}`}
-                  className="mt-2"
-                >
-                  Your browser does not support the audio element.
-                </audio>
-              )}
-  
-              <div className="w-full border-2 my-8 border-blue-300 shadow-xl shadow-blue-400">
-                {currentQuestion.answers && currentQuestion.answers.length > 0 && (
-                  <div className="mt-4 border border-gray-200 rounded-lg overflow-hidden">
-                    {currentQuestion.answers.map((answer) => {
-                      if (!answer || !answer.id) return null;
-                      
-                      const questionResult = results[currentQuestion.id];
-                      const isCorrectAnswer = questionResult?.correctAnswer === answer.id;
-                      const userAnswerId = selectedAnswers[currentQuestion.id];
-                      const isUserAnswer = userAnswerId === answer.id;
-  
-                      return (
-                        <label 
-                          key={answer.id} 
-                          className="flex justify-between p-4 cursor-pointer hover:bg-gray-50"
-                        >
-                          <div className="flex items-center space-x-3">
-                            <input
-                              type="radio"
-                              name={`question-${currentQuestion.id}`}
-                              value={answer.id}
-                              checked={isUserAnswer}
-                              onChange={() => handleAnswerChange(currentQuestion.id, answer.id)}
-                              disabled={!!questionResult}
-                              className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                            />
-                            <span className="font-medium text-gray-700">{answer.letter}.</span>
-                            
-                            {answer.text && (
-                              <span className="text-gray-900 px-4 text-lg font-semibold">
-                                {answer.text}
-                              </span>
-                            )}
-  
-                            {answer.image && (
-                              <img
-                                src={`${API_BASE_URL}${answer.image}`}
-                                alt={`Option ${answer.letter}`}
-                                className="mt-2 max-w-xs h-auto object-contain cursor-zoom-in"
-                                onClick={() => openModal(`${API_BASE_URL}${answer.image}`)}
-                              />
-                            )}
-  
-                            {answer.answer_json ? (
-                              <div className="mt-3 overflow-x-auto">
-                                {Object.keys(answer.answer_json).length === 0 ? (
-                                  <div>No data available</div>
-                                ) : (
-                                  <table className="min-w-full divide-y divide-gray-200">
-                                    <thead className="bg-gray-50">
-                                      <tr className="divide-x divide-gray-200">
-                                        {Object.keys(answer.answer_json).map((key) => (
-                                          <th
-                                            key={key}
-                                            className="px-6 py-3 text-left text-sm font-medium text-gray-900 uppercase tracking-wider"
-                                          >
-                                            {key}
-                                          </th>
-                                        ))}
-                                      </tr>
-                                    </thead>
-                                    <tbody className="bg-white divide-y divide-gray-200">
-                                      <tr className="divide-x divide-gray-200">
-                                        {Object.keys(answer.answer_json).map((key) => (
-                                          <td
-                                            key={key}
-                                            className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
-                                          >
-                                            {answer.answer_json[key]}
-                                          </td>
-                                        ))}
-                                      </tr>
-                                    </tbody>
-                                  </table>
-                                )}
-                              </div>
-                            ) : (
-                              <div></div>
-                            )}
-                            
-                            
-
-
-                          </div>
-  
-                          <div className="flex items-center justify-start">
-                            {questionResult && (
-                              <span
-                                className={`ml-2 font-bold ${
-                                  isCorrectAnswer ? 'text-green-600' : 'text-red-500'
-                                }`}
-                              >
-                                {isCorrectAnswer ? '✓' : '✗'}
-                              </span>
-                            )}
-  
-                            {questionResult?.rate_answer && (
-                              <div className="ml-4">
-                                <span className="text-blue-600 font-semibold">
-                                  ({questionResult.rate_answer[answer.id]})%
-                                </span>
-                              </div>
-                            )}
-                          </div>
-                        </label>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-  
-              {currentQuestion.id && !results[currentQuestion.id] && (
-                <>
-                  {mode === "timed" ? (
-                    <button
-                      onClick={() => saveAnswerTimeMode(currentQuestion.id)}
-                      className="mt-4 px-6 py-4 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-300"
-                    >
-                      Save
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => submitAnswer(currentQuestion.id)}
-                      className="mt-4 px-6 py-4 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-300"
-                    >
-                      Submit
-                    </button>
-                  )}
-                </>
-              )}
-  
-=            {!separateView && results[currentQuestion.id] && (
-  <div className="mt-4 p-3 border-t w-full">
-    <h3 className="font-bold text-2xl text-blue-600">Explanation:</h3>
-    {results[currentQuestion.id].image && (
-      <img
-        src={results[currentQuestion.id].image}
-        alt="explanation"
-        className="w-[750px] h-[500px] mt-2 mx-auto cursor-pointer"
-        onClick={() => openModal(results[currentQuestion.id].image)}
-      />
-    )}
-    <div className="text-gray-700 mt-2">
-      {parse(results[currentQuestion.id].content, {
-        replace: (domNode) => {
-          // التعامل مع العناصر التي تحتوي على سمة data-img (الطريقة الأصلية)
-          if (
-            domNode.type === 'tag' &&
-            domNode.name === 'span' &&
-            domNode.attribs &&
-            domNode.attribs['data-img']
-          ) {
-            return (
-              <span
-                className="cursor-pointer text-blue-500 underline"
-                onClick={() => openModal(domNode.attribs['data-img'])}
-              >
-                {domToReact(domNode.children)}
-              </span>
-            );
-          }
-          
-          // إضافة: التعامل مع النص الأزرق (بأي تنسيق)
-          if (domNode.type === 'tag') {
-            // التحقق من وجود فئات أو أنماط للون الأزرق
-            const hasBlueClass = domNode.attribs && domNode.attribs.class && 
-              (domNode.attribs.class.includes('text-blue') || domNode.attribs.class.includes('blue'));
-              
-            const hasBlueStyle = domNode.attribs && domNode.attribs.style && 
-              (domNode.attribs.style.includes('color: blue') || domNode.attribs.style.includes('color:blue'));
-              
-            const hasBlueColor = domNode.attribs && domNode.attribs.color && domNode.attribs.color === 'blue';
-            
-            // إذا كان النص أزرق وليس لديه بالفعل وظيفة النقر
-            if ((hasBlueClass || hasBlueStyle || hasBlueColor) && !domNode.attribs.onClick) {
-              // استخراج النص
-              const nodeText = domToReact(domNode.children);
-              const textContent = typeof nodeText === 'string' ? nodeText.trim() : String(nodeText).trim();
-              
-              // تحديد أي صورة مرتبطة مع هذا النص
-              let imageIndex = 0;
-              // البحث عن فهرس الصورة باستخدام نص المحتوى - يمكن تعديل هذا المنطق
-              const blueTexts = results[currentQuestion.id].blueTexts || [];
-              for (let i = 0; i < blueTexts.length; i++) {
-                if (blueTexts[i] === textContent) {
-                  imageIndex = i + 1;
-                  break;
-                }
-              }
-              
-              // إذا لم يتم العثور عليه بالنص، استخدم ترتيب العناصر الزرقاء
-              if (imageIndex === 0) {
-                // تتبع العناصر الزرقاء المكتشفة
-                if (!window.blueTextCounter) window.blueTextCounter = 0;
-                window.blueTextCounter++;
-                imageIndex = window.blueTextCounter;
-              }
-              
-              const imageKey = `text_image${imageIndex}`;
-              
-              return (
-                <span
-                  className="cursor-pointer text-blue-500 underline"
-                  onClick={() => {
-                    const imageUrl = results[currentQuestion.id][imageKey];
-                    if (imageUrl) {
-                      openModal(imageUrl);
-                    } else {
-                      console.warn(`Image not found for key: ${imageKey}`);
-                    }
-                  }}
-                >
-                  {domToReact(domNode.children)}
-                </span>
-              );
-            }
-          }
-        }
-      })}
-    </div>
-  </div>
-)}
-              
-            </div>
-          ) : (
-            <div>No question data available</div>
-          )}
-  
-          {/*  End Block */}
-          <button 
-            onClick={handleEndBlock} 
-            className="fixed bottom-4 right-4 z-50 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-          >
-            End Block
-          </button>
-  
-          {mode === "timed" && (
+      {activeComponent === "flashcards" && (
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl w-full sm:w-96 max-w-full sm:max-w-[400px]">
+            <Flashcards />
             <button
-              onClick={handleSubmitTimeMode}
-              className="fixed bottom-16 right-4 z-50 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+              onClick={() => setActiveComponent(null)}
+              className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
             >
-              Submit Test
+              Close
             </button>
-          )}
-        </div>
-  
-        {/* ======(separateView) ====== */}
-        {separateView && currentQuestion && results[currentQuestion.id] && (
-          <div className="border-l pl-4">
-            <h3 className="font-bold text-2xl text-blue-600">Explanation:</h3>
-            {results[currentQuestion.id].image && (
-              <img
-                src={results[currentQuestion.id].image}
-                alt="explanation"
-                className="w-[750px] h-[500px] mt-2 mx-auto cursor-pointer"
-                onClick={() => openModal(results[currentQuestion.id].image)}
-              />
-            )}
-            <div className="text-gray-700 mt-2">
-              {parse(results[currentQuestion.id].content, {
-                replace: (domNode) => {
-                  if (
-                    domNode.type === 'tag' &&
-                    domNode.name === 'span' &&
-                    domNode.attribs &&
-                    domNode.attribs['data-img']
-                  ) {
-                    return (
-                      <span
-                        className="cursor-pointer text-blue-500 underline"
-                        onClick={() => openModal(domNode.attribs['data-img'])}
-                      >
-                        {domToReact(domNode.children)}
-                      </span>
-                    );
-                  }
-                }
-              })}
-            </div>
           </div>
-        )}
-      </div>
-    </div>
-  
-    {/* ====== Image zoom modal ====== */}
-    {isModalOpen && (
-      <div 
-        className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50"
-        onClick={closeModal}
-      >
-        <div className="relative" onClick={(e) => e.stopPropagation()}>
-          <span 
-            className="absolute top-0 right-0 text-white text-4xl cursor-pointer p-2"
-            onClick={closeModal}
-          >
-            &times;
-          </span>
-          <img 
-            src={modalImageSrc} 
-            alt="Zoomed" 
-            style={{ transform: `scale(${zoom})`, transition: 'transform 0.2s ease' }}
-            onWheel={handleWheel}
-            className="max-w-[90vw] max-h-[90vh]"
-          />
         </div>
-      </div>
-    )}
+      )}
   
-    {/* ====== Modals (Notes, Flashcards, Calculator, LabValues) ====== */}
-    {activeComponent === "notes" && (
-      <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
-        <div className="bg-white p-6 rounded-lg shadow-xl w-full sm:w-96 max-w-full sm:max-w-[400px]">
-          <Notes onClose={() => setActiveComponent(null)} />
-          <button
-            onClick={() => setActiveComponent(null)}
-            className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-          >
-            Close
-          </button>
+      {activeComponent === "calculator" && (
+        <div className="fixed bottom-0 right-0 bg-white shadow-lg p-1 z-50 w-full sm:w-auto">
+          <Calculator />
         </div>
-      </div>
-    )}
+      )}
   
-    {activeComponent === "flashcards" && (
-      <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
-        <div className="bg-white p-6 rounded-lg shadow-xl w-full sm:w-96 max-w-full sm:max-w-[400px]">
-          <Flashcards />
-          <button
-            onClick={() => setActiveComponent(null)}
-            className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-          >
-            Close
-          </button>
+      {activeComponent === "labvalues" && (
+        <div className="fixed bottom-20 right-0 bg-white shadow-lg p-1 z-50 max-h-[80vh] sm:h-[500px] overflow-y-auto">
+          <LabValues />
         </div>
-      </div>
-    )}
-  
-    {activeComponent === "calculator" && (
-      <div 
-        className="
-          fixed bottom-0 right-0 bg-white shadow-lg p-1 z-50 
-          w-full sm:w-auto
-          // Responsive tweak
-        "
-      >
-        <Calculator />
-      </div>
-    )}
-  
-    {activeComponent === "labvalues" && (
-      <div 
-        className="
-          fixed bottom-20 right-0 bg-white shadow-lg p-1 z-50 
-          max-h-[80vh] sm:h-[500px] 
-          overflow-y-auto
-          // Responsive tweak
-        "
-      >
-        <LabValues />
-      </div>
-    )}
-  </section>
-  
+      )}
+    </section>
   );
 }
