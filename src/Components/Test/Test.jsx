@@ -62,7 +62,23 @@ export default function Test() {
   let token = localStorage.getItem("access_token")
 
 
-  
+  const processExplanationContent = (content) => {
+   
+    let blueTextCounter = 0;
+    
+    const processedContent = content.replace(
+      /<span style="color: blue;">(.*?)<\/span>|<span class="text-blue-\d+">(.*?)<\/span>|<font color="blue">(.*?)<\/font>/g,
+      (match, group1, group2, group3) => {
+        blueTextCounter++;
+        const textContent = group1 || group2 || group3;
+        const imageKey = `text_image${blueTextCounter}`;
+        
+        return `<span class="cursor-pointer text-blue-500 font-medium hover:underline" data-img="${imageKey}">${textContent}</span>`;
+      }
+    );
+    
+    return processedContent;
+  };
 
   // ========== Timer Initialization ==========
   useEffect(() => {
@@ -940,7 +956,6 @@ export default function Test() {
                 )}
               </div>
   
-              {/* زر حفظ/إرسال الإجابة */}
               {currentQuestion.id && !results[currentQuestion.id] && (
                 <>
                   {mode === "timed" ? (
@@ -961,82 +976,57 @@ export default function Test() {
                 </>
               )}
   
-            {!separateView && results[currentQuestion.id] && (
-  <div className="mt-4 p-3 border-t w-full">
-    <h3 className="font-bold text-2xl text-blue-600">Explanation:</h3>
-    
-    {/* Main explanation image if available */}
-    {results[currentQuestion.id].image && (
-      <div className="mt-2 flex justify-center">
-        <img
-          src={results[currentQuestion.id].image}
-          alt="Explanation diagram"
-          className="w-full max-w-[750px] h-auto max-h-[500px] object-contain cursor-pointer"
-          onClick={() => openModal(results[currentQuestion.id].image)}
-        />
-      </div>
-    )}
-    
-    {/* Explanation text with clickable elements */}
-    <div className="text-gray-700 mt-4">
-      {parse(results[currentQuestion.id].content, {
-        replace: (domNode) => {
-          // التعامل مع النص الأزرق القابل للنقر
-          if (
-            domNode.type === 'tag' &&
-            domNode.name === 'span' &&
-            domNode.attribs &&
-            domNode.attribs.class &&
-            domNode.attribs.class.includes('text-blue-500')
-          ) {
-            // تحديد أي صورة يجب عرضها بناءً على ترتيب النص الأزرق
-            // نفترض أن لدينا متغير يتتبع عدد العناصر الزرقاء التي تم العثور عليها
-            if (!window.blueTextCounter) window.blueTextCounter = 0;
-            window.blueTextCounter++;
-            
-            // الحصول على اسم الصورة المناسبة (text_image1 حتى text_image6)
-            const imageKey = `text_image${window.blueTextCounter}`;
-            const imageUrl = results[currentQuestion.id][imageKey];
-            
-            return (
-              <span
-                className="cursor-pointer text-blue-500 font-medium hover:underline transition-colors"
-                onClick={() => {
-                  if (imageUrl) {
-                    openModal(imageUrl);
-                  }
-                }}
-              >
-                {domToReact(domNode.children)}
-              </span>
-            );
-          }
-          
-          // أو إذا كان هناك بالفعل سمة data-img
-          if (
-            domNode.type === 'tag' &&
-            domNode.name === 'span' &&
-            domNode.attribs &&
-            domNode.attribs['data-img']
-          ) {
-            return (
-              <span
-                className="cursor-pointer text-blue-500 font-medium hover:underline transition-colors"
-                onClick={() => {
-                  const imageUrl = domNode.attribs['data-img'];
-                  openModal(imageUrl);
-                }}
-              >
-                {domToReact(domNode.children)}
-              </span>
-            );
-          }
-        }
-      })}
-    </div>
-  </div>
-)}
-
+=              {!separateView && results[currentQuestion.id] && (
+                <div className="mt-4 p-3 border-t w-full">
+                  <h3 className="font-bold text-2xl text-blue-600">Explanation:</h3>
+                  
+                  {/* Main explanation image if available */}
+                  {results[currentQuestion.id].image && (
+                    <div className="mt-2 flex justify-center">
+                      <img
+                        src={results[currentQuestion.id].image}
+                        alt="Explanation diagram"
+                        className="w-full max-w-[750px] h-auto max-h-[500px] object-contain cursor-pointer"
+                        onClick={() => openModal(results[currentQuestion.id].image)}
+                      />
+                    </div>
+                  )}
+                  
+                  <div className="text-gray-700 mt-4">
+                    {parse(
+                      processExplanationContent(results[currentQuestion.id].content),
+                      {
+                        replace: (domNode) => {
+                          if (
+                            domNode.type === 'tag' &&
+                            domNode.name === 'span' &&
+                            domNode.attribs &&
+                            domNode.attribs['data-img']
+                          ) {
+                            const imageKey = domNode.attribs['data-img'];
+                            return (
+                              <span
+                                className="cursor-pointer text-blue-500 font-medium hover:underline transition-colors"
+                                onClick={() => {
+                                  
+                                  const imageUrl = results[currentQuestion.id][imageKey];
+                                  if (imageUrl) {
+                                    openModal(imageUrl);
+                                  } else {
+                                    console.warn(`Image not found for key: ${imageKey}`);
+                                  }
+                                }}
+                              >
+                                {domToReact(domNode.children)}
+                              </span>
+                            );
+                          }
+                        }
+                      }
+                    )}
+                  </div>
+                </div>
+              )}
               
             </div>
           ) : (
