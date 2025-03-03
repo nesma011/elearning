@@ -35,7 +35,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
     username: yup
       .string()
       .min(3, 'Name should be at least 3 characters')
-      .max(30, "Name shouldn't be more than 20 characters")
+      .max(40, "Name shouldn't be more than 40 characters")
       .required('Name is required'),
     email: yup
       .string()
