@@ -12,7 +12,8 @@ const TestCard = () => {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const navigate = useNavigate();
   const { yearId } = useParams();
-  let token = localStorage.getItem("access_token")
+  let token =
+  localStorage.getItem("access_token") 
 
   
   const authToken = `${token}`
@@ -231,55 +232,57 @@ const TestCard = () => {
     }
   };
 
-  const handleViewResults = async (test) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/test/result/${test.id}/`, {
-        headers: {
-          'Authorization': `Bearer ${authToken}`
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error(`API responded with status ${response.status}`);
+ const handleViewResults = async (test) => {
+  console.log("Test received:", test);
+  if (!test || !test.id) {
+    console.error("Invalid test or test ID:", test);
+    toast.error("Invalid test selected. Please try again.");
+    return;
+  }
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/test/result/${test.id}/`, {
+      headers: {
+        'Authorization': `Bearer ${authToken}`
       }
-      
-      const data = await response.json();
-      
-      console.log("Raw result data:", JSON.stringify(data));
-      console.log("Data type:", typeof data);
-      console.log("Is array:", Array.isArray(data));
-      console.log("Length:", Array.isArray(data) ? data.length : 'N/A');
-      
-      if (!Array.isArray(data) || data.length === 0) {
-        toast.error("No questions found in the results");
-        return;
-      }
-      
-      if (data.length > 0) {
-        console.log("First question structure:", JSON.stringify(data[0]));
-        console.log("Has text property:", data[0].hasOwnProperty('text'));
-        console.log("Has answers property:", data[0].hasOwnProperty('answers'));
-      }
-      
-      const formattedData = { 
-        test_id: test.id, 
-        questions: data 
-      };
-      
-      localStorage.setItem("resultData", JSON.stringify(formattedData));
-      
-      navigate(`/test/${yearId}`, {
-        state: {
-          mode: test.type_test === "time_mode" ? "timed" : "regular",
-          totalTime: test.type_test === "time_mode" ? (parseInt(test.time) / 60) : undefined,
-        }
-      });
-      
-    } catch (error) {
-      console.error('Error viewing results:', error);
-      toast.error("Failed to view results. Please try again.");
+    });
+    
+    console.log("API Response Status:", response.status);
+    const data = await response.json();
+    console.log("Parsed Data:", data);
+    console.log("Is Array:", Array.isArray(data));
+    console.log("Data Length:", data.length);
+    
+    if (!response.ok) {
+      throw new Error(`API responded with status ${response.status}`);
     }
-  };
+    
+    if (!Array.isArray(data) || data.length === 0) {
+      console.warn("No questions found in the response for test ID:", test.id);
+      toast.error("No questions found in the results");
+      return;
+    }
+    
+    const formattedData = { 
+      test_id: test.id, 
+      questions: data 
+    };
+    
+    console.log("Formatted Data:", formattedData);
+    localStorage.setItem("resultData", JSON.stringify(formattedData));
+    
+    navigate(`/test/${yearId}`, {
+      state: {
+        mode: test.type_test === "time_mode" ? "timed" : "regular",
+        totalTime: test.type_test === "time_mode" ? (parseInt(test.time) / 60) : undefined,
+      }
+    });
+    
+  } catch (error) {
+    console.error('Error viewing results:', error);
+    toast.error("Failed to view results. Please try again.");
+  }
+};
 
   if (loading) {
     return <div className="flex justify-center items-center h-64">Loading...</div>;
@@ -377,7 +380,7 @@ const TestCard = () => {
 
                     {(test.content_test_unanswer || 0) === 0 ? (
                       <button
-                        onClick={() => handleViewResults(test.id)}
+                        onClick={() => handleViewResults(test)}
                         className="w-full flex items-center justify-center gap-1 text-blue-600 dark:text-blue-400 border dark:border-gray-600 rounded py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
                       >
                         <Eye size={16} /> View Results

@@ -26,8 +26,12 @@ export default function Test() {
   const [isPaused, setIsPaused] = useState(false);
 
   const [testData, setTestData] = useState(() => {
-    const saved = localStorage.getItem("testData");
-    return saved ? JSON.parse(saved) : { questions: [] };
+    const savedTestData = localStorage.getItem("testData");
+    const savedResultData = localStorage.getItem("resultData");
+    if (location.state && location.state.mode === "regular" && savedResultData) {
+      return JSON.parse(savedResultData); 
+    }
+    return savedTestData ? JSON.parse(savedTestData) : { questions: [] };
   });
 
   const [selectedAnswers, setSelectedAnswers] = useState(() => {
@@ -61,7 +65,9 @@ export default function Test() {
   const [error, setError] = useState(null);
 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-  let token = localStorage.getItem("access_token");
+  let token =
+   
+  localStorage.getItem("access_token"); 
 
   useEffect(() => {
     if (mode === 'timed' && totalTime) {
@@ -180,7 +186,7 @@ export default function Test() {
         alert('Please choose an answer first.');
         return;
       }
-
+  
       const response = await fetch(`${API_BASE_URL}/answer/${questionId}/`, {
         method: 'POST',
         headers: {
@@ -192,25 +198,25 @@ export default function Test() {
           id_test: testData.test_id
         })
       });
-
+  
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
       }
-
+  
       const data = await response.json();
-
+  
       const correctAnswerId = data.answer["correct answer"];
       const correctAnswerText = data.answer["correctAnswerText"] || "N/A"; 
       const correctAnswerLetter = data.answer["correctAnswerLetter"] || "N/A";
-
+  
       const newSubmitted = {
         ...submittedQuestions,
         [questionId]: true
       };
       setSubmittedQuestions(newSubmitted);
       localStorage.setItem("submittedQuestions", JSON.stringify(newSubmitted));
-
+  
       const newResults = {
         ...results,
         [questionId]: {
@@ -221,11 +227,17 @@ export default function Test() {
           content: data.content,
           image: data.image,
           rate_answer: data.rate_answer,
+          text_image1: data.text_image1,
+          text_image2: data.text_image2,
+          text_image3: data.text_image3,
+          text_image4: data.text_image4,
+          text_image5: data.text_image5,
+          text_image6: data.text_image6,
         }
       };
       setResults(newResults);
       localStorage.setItem("results", JSON.stringify(newResults));
-
+  
     } catch (err) {
       console.error('Submit answer error:', err);
       alert('Error submitting answer. Check console for details.');
@@ -264,7 +276,6 @@ export default function Test() {
       localStorage.setItem("selectedAnswers", JSON.stringify(newSavedAnswers));
       toast.success("Answer saved successfully!");
 
-      // الانتقال للسؤال التالي آليًا
       if (currentQuestionIndex < testData.questions.length - 1) {
         goToNextQuestion();
       }
@@ -274,42 +285,37 @@ export default function Test() {
     }
   };
 
-  // ========== عند انتهاء الوقت أو الضغط على "Submit Test" في وضع التايم مود ==========
-  //  نقوم بجلب النتيجة النهائية لجميع الأسئلة
   const handleSubmitTimeMode = async () => {
     try {
       setLoading(true);
       await updateTestTime(testData.test_id, timeLeft);
-
+  
       const response = await fetch(`${API_BASE_URL}/get-result-time-mode/${testData.test_id}/`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
-
+  
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
+  
       const data = await response.json();
-
-      // نكوِّن كائن جديد للنتائج
+  
       const newResults = {};
-
+  
       data.forEach(item => {
         const questionId = item.id;
-        // إيجاد الإجابة الصحيحة من answers
         const correctAnswerObj = item.answers.find(answer => answer.is_correct);
         const correctAnswerId = correctAnswerObj ? correctAnswerObj.id : null;
         const correctAnswerText = correctAnswerObj ? correctAnswerObj.text : null;
         const correctAnswerLetter = correctAnswerObj ? correctAnswerObj.letter : null;
-
-        // التفسير
+  
         const explanationObj = (item.explantions && item.explantions.length > 0)
           ? item.explantions[0]
           : null;
-
+  
         newResults[questionId] = {
           status: selectedAnswers[questionId] === correctAnswerId ? "correct" : "incorrect",
           correctAnswer: correctAnswerId,
@@ -317,13 +323,19 @@ export default function Test() {
           correctAnswerLetter,
           content: explanationObj ? explanationObj.content : "",
           image: explanationObj ? explanationObj.image : null,
+          // إضافة حقول text_image
+          text_image1: item.text_image1,
+          text_image2: item.text_image2,
+          text_image3: item.text_image3,
+          text_image4: item.text_image4,
+          text_image5: item.text_image5,
+          text_image6: item.text_image6,
         };
       });
-
+  
       setResults(newResults);
       localStorage.setItem("results", JSON.stringify(newResults));
-
-      // نعتبر كل الأسئلة أصبحت "مُرسَلة"
+  
       const allSubmitted = {};
       testData.questions.forEach(question => {
         if (question.id) {
@@ -332,7 +344,7 @@ export default function Test() {
       });
       setSubmittedQuestions(allSubmitted);
       localStorage.setItem("submittedQuestions", JSON.stringify(allSubmitted));
-
+  
       toast.success("Test completed! Showing results.");
       setLoading(false);
     } catch (err) {
@@ -342,7 +354,7 @@ export default function Test() {
     }
   };
 
-  // ========== تحديث وقت الاختبار على السيرفر ==========
+
   const updateTestTime = async (testId, remainingTime) => {
     try {
       const response = await fetch(`${API_BASE_URL}/update-time-test/${testId}/`, {
@@ -364,7 +376,6 @@ export default function Test() {
     }
   };
 
-  // ========== إنهاء الـ Block ==========
   const handleEndBlock = async () => {
     const storedTestData = localStorage.getItem("testData");
     const testDataParsed = storedTestData ? JSON.parse(storedTestData) : null;
@@ -399,7 +410,6 @@ export default function Test() {
         return;
       }
       
-      // إزالة البيانات من localStorage
       localStorage.removeItem("testData");
       localStorage.removeItem("selectedAnswers");
       localStorage.removeItem("submittedQuestions");
@@ -413,14 +423,13 @@ export default function Test() {
     }
   };
 
-  // ========== إضافة علامة (Mark) ==========
   const handleMarkChange = async (e) => {
     const checked = e.target.checked;
     setIsMarked(checked);
 
     if (checked && currentQuestion) {
       try {
-        const systemId = currentQuestion.systemId;  // تأكدي من اسم الحقل
+        const systemId = currentQuestion.systemId; 
         const questionId = currentQuestion.id;
         const testId = testData.test_id;
 
@@ -506,15 +515,16 @@ export default function Test() {
     return <div>Loading test data...</div>;
   }
 
-  const currentQuestion = 
+  const currentQuestion =
     testData.questions &&
     testData.questions.length > 0 &&
     currentQuestionIndex < testData.questions.length
       ? testData.questions[currentQuestionIndex]
       : null;
 
-  // حساب الوقت المستهلك في حال كان mode === "timed"
-  // (كم ثانية مضت منذ بدأ الامتحان)
+  // تعريف questionResult لاستخدامه في عرض الشرح
+  const questionResult = currentQuestion ? results[currentQuestion.id] : null;
+
   const totalTimeUsed = mode === 'timed'
     ? (totalTime * 60 - timeLeft)
     : null;
@@ -777,7 +787,7 @@ export default function Test() {
           </div>
         </div>
 
-        {/* ======== Main Content ======== */}
+        {/* ======== Main Content ========= */}
         <div
           className={`
             flex-1 
@@ -959,103 +969,69 @@ export default function Test() {
                     )}
                   </>
                 )}
-
-              
-                {results[currentQuestion.id] && (
-                  <div className="my-4 p-3 border-t w-full">
-                    <div className="flex items-center mb-2">
-                      <span 
-                        className={`text-lg font-bold ${
-                          results[currentQuestion.id].status === "correct" ? "text-green-600" : "text-red-500"
-                        }`}
-                      >
-                        {results[currentQuestion.id].status === "correct" ? "Correct" : "Incorrect"}
-                      </span>
-                    </div>
-
-                    {results[currentQuestion.id].status !== "correct" && (
-                      <div className="text-gray-700 mb-2">
-                        <strong>The Correct Answer:</strong>{" "}
-                        {results[currentQuestion.id].correctAnswerLetter 
-                          ? `${results[currentQuestion.id].correctAnswerLetter}. `
-                          : ""}
-                        {results[currentQuestion.id].correctAnswerText || "N/A"}
-                      </div>
-                    )}
-
-                    {mode === "timed" && (
-                      <div className="text-gray-700 mb-2">
-                        <strong>Time Spent:</strong>{" "}
-                        {totalTimeUsed != null ? `${totalTimeUsed} seconds` : "N/A"}
-                      </div>
-                    )}
-
-                    <div className="text-gray-700 mb-2">
-                      <strong>Version:</strong> 2024-08-06
-                    </div>
-
-                    <div className="text-gray-700 mb-2">
-                      <strong>Subject Name:</strong>{" "}
-                      {currentQuestion.subject_name || "N/A"}
-                    </div>
-                    <div className="text-gray-700 mb-2">
-                      <strong>System Name:</strong>{" "}
-                      {currentQuestion.system_name || "N/A"}
-                    </div>
-                  </div>
-                )}
+                
 
                 {/* (Explanation) */}
-                {!separateView && results[currentQuestion.id] && (
+                {!separateView && questionResult && (
                   <div className="mt-4 p-3 border-t w-full">
                     <h3 className="font-bold text-2xl text-blue-600">Explanation:</h3>
                     
-                    {results[currentQuestion.id].image && (
+                    {questionResult?.image && (
                       <img
-                        src={results[currentQuestion.id].image}
+                        src={questionResult.image}
                         alt="explanation"
                         className="w-[750px] h-[500px] mt-2 mx-auto cursor-pointer"
-                        onClick={() => openModal(results[currentQuestion.id].image)}
+                        onClick={() => openModal(questionResult.image)}
                       />
                     )}
-                    
                     <div className="text-gray-700 mt-2">
-                      {(() => {
-                        const imagesArray = [
-                          results[currentQuestion.id].text_image1,
-                          results[currentQuestion.id].text_image2,
-                          results[currentQuestion.id].text_image3,
-                          results[currentQuestion.id].text_image4,
-                          results[currentQuestion.id].text_image5,
-                          results[currentQuestion.id].text_image6,
-                        ];
-                        let underlineCounter = 0;
-                        
-                        return parse(results[currentQuestion.id].content || '', {
-                          replace: (domNode) => {
-                            if (domNode.type === 'tag' && domNode.name === 'u') {
-                              const currentImage = imagesArray[underlineCounter];
-                              underlineCounter++;
-                              if (currentImage) {
-                                return (
-                                  <span
-                                    className="cursor-pointer text-blue-500"
-                                    onClick={() => openModal(currentImage)}
-                                  >
-                                    {domToReact(domNode.children)}
-                                  </span>
-                                );
-                              }
+                    {(() => {
+                      const imagesArray = [
+                        questionResult?.text_image1,
+                        questionResult?.text_image2,
+                        questionResult?.text_image3,
+                        questionResult?.text_image4,
+                        questionResult?.text_image5,
+                        questionResult?.text_image6,
+                      ].filter((image) => image);
+                    
+                      console.log("Images Array:", imagesArray);
+                      console.log("Content to parse:", questionResult?.content);
+                      
+                      let underlineCounter = 0;
+                      
+                      if (!questionResult?.content) return null;
+                      
+                      return parse(questionResult.content, {
+                        replace: (domNode) => {
+                          console.log("Found node:", domNode);
+                          
+                          if (domNode.type === "tag" && domNode.name === "u") {
+                            console.log("Found underline tag:", domNode);
+                            const currentImage = imagesArray[underlineCounter];
+                            console.log("Current image:", currentImage);
+                            underlineCounter++;
+                            
+                            if (currentImage) {
+                              return (
+                                <u
+                                  className="cursor-pointer text-blue-500 "
+                                  onClick={() => openModal(currentImage)}
+                                >
+                                  {domToReact(domNode.children)}
+                                </u>
+                              );
+                            } else {
+                              return <u>{domToReact(domNode.children)}</u>;
                             }
-                          },
-                        });
-                      })()}
+                          }
+                          return undefined;
+                        },
+                      });
+                    })()}
                     </div>
                   </div>
                 )}
-                
-                
-                
               </div>
             ) : (
               <div>No question data available</div>
