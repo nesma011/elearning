@@ -12,7 +12,6 @@ const Profile = () => {
   const menuItems = [
     { name: "My Books", path: "/mybooks" },
     { name: "My Lectures", path: "/mylectures" },
-    { name: "My Tests", path: "/mytests" },
     { name: "Delete Account", path: "#" },
   ];
   let token = localStorage.getItem("access_token")
