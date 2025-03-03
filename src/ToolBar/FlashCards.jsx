@@ -5,7 +5,6 @@ const Flashcards = () => {
   const [cards, setCards] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showForm, setShowForm] = useState(false);
-  const [selectedSystem, setSelectedSystem] = useState("");
   const [frontText, setFrontText] = useState("");
   const [backText, setBackText] = useState("");
   const [tags, setTags] = useState("");
@@ -39,15 +38,10 @@ const Flashcards = () => {
   };
 
   const handleAddCard = async () => {
-    if (!frontText.trim() || !backText.trim() || !selectedSystem) {
-      toast.error("Please fill in all required fields");
-      return;
-    }
 
     const formData = new FormData();
     formData.append('front_text', frontText);
     formData.append('back_text', backText);
-    formData.append('system', selectedSystem);
     formData.append('tag', tags);
 
     try {
@@ -69,7 +63,6 @@ const Flashcards = () => {
       setFrontText("");
       setBackText("");
       setTags("");
-      setSelectedSystem("");
       toast.success("Flashcard added successfully");
       setShowForm(false);
       fetchFlashcards(); 
@@ -203,30 +196,7 @@ const Flashcards = () => {
 
           {/* Modal Content */}
           <div className="p-6">
-            {/* System Selector */}
-            <div className="mb-6">
-              <button className="flex items-center gap-2 px-4 py-2 border rounded-lg">
-                <svg
-                  className="w-5 h-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M3 5h14v2H3V5zm0 6h14v2H3v-2zm0 6h14v2H3v-2z"
-                  />
-                </svg>
-                <span>Choose System</span>
-                <select
-                  value={selectedSystem}
-                  onChange={(e) => setSelectedSystem(e.target.value)}
-                  className="ml-2 focus:outline-none"
-                >
-                  <option value="">Select a system</option>
-                  <option value="22">System 22</option>
-                </select>
-              </button>
-            </div>
+         
 
             {/* Front & Back Editor */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
