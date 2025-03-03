@@ -88,9 +88,9 @@ const RadarScore = () => {
         <RadarChart
           cx={150}
           cy={150}
-          outerRadius={50}
-          width={350}
-          height={350}
+          outerRadius={100}
+          width={400}
+          height={400}
           data={analytics}
         >
           <PolarGrid stroke="#e5e5e5" />
