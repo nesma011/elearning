@@ -104,6 +104,12 @@ export default function Test() {
     return () => clearInterval(updateTimeInterval);
   }, [mode, timeLeft, isPaused, testData?.test_id]);
 
+
+  useEffect(() => {
+    if (window.blueTextCounter) window.blueTextCounter = 0;
+  }, [currentQuestion.id]);
+
+
   // ========== Check if all questions answered ==========
   useEffect(() => {
     if (mode === 'timed' && testData.questions) {
@@ -330,7 +336,7 @@ export default function Test() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}` // ضعي التوكن هنا
+          'Authorization': `Bearer ${token}` 
         },
         body: JSON.stringify({
           time: remainingTime.toString()
@@ -612,7 +618,6 @@ export default function Test() {
           </button>
         </div>
   
-        {/* اختيار لون الهايلايت */}
         <div className="flex items-center space-x-2">
           <label className="font-semibold">Color:</label>
           {['#FFFF00', '#00FF00', '#00BFFF', '#FF4500'].map((color) => (
@@ -626,7 +631,6 @@ export default function Test() {
         </div>
       </div>
   
-      {/* زر More والقائمة المنسدلة */}
       <div className="relative inline-block text-left">
         <button
           onClick={() => setShowMoreMenu(!showMoreMenu)}
@@ -699,9 +703,7 @@ export default function Test() {
       </div>
     </div>
   
-    {/* ====== المحتوى الرئيسي ====== */}
     <div className="flex">
-      {/* ====== Sidebar: أرقام الأسئلة ====== */}
       <div 
         className="
           w-full sm:w-auto bg-gray-200 ps-6 pe-2 
@@ -771,7 +773,6 @@ export default function Test() {
         </div>
       </div>
   
-      {/* ====== Container الأسئلة والإجابات ====== */}
       <div
         className={`
           flex-1 
@@ -789,11 +790,9 @@ export default function Test() {
         )}
         {error && <div className="text-red-500">Error: {error}</div>}
   
-        {/* ====== القسم الأيسر ====== */}
         <div>
           {testData && currentQuestion ? (
             <div className="mb-4 p-1 rounded flex flex-col items-start">
-              {/* نص السؤال */}
               {currentQuestion.text && (
                 <p
                   className="mb-1 text-xl"
@@ -811,7 +810,6 @@ export default function Test() {
                 />
               )}
   
-              {/* صورة السؤال */}
               {currentQuestion.image && (
                 <img
                   src={`${API_BASE_URL}${currentQuestion.image}`}
@@ -963,46 +961,89 @@ export default function Test() {
                 </>
               )}
   
-              {!separateView && results[currentQuestion.id] && (
-                <div className="mt-4 p-3 border-t w-full">
-                  <h3 className="font-bold text-2xl text-blue-600">Explanation:</h3>
-                  {results[currentQuestion.id].image && (
-                    <img
-                      src={results[currentQuestion.id].image}
-                      alt="explanation"
-                      className="w-[750px] h-[500px] mt-2 mx-auto cursor-pointer"
-                      onClick={() => openModal(results[currentQuestion.id].image)}
-                    />
-                  )}
-                  <div className="text-gray-700 mt-2">
-                    {parse(results[currentQuestion.id].content, {
-                      replace: (domNode) => {
-                        if (
-                          domNode.type === 'tag' &&
-                          domNode.name === 'span' &&
-                          domNode.attribs &&
-                          domNode.attribs['data-img']
-                        ) {
-                          return (
-                            <span
-                              className="cursor-pointer text-blue-500 underline"
-                              onClick={() => openModal(domNode.attribs['data-img'])}
-                            >
-                              {domToReact(domNode.children)}
-                            </span>
-                          );
-                        }
-                      }
-                    })}
-                  </div>
-                </div>
-              )}
+            {!separateView && results[currentQuestion.id] && (
+  <div className="mt-4 p-3 border-t w-full">
+    <h3 className="font-bold text-2xl text-blue-600">Explanation:</h3>
+    
+    {/* Main explanation image if available */}
+    {results[currentQuestion.id].image && (
+      <div className="mt-2 flex justify-center">
+        <img
+          src={results[currentQuestion.id].image}
+          alt="Explanation diagram"
+          className="w-full max-w-[750px] h-auto max-h-[500px] object-contain cursor-pointer"
+          onClick={() => openModal(results[currentQuestion.id].image)}
+        />
+      </div>
+    )}
+    
+    {/* Explanation text with clickable elements */}
+    <div className="text-gray-700 mt-4">
+      {parse(results[currentQuestion.id].content, {
+        replace: (domNode) => {
+          // التعامل مع النص الأزرق القابل للنقر
+          if (
+            domNode.type === 'tag' &&
+            domNode.name === 'span' &&
+            domNode.attribs &&
+            domNode.attribs.class &&
+            domNode.attribs.class.includes('text-blue-500')
+          ) {
+            // تحديد أي صورة يجب عرضها بناءً على ترتيب النص الأزرق
+            // نفترض أن لدينا متغير يتتبع عدد العناصر الزرقاء التي تم العثور عليها
+            if (!window.blueTextCounter) window.blueTextCounter = 0;
+            window.blueTextCounter++;
+            
+            // الحصول على اسم الصورة المناسبة (text_image1 حتى text_image6)
+            const imageKey = `text_image${window.blueTextCounter}`;
+            const imageUrl = results[currentQuestion.id][imageKey];
+            
+            return (
+              <span
+                className="cursor-pointer text-blue-500 font-medium hover:underline transition-colors"
+                onClick={() => {
+                  if (imageUrl) {
+                    openModal(imageUrl);
+                  }
+                }}
+              >
+                {domToReact(domNode.children)}
+              </span>
+            );
+          }
+          
+          // أو إذا كان هناك بالفعل سمة data-img
+          if (
+            domNode.type === 'tag' &&
+            domNode.name === 'span' &&
+            domNode.attribs &&
+            domNode.attribs['data-img']
+          ) {
+            return (
+              <span
+                className="cursor-pointer text-blue-500 font-medium hover:underline transition-colors"
+                onClick={() => {
+                  const imageUrl = domNode.attribs['data-img'];
+                  openModal(imageUrl);
+                }}
+              >
+                {domToReact(domNode.children)}
+              </span>
+            );
+          }
+        }
+      })}
+    </div>
+  </div>
+)}
+
+              
             </div>
           ) : (
             <div>No question data available</div>
           )}
   
-          {/* زر End Block */}
+          {/*  End Block */}
           <button 
             onClick={handleEndBlock} 
             className="fixed bottom-4 right-4 z-50 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
@@ -1010,7 +1051,6 @@ export default function Test() {
             End Block
           </button>
   
-          {/* زر Submit Test في الوضع المؤقت فقط */}
           {mode === "timed" && (
             <button
               onClick={handleSubmitTimeMode}
@@ -1021,7 +1061,7 @@ export default function Test() {
           )}
         </div>
   
-        {/* ====== القسم الأيمن (separateView) ====== */}
+        {/* ======(separateView) ====== */}
         {separateView && currentQuestion && results[currentQuestion.id] && (
           <div className="border-l pl-4">
             <h3 className="font-bold text-2xl text-blue-600">Explanation:</h3>
