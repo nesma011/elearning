@@ -57,6 +57,7 @@ export default function Test() {
 
   const [allQuestionsAnswered, setAllQuestionsAnswered] = useState(false);
   const [isMarked, setIsMarked] = useState(false);
+  const [markedQuestions, setMarkedQuestions] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalImageSrc, setModalImageSrc] = useState('');
   const [zoom, setZoom] = useState(1);
@@ -425,41 +426,48 @@ export default function Test() {
 
   const handleMarkChange = async (e) => {
     const checked = e.target.checked;
-    setIsMarked(checked);
-
-    if (checked && currentQuestion) {
-      try {
-        const systemId = currentQuestion.systemId; 
-        const questionId = currentQuestion.id;
-        const testId = testData.test_id;
-
-        const response = await fetch(`${API_BASE_URL}/marks/`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            systems: systemId,
-            name: "important mark",
-            question: questionId,
-            test: testId,
-          })
-        });
-      
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`Request failed: ${errorText}`);
+    // افترض أن currentQuestion يحتوي على id السؤال الحالي
+    if (currentQuestion) {
+      setMarkedQuestions(prev => ({
+        ...prev,
+        [currentQuestion.id]: checked,
+      }));
+  
+      if (checked) {
+        try {
+          const systemId = currentQuestion.systemId; 
+          const questionId = currentQuestion.id;
+          const testId = testData.test_id;
+  
+          const response = await fetch(`${API_BASE_URL}/marks/`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              systems: systemId,
+              name: "important mark",
+              question: questionId,
+              test: testId,
+            })
+          });
+        
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Request failed: ${errorText}`);
+          }
+  
+          const data = await response.json();
+          console.log("Mark created:", data);
+          toast("Question Added to Marked Question Successfully!");
+        } catch (error) {
+          console.error("Error creating mark:", error);
         }
-
-        const data = await response.json();
-        console.log("Mark created:", data);
-        toast("Question Added to Marked Question Successfully!");
-      } catch (error) {
-        console.error("Error creating mark:", error);
       }
     }
   };
+  
 
   useEffect(() => {
     setIsMarked(false);
@@ -775,11 +783,12 @@ export default function Test() {
                       )}
 
                     
-                      {isMarked && currentQuestion.text && (
+                      {markedQuestions[question.id] && (
                         <span className="ml-2 text-xl font-bold text-blue-500">
                           🚩
                         </span>
                       )}
+                      
                     </div>
                   );
                 })
