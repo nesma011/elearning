@@ -66,7 +66,9 @@ export default function Test() {
   const [error, setError] = useState(null);
 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-  let token = localStorage.getItem("access_token"); 
+  let token =
+   
+  localStorage.getItem("access_token"); 
 
   useEffect(() => {
     if (mode === 'timed' && totalTime) {
@@ -93,6 +95,7 @@ export default function Test() {
     return () => clearInterval(timer);
   }, [mode, timeLeft, isPaused]);
 
+  // ========== Update the server with the current time periodically ==========
   useEffect(() => {
     if (mode !== 'timed' || !testData.test_id) return;
     
@@ -105,6 +108,7 @@ export default function Test() {
     return () => clearInterval(updateTimeInterval);
   }, [mode, timeLeft, isPaused, testData?.test_id]);
 
+  // ========== Check if all questions answered ==========
   useEffect(() => {
     if (mode === 'timed' && testData.questions) {
       const answeredCount = Object.keys(savedAnswers).length;
@@ -320,7 +324,7 @@ export default function Test() {
           correctAnswerLetter,
           content: explanationObj ? explanationObj.content : "",
           image: explanationObj ? explanationObj.image : null,
-          rate_answer: item.rate_answer || "N/A", // Ensure rate_answer is included
+          // إضافة حقول text_image
           text_image1: item.text_image1,
           text_image2: item.text_image2,
           text_image3: item.text_image3,
@@ -350,6 +354,7 @@ export default function Test() {
       setLoading(false);
     }
   };
+
 
   const updateTestTime = async (testId, remainingTime) => {
     try {
@@ -421,7 +426,8 @@ export default function Test() {
 
   const handleMarkChange = async (e) => {
     const checked = e.target.checked;
-    if (currentQuestion && currentQuestion.id) {
+    // افترض أن currentQuestion يحتوي على id السؤال الحالي
+    if (currentQuestion) {
       setMarkedQuestions(prev => ({
         ...prev,
         [currentQuestion.id]: checked,
@@ -461,6 +467,7 @@ export default function Test() {
       }
     }
   };
+  
 
   useEffect(() => {
     setIsMarked(false);
@@ -506,6 +513,7 @@ export default function Test() {
     selection.removeAllRanges();
   };
 
+  // ========== Report Question ==========
   const reportQuestion = () => {
     alert("Question reported!");
   };
@@ -774,11 +782,13 @@ export default function Test() {
                         </span>
                       )}
 
+                    
                       {markedQuestions[question.id] && (
                         <span className="ml-2 text-xl font-bold text-blue-500">
                           🚩
                         </span>
                       )}
+                      
                     </div>
                   );
                 })
@@ -952,51 +962,6 @@ export default function Test() {
                   )}
                 </div>
 
-                {/* Feedback Bar */}
-                {currentQuestion.id && results[currentQuestion.id] && (
-                  <div className="mt-4 p-2 bg-gray-200 rounded-lg shadow-md flex flex-col sm:flex-row items-center justify-between">
-                    {/* Correct/Incorrect Status */}
-                    <div className="flex items-center">
-                      <span
-                        className={`font-bold text-xl mr-2 ${
-                          results[currentQuestion.id].status === "correct"
-                            ? "text-green-600"
-                            : "text-red-500"
-                        }`}
-                      >
-                        {results[currentQuestion.id].status === "correct" ? "Correct" : "Incorrect"}
-                      </span>
-                      <span className="text-gray-700">
-                        Correct answer {results[currentQuestion.id].correctAnswerLetter}
-                      </span>
-                    </div>
-
-                    {/* Answer Rate (e.g., 55% correctly) */}
-                    <div className="flex items-center">
-                      <span className="text-gray-700 mr-1">| </span>
-                      <span className="font-semibold text-blue-600">
-                        {results[currentQuestion.id].rate_answer || "N/A"}% correctly
-                      </span>
-                    </div>
-
-                    {/* Time Spent (Only in Time Mode) */}
-                    {mode === "timed" && totalTimeUsed !== null && (
-                      <div className="flex items-center">
-                        <span className="text-gray-700 mr-1">| </span>
-                        <span className="font-semibold">
-                          Time spent {formatTime(totalTimeUsed)}
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Version */}
-                    <div className="flex items-center">
-                      <span className="text-gray-700 mr-1">| </span>
-                      <span className="font-semibold">2023 version</span>
-                    </div>
-                  </div>
-                )}
-
                 {currentQuestion.id && !results[currentQuestion.id] && (
                   <>
                     {mode === "timed" ? (
@@ -1016,8 +981,9 @@ export default function Test() {
                     )}
                   </>
                 )}
+                
 
-                {/* Explanation */}
+                {/* (Explanation) */}
                 {!separateView && questionResult && (
                   <div className="mt-4 p-3 border-t w-full">
                     <h3 className="font-bold text-2xl text-blue-600">Explanation:</h3>
@@ -1114,7 +1080,7 @@ export default function Test() {
               className="absolute top-0 right-0 text-white text-4xl cursor-pointer p-2"
               onClick={closeModal}
             >
-              ×
+              &times;
             </span>
             <img 
               src={modalImageSrc} 
