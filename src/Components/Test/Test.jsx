@@ -1018,7 +1018,7 @@ export default function Test() {
                         onClick={() => openModal(results[currentQuestion.id].image)}
                       />
                     )}
-                
+                    
                     <div className="text-gray-700 mt-2">
                       {(() => {
                         const imagesArray = [
@@ -1030,7 +1030,7 @@ export default function Test() {
                           results[currentQuestion.id].text_image6,
                         ];
                         let underlineCounter = 0;
-                
+                        
                         return parse(results[currentQuestion.id].content || '', {
                           replace: (domNode) => {
                             if (domNode.type === 'tag' && domNode.name === 'u') {
@@ -1038,12 +1038,12 @@ export default function Test() {
                               underlineCounter++;
                               if (currentImage) {
                                 return (
-                                  <u
-                                    className="cursor-pointer text-blue-500 underline"
+                                  <span
+                                    className="cursor-pointer text-blue-500"
                                     onClick={() => openModal(currentImage)}
                                   >
                                     {domToReact(domNode.children)}
-                                  </u>
+                                  </span>
                                 );
                               }
                             }
@@ -1053,6 +1053,7 @@ export default function Test() {
                     </div>
                   </div>
                 )}
+                
                 
                 
               </div>
