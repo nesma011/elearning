@@ -5,6 +5,8 @@ import Sidebar from '../SideBar/Sidebar';
 function ResetAccount() {
   const [showModal, setShowModal] = useState(false);
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  let token = localStorage.getItem("access_token")
+
 
   const [selectedOptions, setSelectedOptions] = useState({
     test: false,
@@ -31,7 +33,7 @@ function ResetAccount() {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQwODQ2NjQ4LCJpYXQiOjE3NDAyNDE4NDYsImp0aSI6IjU0ZTVkNWJlN2Q3ZDRkMjk4OTYzNjhmYmJmNTlkMjkxIiwidXNlcl9pZCI6NjZ9.sZRJuReyOg4ZaIK-Z4cMhcgS2svPKOLbaAcF4I1oSF4',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(bodyData),
       });

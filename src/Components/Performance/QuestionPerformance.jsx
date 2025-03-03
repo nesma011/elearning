@@ -5,10 +5,11 @@ const QuestionsPerformance = () => {
   const [performance, setPerformance] = useState(null);
   const [loading, setLoading] = useState(true);
   let token = localStorage.getItem("access_token")
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 
   useEffect(() => {
-    fetch("https://ahmedmahmoud10.pythonanywhere.com/performance/question/", {
+    fetch(`${API_BASE_URL}/performance/question/`, {
       headers: {
         Authorization:
           `Bearer ${token}`,

@@ -15,6 +15,8 @@ const Profile = () => {
     { name: "My Tests", path: "/mytests" },
     { name: "Delete Account", path: "#" },
   ];
+  let token = localStorage.getItem("access_token")
+
 
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
@@ -27,7 +29,7 @@ const Profile = () => {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQwMjM1MTc1LCJpYXQiOjE3Mzk2MzAwNzksImp0aSI6ImZkNmYwZGJlZTI4MDQ3NjE5ZjQwNDU4ZTgxMjM3ZTY1IiwidXNlcl9pZCI6NjZ9.YuRi4yXQMwvo8lZ9DDHkE9X6gd8cF73KOISq6FT8KX4`,
+            Authorization: `Bearer ${token}`,
           },
         });
 
