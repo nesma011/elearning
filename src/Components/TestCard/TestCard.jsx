@@ -25,7 +25,7 @@ const TestCard = () => {
   useEffect(() => {
     if (!yearId) {
       console.error("Missing yearId parameter");
-      navigate("/dashboard"); // Redirect to a safe page
+      navigate("/dashboard"); 
       return;
     }
     
@@ -247,23 +247,43 @@ const TestCard = () => {
       
       console.log("Raw result data:", JSON.stringify(data));
       console.log("Data type:", typeof data);
-      console.log("Is array:", Array.isArray(data));
-      console.log("Length:", Array.isArray(data) ? data.length : 'N/A');
       
-      if (!Array.isArray(data) || data.length === 0) {
+      // Check the actual structure of the response and handle different formats
+      let questionsArray;
+      
+      if (Array.isArray(data)) {
+        console.log("Data is an array with length:", data.length);
+        questionsArray = data;
+      } else if (typeof data === 'object' && data !== null) {
+        console.log("Data is an object with keys:", Object.keys(data));
+        // Check if data has a questions property that's an array
+        if (Array.isArray(data.questions)) {
+          questionsArray = data.questions;
+          console.log("Found questions array with length:", questionsArray.length);
+        } else {
+          // Try to convert the object to an array if it has numeric keys
+          const possibleArray = Object.values(data);
+          if (possibleArray.length > 0) {
+            questionsArray = possibleArray;
+            console.log("Converted object to array with length:", questionsArray.length);
+          }
+        }
+      }
+      
+      // Validate that we have questions to work with
+      if (!questionsArray || questionsArray.length === 0) {
         toast.error("No questions found in the results");
         return;
       }
       
-      if (data.length > 0) {
-        console.log("First question structure:", JSON.stringify(data[0]));
-        console.log("Has text property:", data[0].hasOwnProperty('text'));
-        console.log("Has answers property:", data[0].hasOwnProperty('answers'));
-      }
+      // Log structure of first question to verify format
+      console.log("First question structure:", JSON.stringify(questionsArray[0]));
+      console.log("Has text property:", questionsArray[0].hasOwnProperty('text'));
+      console.log("Has answers property:", questionsArray[0].hasOwnProperty('answers'));
       
-      const formattedData = { 
-        test_id: testId, 
-        questions: data 
+      const formattedData = {
+        test_id: test.id,
+        questions: questionsArray
       };
       
       localStorage.setItem("resultData", JSON.stringify(formattedData));
