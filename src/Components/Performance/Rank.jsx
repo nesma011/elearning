@@ -25,7 +25,7 @@ const Rank = () => {
           </span>
         </div>
         <div className="text-center mb-8">
-          <p>You Must Solve At least 100 Questions to Enter The USMLEPREPS Rank</p>
+          <p>You Must Solve At least 100 Questions to Enter The Alex-MedLearn Rank</p>
         </div>
         <div className="absolute bottom-0 left-0 w-full border-t border-red-500 text-xs p-2">
           Last updated: {lastUpdated}

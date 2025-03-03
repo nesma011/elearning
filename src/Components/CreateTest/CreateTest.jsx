@@ -632,7 +632,7 @@ export default function CreateTest() {
                           />
                           <span>{subject.name}</span>
                           {subject.count_question && (
-                            <span className="text-green-600">({subject.count_question})</span>
+                            <span className="text-green-600 mx-2">({subject.count_question || 0})</span>
                           )}
                         </div>
                       ))}
@@ -672,7 +672,7 @@ export default function CreateTest() {
                             />
                             <span>{system.name}</span>
                             {system.count_question && selectedSubjects.length > 0 && (
-                              <span className="text-green-600">({system.count_question})</span>
+                              <span className="text-green-600 mx-2">({system.count_question || 0})</span>
                             )}
                           </div>
                           <div className="flex items-center space-x-2">
@@ -727,18 +727,20 @@ export default function CreateTest() {
         </div>
       </div>
 
-      <div className="bg-gray-300 md:w-1/4 w-1/2 dark:bg-gray-800 rounded-lg shadow-md p-6 md:ms-80 ms-20 my-6 ">
-        <label className="block text-lg font-bold mb-2">Number of Questions:</label>
-        <input
-          type="number"
-          value={questionCount}
-          onChange={(e) => setQuestionCount(e.target.value)}
-          placeholder="Enter number of questions"
-          className="w-full p-2  border rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-          min="1"
-          max="40"
-        />
-      </div>
+      <div className="bg-gray-300 md:w-1/4 w-1/2 dark:bg-gray-800 rounded-lg shadow-md p-6 md:ms-80 ms-20 my-6">
+      <label className="block text-lg font-bold mb-2">Number of Questions:</label>
+      <input
+        type="number"
+        value={questionCount}
+        onChange={(e) => setQuestionCount(e.target.value)}
+        placeholder="Enter number of questions (max 40)"
+        className="w-full p-2 border rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+        min="1"
+        max="40"
+      />
+      <small className="text-gray-600 dark:text-gray-300">Max 40 questions</small>
+    </div>
+    
 
       <button 
       disabled={selectedSubjects.length === 0 || selectedSystems.length === 0 || !questionCount || isSubmitting}
