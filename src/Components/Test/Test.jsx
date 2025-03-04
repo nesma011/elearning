@@ -183,7 +183,7 @@ export default function Test() {
         alert('Please choose an answer first.');
         return;
       }
-
+  
       const response = await fetch(`${API_BASE_URL}/answer/${questionId}/`, {
         method: 'POST',
         headers: {
@@ -195,29 +195,29 @@ export default function Test() {
           id_test: testData.test_id
         })
       });
-
+  
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
       }
-
+  
       const data = await response.json();
       console.log("submitAnswer Response:", data);
-
+  
       const correctAnswerId = data.answer["correct answer"];
       const correctAnswerText = data.answer["correctAnswerText"] || "N/A";
       const correctAnswerLetter = data.answer["correctAnswerLetter"] || "N/A";
-
+  
       const newSubmitted = {
         ...submittedQuestions,
         [questionId]: true
       };
       setSubmittedQuestions(newSubmitted);
       localStorage.setItem("submittedQuestions", JSON.stringify(newSubmitted));
-
+  
       const imagePath = data.image ? `${API_BASE_URL}${data.image.startsWith('/') ? '' : '/'}${data.image}` : null;
       console.log("Explanation Image Path:", imagePath);
-
+  
       const newResults = {
         ...results,
         [questionId]: {
@@ -225,7 +225,7 @@ export default function Test() {
           correctAnswer: correctAnswerId,
           correctAnswerText,
           correctAnswerLetter,
-          content: data.content || "",
+          content: data.content || "", // التأكد من تعبئة content
           image: imagePath,
           rate_answer: data.rate_answer,
           text_image1: data.text_image1 || null,
@@ -236,7 +236,7 @@ export default function Test() {
           text_image6: data.text_image6 || null,
         }
       };
-
+  
       setResults(newResults);
       localStorage.setItem("results", JSON.stringify(newResults));
     } catch (err) {
@@ -290,46 +290,46 @@ export default function Test() {
     try {
       setLoading(true);
       await updateTestTime(testData.test_id, timeLeft);
-
+  
       const response = await fetch(`${API_BASE_URL}/get-result-time-mode/${testData.test_id}/`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
-
+  
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
+  
       const data = await response.json();
       console.log("get-result-time-mode Response:", data);
-
+  
       const newResults = {};
-
+  
       data.forEach(item => {
         const questionId = item.id;
         const correctAnswerObj = item.answers.find(answer => answer.is_correct);
         const correctAnswerId = correctAnswerObj ? correctAnswerObj.id : null;
         const correctAnswerText = correctAnswerObj ? correctAnswerObj.text : null;
         const correctAnswerLetter = correctAnswerObj ? correctAnswerObj.letter : null;
-
+  
         const explanationObj = (item.explanations && item.explanations.length > 0)
           ? item.explanations[0]
           : (item.explantions && item.explantions.length > 0)
           ? item.explantions[0]
           : null;
-
+  
         console.log(`Question ${questionId} Explanation:`, explanationObj);
-
+  
         const imagePath = explanationObj && explanationObj.image ? `${API_BASE_URL}${explanationObj.image.startsWith('/') ? '' : '/'}${explanationObj.image}` : null;
-
+  
         newResults[questionId] = {
           status: selectedAnswers[questionId] === correctAnswerId ? "correct" : "incorrect",
           correctAnswer: correctAnswerId,
           correctAnswerText,
           correctAnswerLetter,
-          content: explanationObj ? explanationObj.content : "",
+          content: explanationObj ? explanationObj.content : "", // التأكد من تعبئة content
           image: imagePath,
           text_image1: item.text_image1 || null,
           text_image2: item.text_image2 || null,
@@ -339,11 +339,11 @@ export default function Test() {
           text_image6: item.text_image6 || null,
         };
       });
-
+  
       console.log("New Results:", newResults);
       setResults(newResults);
       localStorage.setItem("results", JSON.stringify(newResults));
-
+  
       const allSubmitted = {};
       testData.questions.forEach(question => {
         if (question.id) {
@@ -352,10 +352,10 @@ export default function Test() {
       });
       setSubmittedQuestions(allSubmitted);
       localStorage.setItem("submittedQuestions", JSON.stringify(allSubmitted));
-
+  
       setCurrentQuestionIndex(0);
       localStorage.setItem("currentQuestionIndex", "0");
-
+  
       toast.success("Test completed! Showing results.");
       setLoading(false);
     } catch (err) {
