@@ -959,61 +959,6 @@ export default function Test() {
             )}
           </div>
 
-          {!separateView && questionResult && (
-  <div className="mt-4 p-3 border-t w-full">
-    <h3 className="font-bold text-2xl text-blue-600">Explanation:</h3>
-    {questionResult.image && questionResult.image !== null && (
-      <img
-        src={questionResult.image}
-        alt="explanation"
-        className="w-[750px] h-[500px] mt-2 mx-auto cursor-pointer"
-        onClick={() => openModal(questionResult.image)}
-        onError={() => console.error("Failed to load image:", questionResult.image)}
-      />
-    )}
-    <div className="text-gray-700 mt-2">
-      {(() => {
-        const imagesArray = [
-          questionResult?.text_image1,
-          questionResult?.text_image2,
-          questionResult?.text_image3,
-          questionResult?.text_image4,
-          questionResult?.text_image5,
-          questionResult?.text_image6,
-        ].filter((image) => image);
-        console.log("Images Array:", imagesArray);
-        let underlineCounter = 0;
-
-        if (!questionResult?.content) return <p>No explanation available.</p>;
-
-        return parse(questionResult.content, {
-          replace: (domNode) => {
-            if (domNode.type === "tag" && domNode.name === "u") {
-              const currentImage = imagesArray[underlineCounter];
-              console.log("Processing <u>:", domNode.children, "Image:", currentImage);
-              underlineCounter++;
-              if (currentImage) {
-                return (
-                  <u
-                    className="cursor-pointer text-blue-500 underline"
-                    onClick={() => {
-                      console.log("Opening modal with:", currentImage);
-                      openModal(currentImage);
-                    }}
-                  >
-                    {domToReact(domNode.children)}
-                  </u>
-                );
-              }
-              return <u>{domToReact(domNode.children)}</u>;
-            }
-            return undefined;
-          },
-        });
-      })()}
-    </div>
-  </div>
-)}
 
           <button
             onClick={handleEndBlock}
