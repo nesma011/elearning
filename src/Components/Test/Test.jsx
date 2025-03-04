@@ -303,6 +303,7 @@ export default function Test() {
       }
   
       const data = await response.json();
+      console.log("get-result-time-mode Response:", data);
   
       const newResults = {};
   
@@ -313,7 +314,7 @@ export default function Test() {
         const correctAnswerText = correctAnswerObj ? correctAnswerObj.text : null;
         const correctAnswerLetter = correctAnswerObj ? correctAnswerObj.letter : null;
   
-        const explanationObj = (item.explantions && item.explantions.length > 0)
+        const explanationObj = (item.explantions && item.explantions.length > 0) 
           ? item.explantions[0]
           : null;
   
@@ -333,6 +334,7 @@ export default function Test() {
         };
       });
   
+      console.log("New Results:", newResults);
       setResults(newResults);
       localStorage.setItem("results", JSON.stringify(newResults));
   
@@ -344,6 +346,9 @@ export default function Test() {
       });
       setSubmittedQuestions(allSubmitted);
       localStorage.setItem("submittedQuestions", JSON.stringify(allSubmitted));
+  
+      setCurrentQuestionIndex(0); 
+      localStorage.setItem("currentQuestionIndex", "0");
   
       toast.success("Test completed! Showing results.");
       setLoading(false);
