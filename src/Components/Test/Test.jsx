@@ -13,7 +13,6 @@ export default function Test() {
   const location = useLocation();
   const navigate = useNavigate();
   const { mode, totalTime } = location.state || {};
-
   const [highlightOn, setHighlightOn] = useState(true);
   const [highlightColor, setHighlightColor] = useState('#FFFF00');
   const [hideHighlights, setHideHighlights] = useState(false);
