@@ -1,26 +1,48 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import logo from "../../assets/logo.webp"
 import { NavLink } from 'react-router-dom'
 
 export default function Nav({ hasSidebar = false }) {
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUserData(JSON.parse(storedUser));
+    }
+  }, []);
 
   return (
-    <nav className={`h-16 flex-shrink-0 fixed top-0 right-0 ${hasSidebar ? "left-[256px]" : "left-0"} bg-gray-100 dark:bg-gray-800 dark:text-white border-b flex items-center justify-between py-10 px-4`}>
+    <nav
+      className={`h-16 flex-shrink-0 fixed top-0 right-0 ${
+        hasSidebar ? "left-[256px]" : "left-0"
+      } bg-gray-100 dark:bg-gray-800 dark:text-white border-b flex items-center justify-between py-10 px-4`}
+    >
       <NavLink to="/classes" className="flex justify-center items-center gap-2">
         <img src={logo} className="w-16 ms-16" alt="Logo" />
         <h1 className="text-3xl font-semibold text-blue-600">
-          <span className="text-3xl font-extrabold text-blue-600">ALEX</span>-MedLearn
+          <span className="text-3xl font-extrabold text-blue-600">ALEX</span>
+          -MedLearn
         </h1>
       </NavLink>
+
+      {/* قسم يعرض الاسم والإيميل إن وجدوا */}
+      {userData && (
+        <div className="text-end me-4">
+          <p className="font-semibold text-blue-700">{userData.name}</p>
+          <p className="text-gray-600 text-sm">{userData.email}</p>
+        </div>
+      )}
+
       <div className="relative">
         <div className="inline-flex items-center overflow-hidden rounded-md border bg-white">
-          <a
-            href="#"
+          <button
+            type="button"
             className="border-e px-4 py-2 text-2xl text-blue-700 hover:bg-gray-50 hover:text-gray-700"
           >
             <i className="fa-solid fa-user text-4xl"></i>
-          </a>
+          </button>
 
           <button
             className="h-full p-2 text-gray-600 hover:bg-gray-50 hover:text-gray-700"
@@ -71,6 +93,7 @@ export default function Nav({ hasSidebar = false }) {
               className="p-4 text-red-600 font-semibold text-lg"
               onClick={() => {
                 localStorage.removeItem("userToken");
+                localStorage.removeItem("user");
                 window.location.href = "/login";
               }}
             >
@@ -80,5 +103,5 @@ export default function Nav({ hasSidebar = false }) {
         )}
       </div>
     </nav>
-  )
+  );
 }

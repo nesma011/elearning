@@ -22,7 +22,7 @@ export default function CreateTest() {
 
   const [showIncorrect, setShowIncorrect] = useState(false);
   const [showUnanswered, setShowUnanswered] = useState(false);
-  const [showHighYield, setShowHighYield] = useState(false); // New state for high yield filter
+  const [showHighYield, setShowHighYield] = useState(false); 
 
   const [incorrectCount, setIncorrectCount] = useState(0);
   const [unansweredCount, setUnansweredCount] = useState(0);
@@ -191,22 +191,28 @@ export default function CreateTest() {
     }
   };
 
-  // Handler for High Yield questions filter
-  const handleHighYieldFilter = () => {
-    setShowHighYield(true);
-    setShowIncorrect(false);
-    setShowUnanswered(false);
-    
-    fetchHighYieldQuestions();
+  const handleHighYieldChange = (e) => {
+    const checked = e.target.checked;
+    setShowHighYield(checked);
+    if (checked) {
+      setShowIncorrect(false);
+      setShowUnanswered(false);
+      fetchHighYieldQuestions(); 
+    } else {
+      setSystems(allSystems);
+      setSelectedSystems([]);
+      setSelectedSubtitles([]);
+    }
   };
 
-  // Function to fetch high yield questions
+  
+
   const fetchHighYieldQuestions = async () => {
     if (selectedSubtitles.length === 0) {
       toast.warning("Please select at least one subtitle first");
       return;
     }
-
+  
     setIsLoading(true);
     try {
       const response = await fetch(`${API_BASE_URL}/Hight_heeld_question/`, {
@@ -220,60 +226,64 @@ export default function CreateTest() {
           count: parseInt(questionCount) || 1
         }),
       });
-
+  
       if (!response.ok) {
         throw new Error(`API error: ${response.status}`);
       }
-
+  
       const data = await response.json();
-      console.log("High Yield Questions:", data);
-
-      // Check if high_question is true for any of the questions
-      const hasHighYieldQuestions = data.questions && 
-        data.questions.some(question => question.high_question === true);
-
-      if (hasHighYieldQuestions) {
-        toast.info(
-          "⭐⭐⭐ HIGH YIELD QUESTIONS DETECTED! ⭐⭐⭐ These questions are particularly important for your exam.", 
-          {
-            position: "top-center",
-            autoClose: 10000, // 10 seconds
-            hideProgressBar: false,
-            closeOnClick: false,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            style: {
-              backgroundColor: '#ffc107',
-              color: '#000',
-              fontSize: '16px',
-              fontWeight: 'bold',
-              padding: '16px',
-              borderRadius: '8px',
-              boxShadow: '0 4px 8px rgba(0,0,0,0.2)'
-            }
+      console.log("High Yield Questions Response:", data);
+  
+      const highYieldQuestions = data.questions?.filter(question => question.high_question === true) || [];
+  
+      if (highYieldQuestions.length === 0) {
+        toast.warning("No high yield questions found for the selected subtitles.");
+        return;
+      }
+  
+      toast.info(
+        "⭐⭐⭐ HIGH YIELD QUESTIONS DETECTED! ⭐⭐⭐ These questions are particularly important for your exam.", 
+        {
+          position: "top-center",
+          autoClose: 50000, 
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          style: {
+            backgroundColor: '#ffc107',
+            color: '#000',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            padding: '16px',
+            borderRadius: '8px',
+            boxShadow: '0 4px 8px rgba(0,0,0,0.2)'
           }
-        );
-      }
-
-      // Store test data and navigate to test page
-      if (data.test_id) {
-        localStorage.setItem("testData", JSON.stringify(data));
-        
-        navigate(`/test/${yearId}`, {
-          state: {
-            testName: testName || "High Yield Test",
-            selectedSubjects,
-            selectedSystems,
-            questionCount: data.questions.length,
-            selectedSubtitles,
-            mode,
-            totalTime: mode === "timed" ? data.questions.length * 1.5 : null,
-            createdTestId: data.test_id,
-            isHighYield: true
-          },
-        });
-      }
+        }
+      );
+  
+      const filteredTestData = {
+        ...data,
+        questions: highYieldQuestions,
+        test_id: data.test_id 
+      };
+  
+      localStorage.setItem("testData", JSON.stringify(filteredTestData));
+  
+      navigate(`/test/${yearId}`, {
+        state: {
+          testName: testName || "High Yield Test",
+          selectedSubjects,
+          selectedSystems,
+          questionCount: highYieldQuestions.length,
+          selectedSubtitles,
+          mode,
+          totalTime: mode === "timed" ? highYieldQuestions.length * 1.5 : null,
+          createdTestId: data.test_id,
+          isHighYield: true
+        },
+      });
     } catch (error) {
       console.error("Error fetching high yield questions:", error);
       toast.error("Failed to fetch high yield questions");
@@ -608,14 +618,14 @@ export default function CreateTest() {
                         <span className="text-green-600">Unanswered Questions ({unansweredCount})</span>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <input
-                          type="checkbox"
-                          checked={showHighYield}
-                          onChange={handleHighYieldFilter}
-                          className="w-4 h-4"
-                        />
-                        <span className="text-yellow-500 font-semibold">High Yield Questions</span>
-                      </div>
+                      <input
+                        type="checkbox"
+                        checked={showHighYield}
+                        onChange={handleHighYieldChange} 
+                        className="w-4 h-4"
+                      />
+                      <span className="text-yellow-500 font-semibold">High Yield Questions</span>
+                    </div>
                     </div>
                   </div>
 

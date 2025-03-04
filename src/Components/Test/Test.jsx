@@ -9,8 +9,6 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 export default function Test() {
-
-  
   const { yearId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
@@ -28,13 +26,12 @@ export default function Test() {
   const [isPaused, setIsPaused] = useState(false);
 
   const [testData, setTestData] = useState(() => {
-    if (location.state && location.state.mode === "regular") {
-      const savedResultData = localStorage.getItem("resultData");
-      if (savedResultData) {
-        return JSON.parse(savedResultData);
-      }
+    const savedTestData = localStorage.getItem("testData");
+    const savedResultData = localStorage.getItem("resultData");
+    if (location.state && location.state.mode === "regular" && savedResultData) {
+      return JSON.parse(savedResultData);
     }
-    return { questions: [] };
+    return savedTestData ? JSON.parse(savedTestData) : { questions: [] };
   });
 
   const [selectedAnswers, setSelectedAnswers] = useState(() => {
@@ -228,7 +225,7 @@ export default function Test() {
           correctAnswer: correctAnswerId,
           correctAnswerText,
           correctAnswerLetter,
-          content: data.content || "",
+          content: data.content || "", // التأكد من تعبئة content
           image: imagePath,
           rate_answer: data.rate_answer,
           text_image1: data.text_image1 || null,
@@ -327,7 +324,7 @@ export default function Test() {
         const correctAnswerLetter = correctAnswerObj ? correctAnswerObj.letter : null;
   
         // Safely handle explanations
-        const explanations = item.explanations || []; // تصحيح الـ typo هنا
+        const explanations = item.explanations || []; // Default to empty array if undefined
         const explanationObj = explanations.length > 0 ? explanations[0] : null;
   
         console.log(`Question ${questionId} Explanation:`, explanationObj);
@@ -341,7 +338,7 @@ export default function Test() {
           correctAnswer: correctAnswerId,
           correctAnswerText,
           correctAnswerLetter,
-          content: explanationObj ? explanationObj.content : "No explanation available", // تحديد افتراضي
+          content: explanationObj ? explanationObj.content : "",
           image: imagePath,
           text_image1: item.text_image1 || null,
           text_image2: item.text_image2 || null,
@@ -401,14 +398,13 @@ export default function Test() {
   const handleEndBlock = async () => {
     const storedTestData = localStorage.getItem("testData");
     const testDataParsed = storedTestData ? JSON.parse(storedTestData) : null;
-  
+
     if (!testDataParsed || !testDataParsed.test_id) {
       toast.error("Test data is missing or invalid.");
       console.error("testData:", testDataParsed);
-      navigate(`/createTest/${yearId}`);
       return;
     }
-  
+
     try {
       const response = await fetch(`${API_BASE_URL}/test/end/`, {
         method: "POST",
@@ -418,33 +414,27 @@ export default function Test() {
         },
         body: JSON.stringify({ test_id: testDataParsed.test_id }),
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || `Error: ${response.status}`);
       }
-  
+
       const data = await response.json();
       console.log(data);
-  
+
       if (data.message === "There are still unanswered questions.") {
         toast.error("There are still unanswered questions.");
         navigate(`/createTest/${yearId}`);
         return;
       }
-  
+
       localStorage.removeItem("testData");
       localStorage.removeItem("selectedAnswers");
       localStorage.removeItem("submittedQuestions");
       localStorage.removeItem("results");
       localStorage.removeItem("currentQuestionIndex");
-  
-      setTestData({ questions: [] });
-      setSelectedAnswers({});
-      setSubmittedQuestions({});
-      setResults({});
-      setCurrentQuestionIndex(0);
-  
+
       navigate(`/createTest/${yearId}`);
     } catch (error) {
       console.error("Error in handleEndBlock:", error);
