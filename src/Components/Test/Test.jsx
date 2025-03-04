@@ -330,7 +330,7 @@ export default function Test() {
           correctAnswer: correctAnswerId,
           correctAnswerText,
           correctAnswerLetter,
-          content: explanationObj ? explanationObj.content : "", // التأكد من تعبئة content
+          content: explanationObj ? explanationObj.content : "", 
           image: imagePath,
           text_image1: item.text_image1 || null,
           text_image2: item.text_image2 || null,
@@ -833,7 +833,10 @@ export default function Test() {
                         const isUserAnswer = userAnswerId === answer.id;
 
                         return (
-                          <label key={answer.id} className="flex justify-between p-4 cursor-pointer hover:bg-gray-50">
+                          <label 
+                            key={answer.id} 
+                            className="flex justify-between p-4 cursor-pointer hover:bg-gray-50"
+                          >
                             <div className="flex items-center space-x-3">
                               <input
                                 type="radio"
@@ -845,9 +848,13 @@ export default function Test() {
                                 className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                               />
                               <span className="font-medium text-gray-700">{answer.letter}.</span>
+                              
                               {answer.text && (
-                                <span className="text-gray-900 px-4 text-lg font-semibold">{answer.text}</span>
+                                <span className="text-gray-900 px-4 text-lg font-semibold">
+                                  {answer.text}
+                                </span>
                               )}
+
                               {answer.image && (
                                 <img
                                   src={`${API_BASE_URL}${answer.image}`}
@@ -856,13 +863,56 @@ export default function Test() {
                                   onClick={() => openModal(`${API_BASE_URL}${answer.image}`)}
                                 />
                               )}
+
+                              {answer.answer_json ? (
+                                <div className="mt-3 overflow-x-auto">
+                                  {Object.keys(answer.answer_json).length === 0 ? (
+                                    <div>No data available</div>
+                                  ) : (
+                                    <table className="min-w-full divide-y divide-gray-200">
+                                      <thead className="bg-gray-50">
+                                        <tr className="divide-x divide-gray-200">
+                                          {Object.keys(answer.answer_json).map((key) => (
+                                            <th
+                                              key={key}
+                                              className="px-6 py-3 text-left text-sm font-medium text-gray-900 uppercase tracking-wider"
+                                            >
+                                              {key}
+                                            </th>
+                                          ))}
+                                        </tr>
+                                      </thead>
+                                      <tbody className="bg-white divide-y divide-gray-200">
+                                        <tr className="divide-x divide-gray-200">
+                                          {Object.keys(answer.answer_json).map((key) => (
+                                            <td
+                                              key={key}
+                                              className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
+                                            >
+                                              {answer.answer_json[key]}
+                                            </td>
+                                          ))}
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                  )}
+                                </div>
+                              ) : (
+                                <div></div>
+                              )}
                             </div>
+
                             <div className="flex items-center justify-start">
                               {questionResult && (
-                                <span className={`ml-2 font-bold ${isCorrectAnswer ? 'text-green-600' : 'text-red-500'}`}>
+                                <span
+                                  className={`ml-2 font-bold ${
+                                    isCorrectAnswer ? 'text-green-600' : 'text-red-500'
+                                  }`}
+                                >
                                   {isCorrectAnswer ? '✓' : '✗'}
                                 </span>
                               )}
+
                               {questionResult?.rate_answer && (
                                 <div className="ml-4">
                                   <span className="text-blue-600 font-semibold">
