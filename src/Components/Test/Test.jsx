@@ -314,7 +314,8 @@ export default function Test() {
         const correctAnswerText = correctAnswerObj ? correctAnswerObj.text : null;
         const correctAnswerLetter = correctAnswerObj ? correctAnswerObj.letter : null;
   
-        const explanationObj = (item.explanations && item.explanations.length > 0)
+
+        const explanationObj = (item.explantions && item.explantions.length > 0)
           ? item.explanations[0]
           : (item.explantions && item.explantions.length > 0)
           ? item.explantions[0]
