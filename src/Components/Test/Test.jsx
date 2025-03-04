@@ -178,6 +178,7 @@ export default function Test() {
     localStorage.setItem("selectedAnswers", JSON.stringify(newAnswers));
   };
 
+
   const submitAnswer = async (questionId) => {
     try {
       const answerId = selectedAnswers[questionId];
@@ -204,6 +205,8 @@ export default function Test() {
       }
   
       const data = await response.json();
+      console.log("Time Mode data:", JSON.stringify(data, null, 2));
+
       console.log("submitAnswer Response:", data);
   
       const correctAnswerId = data.answer["correct answer"];
