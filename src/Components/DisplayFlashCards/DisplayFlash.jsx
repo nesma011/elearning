@@ -92,7 +92,6 @@ export default function Displayflashcards() {
                   </h2>
                 </div>
                 <div className="flex justify-between mt-4">
-                  {/* زر عرض الفلاش كارد في مودال */}
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -101,7 +100,6 @@ export default function Displayflashcards() {
                   >
                     Show Card
                   </motion.button>
-                  {/* زر حذف الفلاش كارد */}
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -117,7 +115,6 @@ export default function Displayflashcards() {
         </div>
       </main>
 
-      {/* مودال عرض تفاصيل الفلاش كارد */}
       {selectedFlashcard && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
