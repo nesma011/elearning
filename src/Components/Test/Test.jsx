@@ -294,6 +294,8 @@ export default function Test() {
   const handleSubmitTimeMode = async () => {
     try {
       setLoading(true);
+      setIsPaused(true);
+
       await updateTestTime(testData.test_id, timeLeft);
   
       const response = await fetch(`${API_BASE_URL}/get-result-time-mode/${testData.test_id}/`, {
