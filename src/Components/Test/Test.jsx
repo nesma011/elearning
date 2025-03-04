@@ -112,6 +112,8 @@ export default function Test() {
     }
   }, [savedAnswers, testData.questions, mode]);
 
+
+
   useEffect(() => {
     if (!highlightOn || hideHighlights) {
       document.querySelectorAll('span[data-highlight="true"]').forEach((span) => {
@@ -216,7 +218,7 @@ export default function Test() {
       localStorage.setItem("submittedQuestions", JSON.stringify(newSubmitted));
   
       const imagePath = data.image ? `${API_BASE_URL}${data.image.startsWith('/') ? '' : '/'}${data.image}` : null;
-      console.log("Explanation Image Path:", imagePath);
+      console.log("Explantion Image Path:", imagePath);
   
       const newResults = {
         ...results,
@@ -323,14 +325,14 @@ export default function Test() {
         const correctAnswerText = correctAnswerObj ? correctAnswerObj.text : null;
         const correctAnswerLetter = correctAnswerObj ? correctAnswerObj.letter : null;
   
-        // Safely handle explanations
-        const explanations = item.explanations || []; // Default to empty array if undefined
-        const explanationObj = explanations.length > 0 ? explanations[0] : null;
+        // Safely handle explantions
+        const explantions = item.explantions || []; // Default to empty array if undefined
+        const explantionObj = explantions.length > 0 ? explantions[0] : null;
   
-        console.log(`Question ${questionId} Explanation:`, explanationObj);
+        console.log(`Question ${questionId} Explantion:`, explantionObj);
   
-        const imagePath = explanationObj && explanationObj.image 
-          ? `${API_BASE_URL}${explanationObj.image.startsWith('/') ? '' : '/'}${explanationObj.image}` 
+        const imagePath = explantionObj && explantionObj.image 
+          ? `${API_BASE_URL}${explantionObj.image.startsWith('/') ? '' : '/'}${explantionObj.image}` 
           : null;
   
         newResults[questionId] = {
@@ -338,7 +340,7 @@ export default function Test() {
           correctAnswer: correctAnswerId,
           correctAnswerText,
           correctAnswerLetter,
-          content: explanationObj ? explanationObj.content : "",
+          content: explantionObj ? explantionObj.content : "",
           image: imagePath,
           text_image1: item.text_image1 || null,
           text_image2: item.text_image2 || null,
@@ -971,7 +973,7 @@ export default function Test() {
     )}
   </div>
 
-  {/* Explanation Section */}
+  {/* Explantion Section */}
   {questionResult && (
     <div className={separateView ? 'col-span-1' : 'mt-4'}>
       <div className="p-3 border-t w-full">
@@ -979,7 +981,7 @@ export default function Test() {
         {questionResult?.image && (
           <img
             src={questionResult.image}
-            alt="explanation"
+            alt="explantion"
             className="w-[750px] h-[500px] mt-2 mx-auto cursor-pointer"
             onClick={() => openModal(questionResult.image)}
             onError={() => console.error("Failed to load image:", questionResult.image)}
@@ -998,7 +1000,7 @@ export default function Test() {
             console.log("Images Array:", imagesArray);
             let underlineCounter = 0;
 
-            if (!questionResult?.content) return <p>No explanation available.</p>;
+            if (!questionResult?.content) return <p>No explantion available.</p>;
 
             return parse(questionResult.content, {
               replace: (domNode) => {
