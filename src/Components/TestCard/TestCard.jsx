@@ -271,7 +271,7 @@ const TestCard = () => {
     console.log("Formatted Data:", formattedData);
     localStorage.setItem("resultData", JSON.stringify(formattedData));
     
-    navigate(`/test/${yearId}`, {
+    navigate(`/test/${yearId}`,{
       state: {
         mode: test.type_test === "time_mode" ? "timed" : "regular",
         totalTime: test.type_test === "time_mode" ? (parseInt(test.time) / 60) : undefined,
@@ -283,6 +283,8 @@ const TestCard = () => {
     toast.error("Failed to view results. Please try again.");
   }
 };
+
+
 
   if (loading) {
     return <div className="flex justify-center items-center h-64">Loading...</div>;

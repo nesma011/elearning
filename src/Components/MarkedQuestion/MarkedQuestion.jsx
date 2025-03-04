@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../SideBar/Sidebar";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 export default function MarkedQuestion() {
   const [marksBySystem, setMarksBySystem] = useState({});
   const [systemNames, setSystemNames] = useState([]);
   const [openSystems, setOpenSystems] = useState({});
   const { yearId } = useParams();
-  let token = localStorage.getItem("access_token")
+  let token = localStorage.getItem("access_token");
 
-
-  const authToken =
-    `Bearer ${token}`;
-    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  const authToken = `Bearer ${token}`;
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     fetchMarks();
@@ -27,8 +25,7 @@ export default function MarkedQuestion() {
       });
       if (!res.ok) throw new Error("Failed to fetch marks");
       const data = await res.json();
-      
-    
+
       const grouped = data.reduce((acc, mark) => {
         const sysName = mark.system_name;
         if (!acc[sysName]) {
@@ -37,14 +34,14 @@ export default function MarkedQuestion() {
         acc[sysName].push(mark);
         return acc;
       }, {});
-      
+
       setMarksBySystem(grouped);
       setSystemNames(Object.keys(grouped));
     } catch (err) {
       console.error(err);
     }
   };
-  
+
   const toggleSystem = (systemName) => {
     setOpenSystems((prev) => ({
       ...prev,
@@ -52,8 +49,12 @@ export default function MarkedQuestion() {
     }));
   };
 
-  const navigateToQuestion = () => {
-    window.location.href = `/test/${yearId}/`;
+  const navigate = useNavigate();
+  const navigateToQuestion = (testId, questionId) => {
+    navigate({
+      pathname: `/test/${yearId}/`,
+      state: { testId, questionId, mode: "regular" }
+    });
   };
 
   const formatDate = () => {
@@ -90,7 +91,7 @@ export default function MarkedQuestion() {
                         <div className="text-gray-600 text-sm mb-3">
                           {formatDate()}
                         </div>
-                        
+
                         <div className="flex mb-3">
                           <div className="mr-4">
                             <span className="font-medium">Test</span>
@@ -105,8 +106,8 @@ export default function MarkedQuestion() {
                             </div>
                           </div>
                         </div>
-                        
-                        <button 
+
+                        <button
                           onClick={() => navigateToQuestion(mark.test, mark.question)}
                           className="bg-blue-100 text-blue-600 flex items-center justify-center w-full py-2 rounded"
                         >
@@ -124,7 +125,7 @@ export default function MarkedQuestion() {
             )}
           </div>
         ))}
-        
+
         {systemNames.length === 0 && (
           <div className="text-center text-gray-500 py-8">No systems found.</div>
         )}
