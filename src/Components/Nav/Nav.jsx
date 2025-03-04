@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
-import logo from "../../assets/logo.webp"
-import { NavLink } from 'react-router-dom'
+import React, { useState, useEffect } from 'react';
+import logo from "../../assets/logo.webp";
+import { NavLink } from 'react-router-dom';
 
 export default function Nav({ hasSidebar = false }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -17,7 +17,7 @@ export default function Nav({ hasSidebar = false }) {
     <nav
       className={`h-16 flex-shrink-0 fixed top-0 right-0 ${
         hasSidebar ? "left-[256px]" : "left-0"
-      } bg-gray-100 dark:bg-gray-800 dark:text-white border-b flex items-center justify-between py-10 px-4`}
+      } bg-gray-100 dark:bg-gray-800 dark:text-white border-b flex items-center justify-between py-4 px-4`}
     >
       <NavLink to="/classes" className="flex justify-center items-center gap-2">
         <img src={logo} className="w-16 ms-16" alt="Logo" />
@@ -27,11 +27,17 @@ export default function Nav({ hasSidebar = false }) {
         </h1>
       </NavLink>
 
-      {/* قسم يعرض الاسم والإيميل إن وجدوا */}
       {userData && (
-        <div className="text-end me-4">
-          <p className="font-semibold text-blue-700">{userData.name}</p>
-          <p className="text-gray-600 text-sm">{userData.email}</p>
+        <div className="flex items-center gap-4 text-end me-4">
+          <div className="text-left">
+            <p className="font-semibold text-blue-700 text-lg">
+              {userData.username}
+            </p>
+            <p className="text-gray-600 text-sm">
+              {userData.email}
+            </p>
+          </div>
+          <i className="fa-solid fa-user text-4xl text-gray-500"></i>
         </div>
       )}
 

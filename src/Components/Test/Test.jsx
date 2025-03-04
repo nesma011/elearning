@@ -434,11 +434,20 @@ export default function Test() {
       localStorage.removeItem("submittedQuestions");
       localStorage.removeItem("results");
       localStorage.removeItem("currentQuestionIndex");
+      localStorage.removeItem("resultData");
 
       navigate(`/createTest/${yearId}`);
     } catch (error) {
       console.error("Error in handleEndBlock:", error);
       toast.error("An error occurred. Please try again later.");
+    }finally
+    {
+      localStorage.removeItem("testData");
+      localStorage.removeItem("selectedAnswers");
+      localStorage.removeItem("submittedQuestions");
+      localStorage.removeItem("results");
+      localStorage.removeItem("currentQuestionIndex");
+      localStorage.removeItem("resultData");
     }
   };
 
