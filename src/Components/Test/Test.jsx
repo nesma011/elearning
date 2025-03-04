@@ -84,19 +84,15 @@ export default function Test() {
     }
   };
 
-  // ... (باقي الدوال كما هي بدون تغيير)
 
   return (
     <section
-      style={{ fontSize: `${fontSize}px` }}
       onMouseUp={handleTextSelection}
       className="min-h-screen bg-gray-50"
     >
-      {/* ... (الـ nav والـ highlight bar كما هي بدون تغيير) */}
 
       <div className="flex">
         {/* ======== Sidebar======== */}
-        {/* ... (كما هو بدون تغيير) */}
 
         {/* ======== Main Content ========= */}
         <div
