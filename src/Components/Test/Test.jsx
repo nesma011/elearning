@@ -303,34 +303,42 @@ export default function Test() {
       }
   
       const data = await response.json();
-      console.log("get-result-time-mode Response:", data);
+      console.log("API Response Data:", JSON.stringify(data, null, 2));
+  
+      if (!Array.isArray(data)) {
+        throw new Error("API response is not an array");
+      }
   
       const newResults = {};
   
       data.forEach(item => {
+        if (!item || !item.id) {
+          console.warn("Skipping invalid item:", item);
+          return;
+        }
+  
         const questionId = item.id;
-        const correctAnswerObj = item.answers.find(answer => answer.is_correct);
+        const correctAnswerObj = item.answers?.find(answer => answer.is_correct) || null;
         const correctAnswerId = correctAnswerObj ? correctAnswerObj.id : null;
         const correctAnswerText = correctAnswerObj ? correctAnswerObj.text : null;
         const correctAnswerLetter = correctAnswerObj ? correctAnswerObj.letter : null;
   
-
-        const explanationObj = (item.explantions && item.explantions.length > 0)
-          ? item.explanations[0]
-          : (item.explantions && item.explantions.length > 0)
-          ? item.explantions[0]
-          : null;
+        // Safely handle explanations
+        const explanations = item.explanations || []; // Default to empty array if undefined
+        const explanationObj = explanations.length > 0 ? explanations[0] : null;
   
         console.log(`Question ${questionId} Explanation:`, explanationObj);
   
-        const imagePath = explanationObj && explanationObj.image ? `${API_BASE_URL}${explanationObj.image.startsWith('/') ? '' : '/'}${explanationObj.image}` : null;
+        const imagePath = explanationObj && explanationObj.image 
+          ? `${API_BASE_URL}${explanationObj.image.startsWith('/') ? '' : '/'}${explanationObj.image}` 
+          : null;
   
         newResults[questionId] = {
           status: selectedAnswers[questionId] === correctAnswerId ? "correct" : "incorrect",
           correctAnswer: correctAnswerId,
           correctAnswerText,
           correctAnswerLetter,
-          content: explanationObj ? explanationObj.content : "", 
+          content: explanationObj ? explanationObj.content : "",
           image: imagePath,
           text_image1: item.text_image1 || null,
           text_image2: item.text_image2 || null,
