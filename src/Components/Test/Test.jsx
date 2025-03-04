@@ -730,7 +730,7 @@ export default function Test() {
                   const isAnswerSaved = mode === 'timed' && savedAnswers[question.id];
 
                   return (
-                    <div key={question.id} className="flex items-center gap-2">
+                    <div key={question.id} className="md:flex items-center gap-2 ">
                       <button
                         onClick={() => setCurrentQuestionIndex(index)}
                         className={`
@@ -979,15 +979,15 @@ export default function Test() {
       replace: (domNode) => {
         if (domNode.type === "tag" && domNode.name === "u") {
           const currentImage = imagesArray[underlineCounter];
-          console.log("Processing <u>:", domNode.children, "Image:", currentImage); // تحقق من النص والصورة
+          console.log("Processing <u>:", domNode.children, "Image:", currentImage); 
           underlineCounter++;
           if (currentImage) {
             return (
               <u
-                className="cursor-pointer text-blue-500 underline" // أضف تأثير الخط للتأكد من التفاعل
+                className="cursor-pointer text-blue-500 underline" 
                 onClick={() => {
                   console.log("Opening modal with:", currentImage);
-                  openModal(currentImage); // استخدم الرابط مباشرة لأنه كامل
+                  openModal(currentImage); 
                 }}
               >
                 {domToReact(domNode.children)}
