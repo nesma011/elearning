@@ -299,7 +299,7 @@ export default function Test() {
     setIsPaused(true);
     try {
       setLoading(true);
-
+  
       await updateTestTime(testData.test_id, timeLeft);
   
       const response = await fetch(`${API_BASE_URL}/get-result-time-mode/${testData.test_id}/`, {
@@ -320,19 +320,36 @@ export default function Test() {
         throw new Error("API response is not an array");
       }
   
-     const newSubmitted = {
+      // Find the question in the response that matches the questionId
+      const questionData = data.find(q => q.id === questionId);
+      if (!questionData) {
+        throw new Error(`Question with ID ${questionId} not found in the response`);
+      }
+  
+      const newSubmitted = {
         ...submittedQuestions,
         [questionId]: true
       };
       setSubmittedQuestions(newSubmitted);
       localStorage.setItem("submittedQuestions", JSON.stringify(newSubmitted));
-      
-      const correctAnswerId = data.answer["correct answer"];
-      const correctAnswerText = data.answer["correctAnswerText"] || "N/A";
-      const correctAnswerLetter = data.answer["correctAnswerLetter"] || "N/A";
   
-      const explanation = data[0].explantions[0];
+      // Find the correct answer from the answers array of the specific question
+      const correctAnswer = questionData.answers.find(answer => answer.is_correct);
+      if (!correctAnswer) {
+        throw new Error(`No correct answer found for question ID ${questionId}`);
+      }
+  
+      const correctAnswerId = correctAnswer.id;
+      const correctAnswerText = correctAnswer.text || "N/A";
+      const correctAnswerLetter = correctAnswer.letter || "N/A";
+  
+      // Get the explanation for the specific question (assuming one explanation per question)
+      const explanation = questionData.explantions[0];
+      if (!explanation) {
+        throw new Error(`No explanation found for question ID ${questionId}`);
+      }
       const imagePath = explanation.image ? explanation.image : null;
+  
       const newResults = {
         ...results,
         [questionId]: {
@@ -341,7 +358,7 @@ export default function Test() {
           correctAnswerLetter,
           content: explanation.content || "",
           image: imagePath,
-          rate_answer: data[0].rate_answer || null, // If rate_answer is expected elsewhere
+          rate_answer: questionData.rate_answer || null, // If rate_answer is expected
           text_image1: explanation.text_image1 || null,
           text_image2: explanation.text_image2 || null,
           text_image3: explanation.text_image3 || null,
@@ -356,6 +373,8 @@ export default function Test() {
     } catch (err) {
       console.error('Submit answer error:', err);
       alert('Error submitting answer. Check console for details.');
+    } finally {
+      setLoading(false); // Reset loading state
     }
   };
 
