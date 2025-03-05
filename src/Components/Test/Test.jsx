@@ -1087,8 +1087,8 @@ export default function Test() {
 
   {mode === "timed" && (
     <button
-      onClick={handleSubmitTimeMode}
-      className="fixed bottom-16 right-4 z-50 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+    onClick={() => handleSubmitTimeMode(currentQuestion.id)}
+    className="fixed bottom-16 right-4 z-50 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
     >
       Submit Test
     </button>
