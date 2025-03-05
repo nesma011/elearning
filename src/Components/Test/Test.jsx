@@ -295,7 +295,7 @@ export default function Test() {
     }
   };
 
-  const handleSubmitTimeMode = async (questionId) => {
+  const handleSubmitTimeMode = async () => { 
     setIsPaused(true);
     try {
       setLoading(true);
@@ -322,45 +322,41 @@ export default function Test() {
         throw new Error("API response is not an array");
       }
   
-      // Find the question in the response that matches the questionId
-      const questionData = data.find(q => q.id === questionId);
-      if (!questionData) {
-        throw new Error(`Question with ID ${questionId} not found in the response`);
-      }
-      console.log("Found question data:", questionData);
+      // Process all questions in the response
+      const newSubmitted = { ...submittedQuestions };
+      const newResults = { ...results };
   
-      // Check if answers array exists and find the correct answer
-      if (!questionData.answers || !Array.isArray(questionData.answers)) {
-        throw new Error(`Answers array is missing or invalid for question ID ${questionId}`);
-      }
-      const correctAnswer = questionData.answers.find(answer => answer.is_correct);
-      if (!correctAnswer) {
-        throw new Error(`No correct answer found for question ID ${questionId}`);
-      }
-      console.log("Correct answer:", correctAnswer);
+      data.forEach(questionData => {
+        const questionId = questionData.id;
   
-      const correctAnswerId = correctAnswer.id;
-      const correctAnswerText = correctAnswer.text || "N/A";
-      const correctAnswerLetter = correctAnswer.letter || "N/A";
+        // Check if answers array exists and find the correct answer
+        if (!questionData.answers || !Array.isArray(questionData.answers)) {
+          console.warn(`Answers array is missing or invalid for question ID ${questionId}`);
+          return;
+        }
+        const correctAnswer = questionData.answers.find(answer => answer.is_correct);
+        if (!correctAnswer) {
+          console.warn(`No correct answer found for question ID ${questionId}`);
+          return;
+        }
   
-      // Check if explanations array exists and get the first explanation
-      if (!questionData.explantions || !Array.isArray(questionData.explantions) || questionData.explantions.length === 0) {
-        throw new Error(`No explanations found for question ID ${questionId}`);
-      }
-      const explanation = questionData.explantions[0];
-      const imagePath = explanation.image ? explanation.image : null;
-      console.log("Explanation:", explanation);
+        const correctAnswerId = correctAnswer.id;
+        const correctAnswerText = correctAnswer.text || "N/A";
+        const correctAnswerLetter = correctAnswer.letter || "N/A";
   
-      const newSubmitted = {
-        ...submittedQuestions,
-        [questionId]: true
-      };
-      setSubmittedQuestions(newSubmitted);
-      localStorage.setItem("submittedQuestions", JSON.stringify(newSubmitted));
+        // Check if explanations array exists and get the first explanation
+        if (!questionData.explantions || !Array.isArray(questionData.explantions) || questionData.explantions.length === 0) {
+          console.warn(`No explanations found for question ID ${questionId}`);
+          return;
+        }
+        const explanation = questionData.explantions[0];
+        const imagePath = explanation.image ? explanation.image : null;
   
-      const newResults = {
-        ...results,
-        [questionId]: {
+        // Update submitted questions
+        newSubmitted[questionId] = true;
+  
+        // Update results
+        newResults[questionId] = {
           correctAnswer: correctAnswerId,
           correctAnswerText,
           correctAnswerLetter,
@@ -373,15 +369,18 @@ export default function Test() {
           text_image4: explanation.text_image4 || null,
           text_image5: explanation.text_image5 || null,
           text_image6: explanation.text_image6 || null,
-        }
-      };
+        };
+      });
+  
+      setSubmittedQuestions(newSubmitted);
+      localStorage.setItem("submittedQuestions", JSON.stringify(newSubmitted));
   
       setResults(newResults);
       localStorage.setItem("results", JSON.stringify(newResults));
-      console.log("Results updated successfully for question ID:", questionId);
+      console.log("Results updated successfully for all questions");
     } catch (err) {
-      console.error('Submit answer error:', err.message, err.stack);
-      alert('Error submitting answer: ' + err.message);
+      console.error('Submit test error:', err.message, err.stack);
+      alert('Error submitting test: ' + err.message);
     } finally {
       setLoading(false);
     }
@@ -1087,8 +1086,8 @@ export default function Test() {
 
   {mode === "timed" && (
     <button
-    onClick={() => handleSubmitTimeMode(currentQuestion.id)}
-    className="fixed bottom-16 right-4 z-50 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+      onClick={handleSubmitTimeMode} 
+      className="fixed bottom-16 right-4 z-50 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
     >
       Submit Test
     </button>
