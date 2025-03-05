@@ -327,24 +327,23 @@ export default function Test() {
       setSubmittedQuestions(newSubmitted);
       localStorage.setItem("submittedQuestions", JSON.stringify(newSubmitted));
   
-      const imagePath = data.image ? `${data.image}` : null;
-      console.log("Explantion Image Path:", imagePath);
+      const explanation = data[0].explantions[0];
+      const imagePath = explanation.image ? explanation.image : null;
       const newResults = {
         ...results,
         [questionId]: {
-          status: data.answer.status,
           correctAnswer: correctAnswerId,
           correctAnswerText,
           correctAnswerLetter,
-          content: data.content || "",
+          content: explanation.content || "",
           image: imagePath,
-          rate_answer: data.rate_answer,
-          text_image1: data.text_image1 || null,
-          text_image2: data.text_image2 || null,
-          text_image3: data.text_image3 || null,
-          text_image4: data.text_image4 || null,
-          text_image5: data.text_image5 || null,
-          text_image6: data.text_image6 || null,
+          rate_answer: data[0].rate_answer || null, // If rate_answer is expected elsewhere
+          text_image1: explanation.text_image1 || null,
+          text_image2: explanation.text_image2 || null,
+          text_image3: explanation.text_image3 || null,
+          text_image4: explanation.text_image4 || null,
+          text_image5: explanation.text_image5 || null,
+          text_image6: explanation.text_image6 || null,
         }
       };
   
