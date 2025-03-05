@@ -120,6 +120,7 @@ const TestCard = () => {
   };
 
   const handleResume = async (test) => {
+    localStorage.removeItem("resultData");
     try {
       const response = await fetch(`${API_BASE_URL}/test/resume/${test.id}/`, {
         headers: {
@@ -233,6 +234,7 @@ const TestCard = () => {
   };
 
  const handleViewResults = async (test) => {
+  localStorage.removeItem("testData"); 
   console.log("Test received:", test);
   if (!test || !test.id) {
     console.error("Invalid test or test ID:", test);
@@ -271,10 +273,11 @@ const TestCard = () => {
     console.log("Formatted Data:", formattedData);
     localStorage.setItem("resultData", JSON.stringify(formattedData));
     
-    navigate(`/test/${yearId}`,{
+    navigate(`/test/${yearId}`, {
       state: {
         mode: test.type_test === "time_mode" ? "timed" : "regular",
         totalTime: test.type_test === "time_mode" ? (parseInt(test.time) / 60) : undefined,
+        viewResults: true, 
       }
     });
     

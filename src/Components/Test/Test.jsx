@@ -28,11 +28,15 @@ export default function Test() {
   const [testData, setTestData] = useState(() => {
     const savedTestData = localStorage.getItem("testData");
     const savedResultData = localStorage.getItem("resultData");
-    if (location.state && location.state.mode === "regular" && savedResultData) {
+    if (location.state?.resume) {
+      return savedTestData ? JSON.parse(savedTestData) : { questions: [] };
+    } else if (savedResultData) {
       return JSON.parse(savedResultData);
     }
     return savedTestData ? JSON.parse(savedTestData) : { questions: [] };
   });
+
+  const isViewResults = location.state?.viewResults || false;
 
   const [selectedAnswers, setSelectedAnswers] = useState(() => {
     const saved = localStorage.getItem("selectedAnswers");
@@ -854,8 +858,8 @@ export default function Test() {
                         value={answer.id}
                         checked={isUserAnswer}
                         onChange={() => handleAnswerChange(currentQuestion.id, answer.id)}
-                        disabled={!!questionResult}
-                        className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                        disabled={!!questionResult || isViewResults}
+                          className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                       />
                       <span className="font-medium text-gray-700">{answer.letter}.</span>
                       

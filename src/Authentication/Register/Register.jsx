@@ -21,14 +21,11 @@ export default function Register() {
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 
-  const getDeviceId = () => {
-    let deviceId = localStorage.getItem('device_id');
-    if (!deviceId) {
-      deviceId = crypto.randomUUID(); 
-      localStorage.setItem('device_id', deviceId);
-    }
-    return deviceId;
-  };
+const getDeviceId = () => {
+  const newDeviceId = crypto.randomUUID();
+  localStorage.setItem('device_id', newDeviceId); 
+  return newDeviceId;
+};
   
   // Form validation schema
   const validationSchema = yup.object().shape({
@@ -112,8 +109,8 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
     
           await new Promise(resolve => setTimeout(resolve, 5000));
           
-/*           window.location.href = '/login'; 
- */        }
+
+        }
       } catch (error) {
         console.error('Error:', error); 
     
