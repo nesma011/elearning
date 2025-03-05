@@ -120,7 +120,6 @@ const TestCard = () => {
   };
 
   const handleResume = async (test) => {
-    // تنظيف الـ localStorage قبل كتابة البيانات الجديدة
     localStorage.removeItem("resultData");
     localStorage.removeItem("selectedAnswers");
     localStorage.removeItem("submittedQuestions");
@@ -160,11 +159,9 @@ const TestCard = () => {
         
         const correctAnswer = question.answers.find(a => a.is_correct) || { id: null };
         
-        // دايماً نعالج كل سؤال، مش بس لو فيه user_answer
         const userAnswerId = question.user_answer || null;
         selectedAnswersObj[question.id] = userAnswerId;
   
-        // لو فيه user_answer، السؤال اتسجل، فهنضع true
         if (userAnswerId) {
           submittedQuestionsObj[question.id] = true;
         }
@@ -277,7 +274,6 @@ const TestCard = () => {
         return;
       }
   
-      // تنظيف الـ localStorage قبل كتابة البيانات الجديدة
       localStorage.removeItem("resultData");
       localStorage.removeItem("selectedAnswers");
       localStorage.removeItem("results");
@@ -297,10 +293,8 @@ const TestCard = () => {
         }
   
         const correctAnswer = question.answers.find(a => a.is_correct) || { id: null };
-        // استخدام user_answer لو موجود، لو لا نستخدم null
         const userAnswerId = question.user_answer || null;
   
-        // لو user_answer موجود، نضعه في selectedAnswers
         selectedAnswersObj[question.id] = userAnswerId;
   
         if (question.explantions && question.explantions.length > 0) {
