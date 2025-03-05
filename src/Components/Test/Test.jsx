@@ -22,6 +22,7 @@ export default function Test() {
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
 
+
   const [timeLeft, setTimeLeft] = useState(null);
   const [isPaused, setIsPaused] = useState(false);
 
@@ -328,6 +329,7 @@ export default function Test() {
         const imagePath = explantionObj && explantionObj.image 
           ? `${API_BASE_URL}${explantionObj.image.startsWith('/') ? '' : '/'}${explantionObj.image}` 
           : null;
+         
       
           newResults[questionId] = {
             status: selectedAnswers[questionId] === correctAnswerId ? "correct" : "incorrect",
@@ -346,6 +348,8 @@ export default function Test() {
       });
   
       console.log("New Results:", newResults);
+      console.log("Full Image Path:", `${API_BASE_URL}${currentQuestion.image}`);
+      console.log("Question Result Image:", questionResult?.image);
       setResults(newResults);
       localStorage.setItem("results", JSON.stringify(newResults));
   
@@ -421,7 +425,7 @@ export default function Test() {
       }
   
       localStorage.removeItem("testData");
-      localStorage.removeItem("resultDataParsed")
+      localStorage.removeItem("resultData")
       localStorage.removeItem("selectedAnswers")
       localStorage.removeItem("savedAnswers")
       localStorage.removeItem("submittedQuestions")
@@ -432,7 +436,7 @@ export default function Test() {
       toast.error("An error occurred. Please try again later.");
     }finally{
       localStorage.removeItem("testData");
-      localStorage.removeItem("resultDataParsed")
+      localStorage.removeItem("resultData")
       localStorage.removeItem("selectedAnswers")
       localStorage.removeItem("savedAnswers")
       localStorage.removeItem("submittedQuestions")
@@ -960,7 +964,7 @@ export default function Test() {
     )}
   </div>
 
-  {/* Explanation Section للسؤال الحالي في الامتحان العادي */}
+  {/* Explanation Section */}
 {questionResult && !isViewResults && mode !== "timed" && (
   <div className={separateView ? 'col-span-1' : 'mt-4'}>
     <div className="p-3 border-t w-full">
@@ -1010,7 +1014,7 @@ export default function Test() {
   </div>
 )}
 
-{/* Explanation Section لجميع الأسئلة في وضع View Results */}
+{/* Explanation Section in View Results */}
 {isViewResults && (
   <div className="mt-4">
     {testData.questions.map((question) => (
