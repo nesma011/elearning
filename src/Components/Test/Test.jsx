@@ -393,14 +393,18 @@ export default function Test() {
 
   const handleEndBlock = async () => {
     const storedTestData = localStorage.getItem("testData");
-    const testDataParsed = storedTestData ? JSON.parse(storedTestData) : null;
-
-    if (!testDataParsed || !testDataParsed.test_id) {
+    const storedResultData = localStorage.getItem("resultData");
+    let testDataParsed = storedTestData ? JSON.parse(storedTestData) : null;
+    let resultDataParsed = storedResultData ? JSON.parse(storedResultData) : null;
+  
+    const testId = testDataParsed?.test_id || resultDataParsed?.test_id;
+  
+    if (!testId) {
       toast.error("Test data is missing or invalid.");
-      console.error("testData:", testDataParsed);
+      console.error("testData:", testDataParsed, "resultData:", resultDataParsed);
       return;
     }
-
+  
     try {
       const response = await fetch(`${API_BASE_URL}/test/end/`, {
         method: "POST",
@@ -408,42 +412,19 @@ export default function Test() {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`,
         },
-        body: JSON.stringify({ test_id: testDataParsed.test_id }),
+        body: JSON.stringify({ test_id: testId }),
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || `Error: ${response.status}`);
       }
-
-      const data = await response.json();
-      console.log(data);
-
-      if (data.message === "There are still unanswered questions.") {
-        toast.error("There are still unanswered questions.");
-        navigate(`/createTest/${yearId}`);
-        return;
-      }
-
-      localStorage.removeItem("testData");
-      localStorage.removeItem("selectedAnswers");
-      localStorage.removeItem("submittedQuestions");
-      localStorage.removeItem("results");
-      localStorage.removeItem("currentQuestionIndex");
-      localStorage.removeItem("resultData");
-
+  
+      localStorage.clear();
       navigate(`/createTest/${yearId}`);
     } catch (error) {
       console.error("Error in handleEndBlock:", error);
       toast.error("An error occurred. Please try again later.");
-    }finally
-    {
-      localStorage.removeItem("testData");
-      localStorage.removeItem("selectedAnswers");
-      localStorage.removeItem("submittedQuestions");
-      localStorage.removeItem("results");
-      localStorage.removeItem("currentQuestionIndex");
-      localStorage.removeItem("resultData");
     }
   };
 
@@ -785,10 +766,12 @@ export default function Test() {
           </div>
         </div>
 
-        <div className={` flex-1  p-4 sm:p-10 
-         ${separateView ? 'grid grid-cols-1 sm:grid-cols-2 gap-4' : 'flex flex-col'}
-         `}
-   
+        <div
+  className={`
+    flex-1 
+    p-4 sm:p-10 
+    ${separateView ? 'grid grid-cols-1 sm:grid-cols-2 gap-4' : 'flex flex-col'}
+  `}
 >
   {loading && (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -984,7 +967,7 @@ export default function Test() {
                   results[question.id]?.text_image4,
                   results[question.id]?.text_image5,
                   results[question.id]?.text_image6,
-                  
+
                 ].filter((image) => image);
                 let underlineCounter = 0;
   
@@ -1015,7 +998,26 @@ export default function Test() {
     </div>
   )}
 
-      </div>
+
+
+  <button
+    onClick={handleEndBlock}
+    className="fixed bottom-4 right-4 z-50 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+  >
+    End Block
+  </button>
+
+  {mode === "timed" && (
+    <button
+      onClick={handleSubmitTimeMode}
+      className="fixed bottom-16 right-4 z-50 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+    >
+      Submit Test
+    </button>
+  )}
+</div>
+
+
       </div>
 
       {isModalOpen && (
