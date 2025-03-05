@@ -78,7 +78,7 @@ export default function Test() {
     if (mode !== 'timed') return;
     if (!timeLeft) return;
     if (isPaused) return;
-
+  
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
@@ -89,7 +89,7 @@ export default function Test() {
         return prev - 1;
       });
     }, 1000);
-
+  
     return () => clearInterval(timer);
   }, [mode, timeLeft, isPaused]);
 
@@ -222,7 +222,6 @@ export default function Test() {
   
       const imagePath = data.image ? `${API_BASE_URL}${data.image.startsWith('/') ? '' : '/'}${data.image}` : null;
       console.log("Explantion Image Path:", imagePath);
-  
       const newResults = {
         ...results,
         [questionId]: {
@@ -230,7 +229,7 @@ export default function Test() {
           correctAnswer: correctAnswerId,
           correctAnswerText,
           correctAnswerLetter,
-          content: data.content || "", // التأكد من تعبئة content
+          content: data.content || "",
           image: imagePath,
           rate_answer: data.rate_answer,
           text_image1: data.text_image1 || null,
@@ -292,9 +291,9 @@ export default function Test() {
   };
 
   const handleSubmitTimeMode = async () => {
+    setIsPaused(true);
     try {
       setLoading(true);
-      setIsPaused(true);
 
       await updateTestTime(testData.test_id, timeLeft);
   
@@ -319,41 +318,27 @@ export default function Test() {
       const newResults = {};
   
       data.forEach(item => {
-        if (!item || !item.id) {
-          console.warn("Skipping invalid item:", item);
-          return;
-        }
-  
         const questionId = item.id;
-        const correctAnswerObj = item.answers?.find(answer => answer.is_correct) || null;
-        const correctAnswerId = correctAnswerObj ? correctAnswerObj.id : null;
-        const correctAnswerText = correctAnswerObj ? correctAnswerObj.text : null;
-        const correctAnswerLetter = correctAnswerObj ? correctAnswerObj.letter : null;
-  
-        // Safely handle explantions
-        const explantions = item.explantions || []; // Default to empty array if undefined
+        const explantions = item.explantions || [];
         const explantionObj = explantions.length > 0 ? explantions[0] : null;
-  
-        console.log(`Question ${questionId} Explantion:`, explantionObj);
-  
         const imagePath = explantionObj && explantionObj.image 
           ? `${API_BASE_URL}${explantionObj.image.startsWith('/') ? '' : '/'}${explantionObj.image}` 
           : null;
-  
-        newResults[questionId] = {
-          status: selectedAnswers[questionId] === correctAnswerId ? "correct" : "incorrect",
-          correctAnswer: correctAnswerId,
-          correctAnswerText,
-          correctAnswerLetter,
-          content: explantionObj ? explantionObj.content : "",
-          image: imagePath,
-          text_image1: item.text_image1 || null,
-          text_image2: item.text_image2 || null,
-          text_image3: item.text_image3 || null,
-          text_image4: item.text_image4 || null,
-          text_image5: item.text_image5 || null,
-          text_image6: item.text_image6 || null,
-        };
+      
+          newResults[questionId] = {
+            status: selectedAnswers[questionId] === correctAnswerId ? "correct" : "incorrect",
+            correctAnswer: correctAnswerId,
+            correctAnswerText,
+            correctAnswerLetter,
+            content: explantionObj ? explantionObj.content : "",
+            image: imagePath,
+            text_image1: explantionObj?.text_image1 || null,
+            text_image2: explantionObj?.text_image2 || null,
+            text_image3: explantionObj?.text_image3 || null,
+            text_image4: explantionObj?.text_image4 || null,
+            text_image5: explantionObj?.text_image5 || null,
+            text_image6: explantionObj?.text_image6 || null,
+          };
       });
   
       console.log("New Results:", newResults);
