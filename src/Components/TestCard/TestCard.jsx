@@ -233,59 +233,61 @@ const TestCard = () => {
     }
   };
 
- const handleViewResults = async (test) => {
-  localStorage.removeItem("testData"); 
-  console.log("Test received:", test);
-  if (!test || !test.id) {
-    console.error("Invalid test or test ID:", test);
-    toast.error("Invalid test selected. Please try again.");
-    return;
-  }
-
-  try {
-    const response = await fetch(`${API_BASE_URL}/test/result/${test.id}/`, {
-      headers: {
-        'Authorization': `Bearer ${authToken}`
+  const handleViewResults = async (test) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/test/result/${test.id}/`, {
+        headers: {
+          'Authorization': `Bearer ${authToken}`
+        }
+      });
+  
+      if (!response.ok) {
+        throw new Error(`API responded with status ${response.status}`);
       }
-    });
-    
-    console.log("API Response Status:", response.status);
-    const data = await response.json();
-    console.log("Parsed Data:", data);
-    console.log("Is Array:", Array.isArray(data));
-    console.log("Data Length:", data.length);
-    
-    if (!response.ok) {
-      throw new Error(`API responded with status ${response.status}`);
-    }
-    
-    if (!Array.isArray(data) || data.length === 0) {
-      console.warn("No questions found in the response for test ID:", test.id);
-      toast.error("No questions found in the results");
-      return;
-    }
-    
-    const formattedData = { 
-      test_id: test.id, 
-      questions: data 
-    };
-    
-    console.log("Formatted Data:", formattedData);
-    localStorage.setItem("resultData", JSON.stringify(formattedData));
-    
-    navigate(`/test/${yearId}`, {
-      state: {
-        mode: test.type_test === "time_mode" ? "timed" : "regular",
-        totalTime: test.type_test === "time_mode" ? (parseInt(test.time) / 60) : undefined,
-        viewResults: true, 
+  
+      const data = await response.json();
+      if (!Array.isArray(data) || data.length === 0) {
+        toast.error("No questions found in the results");
+        return;
       }
-    });
-    
-  } catch (error) {
-    console.error('Error viewing results:', error);
-    toast.error("Failed to view results. Please try again.");
-  }
-};
+  
+      const formattedData = { test_id: test.id, questions: data };
+      localStorage.setItem("resultData", JSON.stringify(formattedData));
+  
+      // استخراج الإجابات والنتائج من البيانات
+      let selectedAnswersObj = {};
+      let resultsObj = {};
+      data.forEach((question) => {
+        if (question.user_answer) {
+          selectedAnswersObj[question.id] = question.user_answer;
+          if (question.explantions && question.explantions.length > 0) {
+            const correctAnswer = question.answers.find(a => a.is_correct);
+            resultsObj[question.id] = {
+              status: question.answers.find(a => a.id === question.user_answer)?.is_correct,
+              correctAnswer: correctAnswer ? correctAnswer.id : null,
+              content: question.explantions[0].content,
+              image: question.explantions[0].image,
+            };
+          }
+        }
+      });
+  
+      localStorage.setItem("selectedAnswers", JSON.stringify(selectedAnswersObj));
+      localStorage.setItem("results", JSON.stringify(resultsObj));
+      localStorage.setItem("currentQuestionIndex", "0");
+  
+      navigate(`/test/${yearId}`, {
+        state: {
+          mode: test.type_test === "time_mode" ? "timed" : "regular",
+          totalTime: test.type_test === "time_mode" ? (parseInt(test.time) / 60) : undefined,
+          viewResults: true // للإشارة إلى أننا في وضع عرض النتائج
+        }
+      });
+    } catch (error) {
+      console.error('Error viewing results:', error);
+      toast.error("Failed to view results. Please try again.");
+    }
+  };
 
 
 

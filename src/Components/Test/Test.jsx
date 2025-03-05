@@ -785,12 +785,10 @@ export default function Test() {
           </div>
         </div>
 
-        <div
-  className={`
-    flex-1 
-    p-4 sm:p-10 
-    ${separateView ? 'grid grid-cols-1 sm:grid-cols-2 gap-4' : 'flex flex-col'}
-  `}
+        <div className={` flex-1  p-4 sm:p-10 
+         ${separateView ? 'grid grid-cols-1 sm:grid-cols-2 gap-4' : 'flex flex-col'}
+         `}
+   
 >
   {loading && (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -968,82 +966,56 @@ export default function Test() {
   </div>
 
   {/* Explantion Section */}
-  {questionResult && (
-    <div className={separateView ? 'col-span-1' : 'mt-4'}>
-      <div className="p-3 border-t w-full">
-        <h3 className="font-bold text-2xl text-blue-600">Explanation:</h3>
-        {questionResult?.image && (
-          <img
-            src={questionResult.image}
-            alt="explanation"
-            className="w-[750px] h-[500px] mt-2 mx-auto cursor-pointer"
-            onClick={() => openModal(questionResult.image)}
-            onError={() => console.error("Failed to load image:", questionResult.image)}
-          />
-        )}
-        <div className="text-gray-700 mt-2">
-          {(() => {
-            const imagesArray = [
-              questionResult?.text_image1,
-              questionResult?.text_image2,
-              questionResult?.text_image3,
-              questionResult?.text_image4,
-              questionResult?.text_image5,
-              questionResult?.text_image6,
-            ].filter((image) => image);
-            console.log("Images Array:", imagesArray);
-            let underlineCounter = 0;
-
-            if (!questionResult?.content) return <p>No explantion available.</p>;
-
-            return parse(questionResult.content, {
-              replace: (domNode) => {
-                if (domNode.type === "tag" && domNode.name === "u") {
-                  const currentImage = imagesArray[underlineCounter];
-                  console.log("Processing <u>:", domNode.children, "Image:", currentImage); 
-                  underlineCounter++;
-                  if (currentImage) {
-                    return (
-                      <u
-                        className="cursor-pointer text-blue-500 underline" 
-                        onClick={() => {
-                          console.log("Opening modal with:", currentImage);
-                          openModal(currentImage); 
-                        }}
-                      >
-                        {domToReact(domNode.children)}
-                      </u>
-                    );
-                  }
-                  return <u>{domToReact(domNode.children)}</u>;
-                }
-                return undefined;
-              },
-            });
-          })()}
-        </div>
-      </div>
+  {isViewResults && (
+    <div className="mt-4">
+      {testData.questions.map((question) => (
+        results[question.id] && (
+          <div key={question.id} className="p-3 border-t w-full">
+            <h3 className="font-bold text-xl">Question {question.id} Explanation:</h3>
+            {results[question.id]?.image && (
+              <img src={results[question.id].image} className="w-[750px] h-[500px] mt-2 mx-auto" />
+            )}
+            <div className="text-gray-700 mt-2">
+              {(() => {
+                const imagesArray = [
+                  results[question.id]?.text_image1,
+                  results[question.id]?.text_image2,
+                  results[question.id]?.text_image3,
+                  results[question.id]?.text_image4,
+                  results[question.id]?.text_image5,
+                  results[question.id]?.text_image6,
+                  
+                ].filter((image) => image);
+                let underlineCounter = 0;
+  
+                if (!results[question.id]?.content) return <p>No explanation available.</p>;
+  
+                return parse(results[question.id].content, {
+                  replace: (domNode) => {
+                    if (domNode.type === "tag" && domNode.name === "u") {
+                      const currentImage = imagesArray[underlineCounter];
+                      underlineCounter++;
+                      if (currentImage) {
+                        return (
+                          <u className="cursor-pointer text-blue-500 underline" onClick={() => openModal(currentImage)}>
+                            {domToReact(domNode.children)}
+                          </u>
+                        );
+                      }
+                      return <u>{domToReact(domNode.children)}</u>;
+                    }
+                    return undefined;
+                  },
+                });
+              })()}
+            </div>
+          </div>
+        )
+      ))}
     </div>
   )}
 
-  <button
-    onClick={handleEndBlock}
-    className="fixed bottom-4 right-4 z-50 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-  >
-    End Block
-  </button>
-
-  {mode === "timed" && (
-    <button
-      onClick={handleSubmitTimeMode}
-      className="fixed bottom-16 right-4 z-50 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-    >
-      Submit Test
-    </button>
-  )}
-</div>
-
-
+      </div>
       </div>
 
       {isModalOpen && (
