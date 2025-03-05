@@ -299,10 +299,10 @@ export default function Test() {
     setIsPaused(true);
     try {
       setLoading(true);
-  
+    
       console.log("Updating test time for test ID:", testData.test_id, "with time left:", timeLeft);
       await updateTestTime(testData.test_id, timeLeft);
-  
+    
       console.log("Fetching results for test ID:", testData.test_id);
       const response = await fetch(`${API_BASE_URL}/get-result-time-mode/${testData.test_id}/`, {
         method: 'GET',
@@ -310,26 +310,24 @@ export default function Test() {
           'Authorization': `Bearer ${token}`
         }
       });
-  
+    
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-  
+    
       const data = await response.json();
       console.log("API Response Data:", JSON.stringify(data, null, 2));
-  
+    
       if (!Array.isArray(data)) {
         throw new Error("API response is not an array");
       }
-  
-      // Process all questions in the response
+    
       const newSubmitted = { ...submittedQuestions };
       const newResults = { ...results };
-  
+    
       data.forEach(questionData => {
         const questionId = questionData.id;
-  
-        // Check if answers array exists and find the correct answer
+    
         if (!questionData.answers || !Array.isArray(questionData.answers)) {
           console.warn(`Answers array is missing or invalid for question ID ${questionId}`);
           return;
@@ -339,23 +337,20 @@ export default function Test() {
           console.warn(`No correct answer found for question ID ${questionId}`);
           return;
         }
-  
+    
         const correctAnswerId = correctAnswer.id;
         const correctAnswerText = correctAnswer.text || "N/A";
         const correctAnswerLetter = correctAnswer.letter || "N/A";
-  
-        // Check if explanations array exists and get the first explanation
+    
         if (!questionData.explantions || !Array.isArray(questionData.explantions) || questionData.explantions.length === 0) {
           console.warn(`No explanations found for question ID ${questionId}`);
           return;
         }
         const explanation = questionData.explantions[0];
-        const imagePath = explanation.image ? explanation.image : null;
-  
-        // Update submitted questions
+        const imagePath = explanation.image ? `${API_BASE_URL}${explanation.image}` : null;
+    
         newSubmitted[questionId] = true;
-  
-        // Update results
+    
         newResults[questionId] = {
           correctAnswer: correctAnswerId,
           correctAnswerText,
@@ -363,18 +358,18 @@ export default function Test() {
           content: explanation.content || "",
           image: imagePath,
           rate_answer: questionData.rate_answer || null,
-          text_image1: explanation.text_image1 || null,
-          text_image2: explanation.text_image2 || null,
-          text_image3: explanation.text_image3 || null,
-          text_image4: explanation.text_image4 || null,
-          text_image5: explanation.text_image5 || null,
-          text_image6: explanation.text_image6 || null,
+          text_image1: explanation.text_image1 ? `${API_BASE_URL}${explanation.text_image1}` : null,
+          text_image2: explanation.text_image2 ? `${API_BASE_URL}${explanation.text_image2}` : null,
+          text_image3: explanation.text_image3 ? `${API_BASE_URL}${explanation.text_image3}` : null,
+          text_image4: explanation.text_image4 ? `${API_BASE_URL}${explanation.text_image4}` : null,
+          text_image5: explanation.text_image5 ? `${API_BASE_URL}${explanation.text_image5}` : null,
+          text_image6: explanation.text_image6 ? `${API_BASE_URL}${explanation.text_image6}` : null,
         };
       });
-  
+    
       setSubmittedQuestions(newSubmitted);
       localStorage.setItem("submittedQuestions", JSON.stringify(newSubmitted));
-  
+    
       setResults(newResults);
       localStorage.setItem("results", JSON.stringify(newResults));
       console.log("Results updated successfully for all questions");
@@ -483,7 +478,7 @@ export default function Test() {
               test: testId,
             })
           });
-
+                
           if (!response.ok) {
             const errorText = await response.text();
             throw new Error(`Request failed: ${errorText}`);
