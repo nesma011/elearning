@@ -37,7 +37,6 @@ export default function Nav({ hasSidebar = false }) {
               {userData.email}
             </p>
           </div>
-          <i className="fa-solid fa-user text-4xl text-gray-500"></i>
         </div>
       )}
 
