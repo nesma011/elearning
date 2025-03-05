@@ -120,6 +120,7 @@ const TestCard = () => {
   };
 
   const handleResume = async (test) => {
+    // تنظيف الـ localStorage قبل كتابة البيانات الجديدة
     localStorage.removeItem("resultData");
     localStorage.removeItem("selectedAnswers");
     localStorage.removeItem("submittedQuestions");
@@ -159,36 +160,38 @@ const TestCard = () => {
         
         const correctAnswer = question.answers.find(a => a.is_correct) || { id: null };
         
+        // دايماً نعالج selectedAnswers لكل سؤال
         const userAnswerId = question.user_answer || null;
         selectedAnswersObj[question.id] = userAnswerId;
   
+        // لو فيه user_answer، السؤال اتسجل، ونخزن results فقط لهذا السؤال
         if (userAnswerId) {
           submittedQuestionsObj[question.id] = true;
-        }
   
-        if (question.explantions && question.explantions.length > 0) {
-          const explanation = question.explantions[0];
-          resultsObj[question.id] = {
-            status: userAnswerId ? question.answers.find(a => a.id === userAnswerId)?.is_correct || false : null,
-            correctAnswer: correctAnswer.id,
-            content: explanation.content || "No explanation available",
-            image: explanation.image ? `${API_BASE_URL}${explanation.image}` : null,
-            rate_answer: {}, 
-            text_image1: explanation.text_image1 ? `${API_BASE_URL}${explanation.text_image1}` : null,
-            text_image2: explanation.text_image2 ? `${API_BASE_URL}${explanation.text_image2}` : null,
-            text_image3: explanation.text_image3 ? `${API_BASE_URL}${explanation.text_image3}` : null,
-            text_image4: explanation.text_image4 ? `${API_BASE_URL}${explanation.text_image4}` : null,
-            text_image5: explanation.text_image5 ? `${API_BASE_URL}${explanation.text_image5}` : null,
-            text_image6: explanation.text_image6 ? `${API_BASE_URL}${explanation.text_image6}` : null,
-          };
-        } else {
-          resultsObj[question.id] = {
-            status: userAnswerId ? question.answers.find(a => a.id === userAnswerId)?.is_correct || false : null,
-            correctAnswer: correctAnswer.id,
-            content: "No explanation available",
-            image: null,
-            rate_answer: {},
-          };
+          if (question.explantions && question.explantions.length > 0) {
+            const explanation = question.explantions[0];
+            resultsObj[question.id] = {
+              status: question.answers.find(a => a.id === userAnswerId)?.is_correct || false,
+              correctAnswer: correctAnswer.id,
+              content: explanation.content || "No explanation available",
+              image: explanation.image ? `${API_BASE_URL}${explanation.image}` : null,
+              rate_answer: {}, 
+              text_image1: explanation.text_image1 ? `${API_BASE_URL}${explanation.text_image1}` : null,
+              text_image2: explanation.text_image2 ? `${API_BASE_URL}${explanation.text_image2}` : null,
+              text_image3: explanation.text_image3 ? `${API_BASE_URL}${explanation.text_image3}` : null,
+              text_image4: explanation.text_image4 ? `${API_BASE_URL}${explanation.text_image4}` : null,
+              text_image5: explanation.text_image5 ? `${API_BASE_URL}${explanation.text_image5}` : null,
+              text_image6: explanation.text_image6 ? `${API_BASE_URL}${explanation.text_image6}` : null,
+            };
+          } else {
+            resultsObj[question.id] = {
+              status: question.answers.find(a => a.id === userAnswerId)?.is_correct || false,
+              correctAnswer: correctAnswer.id,
+              content: "No explanation available",
+              image: null,
+              rate_answer: {},
+            };
+          }
         }
       });
   
@@ -196,7 +199,7 @@ const TestCard = () => {
       localStorage.setItem("submittedQuestions", JSON.stringify(submittedQuestionsObj));
       localStorage.setItem("results", JSON.stringify(resultsObj));
   
-      const answeredQuestionIds = Object.keys(selectedAnswersObj).filter(id => selectedAnswersObj[id] !== null);
+      const answeredQuestionIds = Object.keys(submittedQuestionsObj); // نستخدم submittedQuestionsObj بدل selectedAnswersObj
       const newIndex = answeredQuestionIds.length > 0 ? 
         data.findIndex(q => q.id.toString() === answeredQuestionIds[answeredQuestionIds.length - 1]) : 0;
       
