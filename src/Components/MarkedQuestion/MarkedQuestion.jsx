@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../SideBar/Sidebar";
 import { useParams, useNavigate } from "react-router-dom";
-
+import { toast } from "react-toastify";
 export default function MarkedQuestion() {
   const [marksBySystem, setMarksBySystem] = useState({});
   const [systemNames, setSystemNames] = useState([]);
@@ -53,8 +53,8 @@ export default function MarkedQuestion() {
 
   const fetchTestDataForQuestion = async (testId, questionId) => {
     try {
-      // جيب بيانات الـ test من API بناءً على testId
-      const response = await fetch(`${API_BASE_URL}/test/preview/${testId}/`, {
+      const response = await fetch(`${API_BASE_URL}/get-question/${testId}/?id_question=${questionId}`
+, {
         headers: {
           Authorization: authToken,
         },
@@ -79,13 +79,11 @@ export default function MarkedQuestion() {
       const formattedData = { test_id: testId, questions: [question] }; // فقط السؤال المحدد
       localStorage.setItem("testData", JSON.stringify(formattedData));
 
-      // تنظيف البيانات القديمة
       localStorage.removeItem("selectedAnswers");
       localStorage.removeItem("submittedQuestions");
       localStorage.removeItem("results");
       localStorage.removeItem("currentQuestionIndex");
 
-      // تحديث selectedAnswers و results بناءً على user_answer لو موجود
       let selectedAnswersObj = {};
       let resultsObj = {};
       if (question.user_answer) {
@@ -120,7 +118,7 @@ export default function MarkedQuestion() {
       localStorage.setItem("selectedAnswers", JSON.stringify(selectedAnswersObj));
       localStorage.setItem("results", JSON.stringify(resultsObj));
       localStorage.setItem("submittedQuestions", JSON.stringify({ [question.id]: !!question.user_answer }));
-      localStorage.setItem("currentQuestionIndex", "0"); // يبدأ من السؤال الأول (الوحيد هنا)
+      localStorage.setItem("currentQuestionIndex", "0"); 
 
     } catch (err) {
       console.error("Error fetching test data for question:", err);
