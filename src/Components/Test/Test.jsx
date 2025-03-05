@@ -326,6 +326,10 @@ export default function Test() {
       };
       setSubmittedQuestions(newSubmitted);
       localStorage.setItem("submittedQuestions", JSON.stringify(newSubmitted));
+      
+      const correctAnswerId = data.answer["correct answer"];
+      const correctAnswerText = data.answer["correctAnswerText"] || "N/A";
+      const correctAnswerLetter = data.answer["correctAnswerLetter"] || "N/A";
   
       const explanation = data[0].explantions[0];
       const imagePath = explanation.image ? explanation.image : null;
