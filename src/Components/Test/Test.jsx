@@ -975,6 +975,58 @@ export default function Test() {
       <div>No question data available</div>
     )}
   </div>
+  {/* Explanation Section for Timed Mode */}
+        {mode === "timed" && submittedQuestions[currentQuestion?.id] && questionResult && (
+          <div className={separateView ? 'col-span-1' : 'mt-4'}>
+            <div className="p-3 border-t w-full">
+              <h3 className="font-bold text-2xl text-blue-600">Explanation:</h3>
+              {questionResult?.image && (
+                <img
+                  src={questionResult.image}
+                  alt="explanation"
+                  className="w-[750px] h-[500px] mt-2 mx-auto cursor-pointer"
+                  onClick={() => openModal(questionResult.image)}
+                />
+              )}
+              <div className="text-gray-700 mt-2">
+                {(() => {
+                  const imagesArray = [
+                    questionResult?.text_image1,
+                    questionResult?.text_image2,
+                    questionResult?.text_image3,
+                    questionResult?.text_image4,
+                    questionResult?.text_image5,
+                    questionResult?.text_image6,
+                  ].filter((image) => image);
+                  let underlineCounter = 0;
+
+                  if (!questionResult?.content) return <p>No explanation available.</p>;
+
+                  return parse(questionResult.content, {
+                    replace: (domNode) => {
+                      if (domNode.type === "tag" && domNode.name === "u") {
+                        const currentImage = imagesArray[underlineCounter];
+                        underlineCounter++;
+                        if (currentImage) {
+                          return (
+                            <u
+                              className="cursor-pointer text-blue-500 underline"
+                              onClick={() => openModal(currentImage)}
+                            >
+                              {domToReact(domNode.children)}
+                            </u>
+                          );
+                        }
+                        return <u>{domToReact(domNode.children)}</u>;
+                      }
+                      return undefined;
+                    },
+                  });
+                })()}
+              </div>
+            </div>
+          </div>
+        )}
 
   {/* Explanation Section */}
 {questionResult && !isViewResults && mode !== "timed" && (
