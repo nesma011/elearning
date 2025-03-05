@@ -152,18 +152,27 @@ const TestCard = () => {
           return;
         }
         
+        const correctAnswer = question.answers.find(a => a.is_correct) || { id: null };
+        
         if (question.user_answer) {
           selectedAnswersObj[question.id] = question.user_answer;
           submittedQuestionsObj[question.id] = true;
   
           if (question.explantions && question.explantions.length > 0) {
-            const correctAnswer = question.answers.find(a => a.is_correct);
             resultsObj[question.id] = {
-              status: question.answers.find(a => a.id === question.user_answer)?.is_correct,
-              correctAnswer: correctAnswer ? correctAnswer.id : null,
-              content: question.explantions[0].content,
-              image: question.explantions[0].image,
+              status: question.answers.find(a => a.id === question.user_answer)?.is_correct || false,
+              correctAnswer: correctAnswer.id,
+              content: question.explantions[0].content || "No explanation available",
+              image: question.explantions[0].image || null,
               rate_answer: {} 
+            };
+          } else {
+            resultsObj[question.id] = {
+              status: question.answers.find(a => a.id === question.user_answer)?.is_correct || false,
+              correctAnswer: correctAnswer.id,
+              content: "No explanation available",
+              image: null,
+              rate_answer: {}
             };
           }
         }
@@ -254,21 +263,34 @@ const TestCard = () => {
       const formattedData = { test_id: test.id, questions: data };
       localStorage.setItem("resultData", JSON.stringify(formattedData));
   
-      // استخراج الإجابات والنتائج من البيانات
       let selectedAnswersObj = {};
       let resultsObj = {};
+  
       data.forEach((question) => {
-        if (question.user_answer) {
-          selectedAnswersObj[question.id] = question.user_answer;
-          if (question.explantions && question.explantions.length > 0) {
-            const correctAnswer = question.answers.find(a => a.is_correct);
-            resultsObj[question.id] = {
-              status: question.answers.find(a => a.id === question.user_answer)?.is_correct,
-              correctAnswer: correctAnswer ? correctAnswer.id : null,
-              content: question.explantions[0].content,
-              image: question.explantions[0].image,
-            };
-          }
+        if (!question || typeof question.id === 'undefined') {
+          console.error('Malformed question data:', question);
+          return;
+        }
+  
+        const correctAnswer = question.answers.find(a => a.is_correct) || { id: null };
+        const userAnswerId = question.user_answer || null;
+  
+        selectedAnswersObj[question.id] = userAnswerId;
+  
+        if (question.explantions && question.explantions.length > 0) {
+          resultsObj[question.id] = {
+            status: userAnswerId ? question.answers.find(a => a.id === userAnswerId)?.is_correct || false : null,
+            correctAnswer: correctAnswer.id,
+            content: question.explantions[0].content || "No explanation available",
+            image: question.explantions[0].image || null,
+          };
+        } else {
+          resultsObj[question.id] = {
+            status: userAnswerId ? question.answers.find(a => a.id === userAnswerId)?.is_correct || false : null,
+            correctAnswer: correctAnswer.id,
+            content: "No explanation available",
+            image: null,
+          };
         }
       });
   
@@ -280,7 +302,7 @@ const TestCard = () => {
         state: {
           mode: test.type_test === "time_mode" ? "timed" : "regular",
           totalTime: test.type_test === "time_mode" ? (parseInt(test.time) / 60) : undefined,
-          viewResults: true // للإشارة إلى أننا في وضع عرض النتائج
+          viewResults: true
         }
       });
     } catch (error) {

@@ -437,6 +437,7 @@ export default function Test() {
       localStorage.removeItem("savedAnswers")
       localStorage.removeItem("submittedQuestions")
       localStorage.removeItem("results")
+      localStorage.removeItem("currentQuestionIndex")
       navigate(`/createTest/${yearId}`);
     } catch (error) {
       console.error("Error in handleEndBlock:", error);
@@ -448,6 +449,8 @@ export default function Test() {
       localStorage.removeItem("savedAnswers")
       localStorage.removeItem("submittedQuestions")
       localStorage.removeItem("results")
+      localStorage.removeItem("currentQuestionIndex")
+
     }
   };
 
