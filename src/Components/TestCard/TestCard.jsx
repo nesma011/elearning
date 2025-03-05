@@ -120,7 +120,6 @@ const TestCard = () => {
   };
 
   const handleResume = async (test) => {
-    // تنظيف الـ localStorage قبل كتابة البيانات الجديدة
     localStorage.removeItem("resultData");
     localStorage.removeItem("selectedAnswers");
     localStorage.removeItem("submittedQuestions");
@@ -340,6 +339,7 @@ const TestCard = () => {
     }
   };
 
+  
 
 
   if (loading) {
@@ -404,7 +404,7 @@ const TestCard = () => {
                         </div>
                       </div>
                     </div>
-
+                
                     <div className="text-center mb-4 dark:text-gray-300">
                       Total Questions: {test.count_question || 0}
                     </div>

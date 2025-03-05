@@ -50,10 +50,93 @@ export default function MarkedQuestion() {
   };
 
   const navigate = useNavigate();
+
+  const fetchTestDataForQuestion = async (testId, questionId) => {
+    try {
+      // جيب بيانات الـ test من API بناءً على testId
+      const response = await fetch(`${API_BASE_URL}/test/preview/${testId}/`, {
+        headers: {
+          Authorization: authToken,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch test data: ${response.status}`);
+      }
+
+      const testData = await response.json();
+      if (!Array.isArray(testData) || testData.length === 0) {
+        throw new Error("No test data found");
+      }
+
+      // فلتر الـ questions عشان نلاقي السؤال المحدد بناءً على questionId
+      const question = testData.find(q => q.id === questionId);
+      if (!question) {
+        throw new Error(`Question with ID ${questionId} not found in test ${testId}`);
+      }
+
+      // تخزين بيانات الـ test كـ array في testData
+      const formattedData = { test_id: testId, questions: [question] }; // فقط السؤال المحدد
+      localStorage.setItem("testData", JSON.stringify(formattedData));
+
+      // تنظيف البيانات القديمة
+      localStorage.removeItem("selectedAnswers");
+      localStorage.removeItem("submittedQuestions");
+      localStorage.removeItem("results");
+      localStorage.removeItem("currentQuestionIndex");
+
+      // تحديث selectedAnswers و results بناءً على user_answer لو موجود
+      let selectedAnswersObj = {};
+      let resultsObj = {};
+      if (question.user_answer) {
+        selectedAnswersObj[question.id] = question.user_answer;
+        const correctAnswer = question.answers.find(a => a.is_correct) || { id: null };
+        if (question.explantions && question.explantions.length > 0) {
+          const explanation = question.explantions[0];
+          resultsObj[question.id] = {
+            status: question.answers.find(a => a.id === question.user_answer)?.is_correct || false,
+            correctAnswer: correctAnswer.id,
+            content: explanation.content || "No explanation available",
+            image: explanation.image ? `${API_BASE_URL}${explanation.image}` : null,
+            rate_answer: {},
+            text_image1: explanation.text_image1 ? `${API_BASE_URL}${explanation.text_image1}` : null,
+            text_image2: explanation.text_image2 ? `${API_BASE_URL}${explanation.text_image2}` : null,
+            text_image3: explanation.text_image3 ? `${API_BASE_URL}${explanation.text_image3}` : null,
+            text_image4: explanation.text_image4 ? `${API_BASE_URL}${explanation.text_image4}` : null,
+            text_image5: explanation.text_image5 ? `${API_BASE_URL}${explanation.text_image5}` : null,
+            text_image6: explanation.text_image6 ? `${API_BASE_URL}${explanation.text_image6}` : null,
+          };
+        } else {
+          resultsObj[question.id] = {
+            status: question.answers.find(a => a.id === question.user_answer)?.is_correct || false,
+            correctAnswer: correctAnswer.id,
+            content: "No explanation available",
+            image: null,
+            rate_answer: {},
+          };
+        }
+      }
+
+      localStorage.setItem("selectedAnswers", JSON.stringify(selectedAnswersObj));
+      localStorage.setItem("results", JSON.stringify(resultsObj));
+      localStorage.setItem("submittedQuestions", JSON.stringify({ [question.id]: !!question.user_answer }));
+      localStorage.setItem("currentQuestionIndex", "0"); // يبدأ من السؤال الأول (الوحيد هنا)
+
+    } catch (err) {
+      console.error("Error fetching test data for question:", err);
+      toast.error("Failed to load question data. Please try again.");
+    }
+  };
+
   const navigateToQuestion = (testId, questionId) => {
-    navigate({
-      pathname: `/test/${yearId}/`,
-      state: { testId, questionId, mode: "regular" }
+    fetchTestDataForQuestion(testId, questionId).then(() => {
+      navigate({
+        pathname: `/test/${yearId}/`,
+        state: { testId, questionId, mode: "regular" }
+      });
+    }).catch((err) => {
+      console.error("Navigation error:", err);
+      toast.error("Failed to navigate to question. Please try again.");
     });
   };
 
