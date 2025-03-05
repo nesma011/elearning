@@ -1077,51 +1077,54 @@ export default function Test() {
 )}
 
 {/* Explanation Section in View Results */}
-{isViewResults && (
+{isViewResults && currentQuestion && results[currentQuestion.id] && (
   <div className="mt-4">
-    {testData.questions.map((question) => (
-      results[question.id] && (
-        <div key={question.id} className="p-3 border-t w-full">
-          <h3 className="font-bold text-xl">Question {question.id} Explanation:</h3>
-          {results[question.id]?.image && (
-            <img src={results[question.id].image} className="w-[750px] h-[500px] mt-2 mx-auto" />
-          )}
-          <div className="text-gray-700 mt-2">
-            {(() => {
-              const imagesArray = [
-                results[question.id]?.text_image1,
-                results[question.id]?.text_image2,
-                results[question.id]?.text_image3,
-                results[question.id]?.text_image4,
-                results[question.id]?.text_image5,
-                results[question.id]?.text_image6,
-              ].filter((image) => image);
-              let underlineCounter = 0;
+    <div className="p-3 border-t w-full">
+      <h3 className="font-bold text-xl">Question {currentQuestion.id} Explanation:</h3>
+      {results[currentQuestion.id]?.image && (
+        <img
+          src={results[currentQuestion.id].image}
+          className="w-[750px] h-[500px] mt-2 mx-auto cursor-pointer"
+          onClick={() => openModal(results[currentQuestion.id].image)}
+        />
+      )}
+      <div className="text-gray-700 mt-2">
+        {(() => {
+          const imagesArray = [
+            results[currentQuestion.id]?.text_image1,
+            results[currentQuestion.id]?.text_image2,
+            results[currentQuestion.id]?.text_image3,
+            results[currentQuestion.id]?.text_image4,
+            results[currentQuestion.id]?.text_image5,
+            results[currentQuestion.id]?.text_image6,
+          ].filter((image) => image);
+          let underlineCounter = 0;
 
-              if (!results[question.id]?.content) return <p>No explanation available.</p>;
+          if (!results[currentQuestion.id]?.content) return <p>No explanation available.</p>;
 
-              return parse(results[question.id].content, {
-                replace: (domNode) => {
-                  if (domNode.type === "tag" && domNode.name === "u") {
-                    const currentImage = imagesArray[underlineCounter];
-                    underlineCounter++;
-                    if (currentImage) {
-                      return (
-                        <u className="cursor-pointer text-blue-500 underline" onClick={() => openModal(currentImage)}>
-                          {domToReact(domNode.children)}
-                        </u>
-                      );
-                    }
-                    return <u>{domToReact(domNode.children)}</u>;
-                  }
-                  return undefined;
-                },
-              });
-            })()}
-          </div>
-        </div>
-      )
-    ))}
+          return parse(results[currentQuestion.id].content, {
+            replace: (domNode) => {
+              if (domNode.type === "tag" && domNode.name === "u") {
+                const currentImage = imagesArray[underlineCounter];
+                underlineCounter++;
+                if (currentImage) {
+                  return (
+                    <u
+                      className="cursor-pointer text-blue-500 underline"
+                      onClick={() => openModal(currentImage)}
+                    >
+                      {domToReact(domNode.children)}
+                    </u>
+                  );
+                }
+                return <u>{domToReact(domNode.children)}</u>;
+              }
+              return undefined;
+            },
+          });
+        })()}
+      </div>
+    </div>
   </div>
 )}
 

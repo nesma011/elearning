@@ -260,6 +260,7 @@ const TestCard = () => {
         return;
       }
   
+      // تنظيف الـ localStorage قبل كتابة البيانات الجديدة
       localStorage.removeItem("resultData");
       localStorage.removeItem("selectedAnswers");
       localStorage.removeItem("results");
@@ -279,8 +280,10 @@ const TestCard = () => {
         }
   
         const correctAnswer = question.answers.find(a => a.is_correct) || { id: null };
-        const userAnswerId = question.user_answer || null; 
+        // استخدام user_answer لو موجود، لو لا نستخدم null
+        const userAnswerId = question.user_answer || null;
   
+        // لو user_answer موجود، نضعه في selectedAnswers
         selectedAnswersObj[question.id] = userAnswerId;
   
         if (question.explantions && question.explantions.length > 0) {
