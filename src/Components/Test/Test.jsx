@@ -300,8 +300,10 @@ export default function Test() {
     try {
       setLoading(true);
   
+      console.log("Updating test time for test ID:", testData.test_id, "with time left:", timeLeft);
       await updateTestTime(testData.test_id, timeLeft);
   
+      console.log("Fetching results for test ID:", testData.test_id);
       const response = await fetch(`${API_BASE_URL}/get-result-time-mode/${testData.test_id}/`, {
         method: 'GET',
         headers: {
@@ -325,6 +327,29 @@ export default function Test() {
       if (!questionData) {
         throw new Error(`Question with ID ${questionId} not found in the response`);
       }
+      console.log("Found question data:", questionData);
+  
+      // Check if answers array exists and find the correct answer
+      if (!questionData.answers || !Array.isArray(questionData.answers)) {
+        throw new Error(`Answers array is missing or invalid for question ID ${questionId}`);
+      }
+      const correctAnswer = questionData.answers.find(answer => answer.is_correct);
+      if (!correctAnswer) {
+        throw new Error(`No correct answer found for question ID ${questionId}`);
+      }
+      console.log("Correct answer:", correctAnswer);
+  
+      const correctAnswerId = correctAnswer.id;
+      const correctAnswerText = correctAnswer.text || "N/A";
+      const correctAnswerLetter = correctAnswer.letter || "N/A";
+  
+      // Check if explanations array exists and get the first explanation
+      if (!questionData.explantions || !Array.isArray(questionData.explantions) || questionData.explantions.length === 0) {
+        throw new Error(`No explanations found for question ID ${questionId}`);
+      }
+      const explanation = questionData.explantions[0];
+      const imagePath = explanation.image ? explanation.image : null;
+      console.log("Explanation:", explanation);
   
       const newSubmitted = {
         ...submittedQuestions,
@@ -332,23 +357,6 @@ export default function Test() {
       };
       setSubmittedQuestions(newSubmitted);
       localStorage.setItem("submittedQuestions", JSON.stringify(newSubmitted));
-  
-      // Find the correct answer from the answers array of the specific question
-      const correctAnswer = questionData.answers.find(answer => answer.is_correct);
-      if (!correctAnswer) {
-        throw new Error(`No correct answer found for question ID ${questionId}`);
-      }
-  
-      const correctAnswerId = correctAnswer.id;
-      const correctAnswerText = correctAnswer.text || "N/A";
-      const correctAnswerLetter = correctAnswer.letter || "N/A";
-  
-      // Get the explanation for the specific question (assuming one explanation per question)
-      const explanation = questionData.explantions[0];
-      if (!explanation) {
-        throw new Error(`No explanation found for question ID ${questionId}`);
-      }
-      const imagePath = explanation.image ? explanation.image : null;
   
       const newResults = {
         ...results,
@@ -358,7 +366,7 @@ export default function Test() {
           correctAnswerLetter,
           content: explanation.content || "",
           image: imagePath,
-          rate_answer: questionData.rate_answer || null, // If rate_answer is expected
+          rate_answer: questionData.rate_answer || null,
           text_image1: explanation.text_image1 || null,
           text_image2: explanation.text_image2 || null,
           text_image3: explanation.text_image3 || null,
@@ -370,11 +378,12 @@ export default function Test() {
   
       setResults(newResults);
       localStorage.setItem("results", JSON.stringify(newResults));
+      console.log("Results updated successfully for question ID:", questionId);
     } catch (err) {
-      console.error('Submit answer error:', err);
-      alert('Error submitting answer. Check console for details.');
+      console.error('Submit answer error:', err.message, err.stack);
+      alert('Error submitting answer: ' + err.message);
     } finally {
-      setLoading(false); // Reset loading state
+      setLoading(false);
     }
   };
 
