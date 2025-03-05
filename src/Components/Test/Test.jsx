@@ -420,7 +420,12 @@ export default function Test() {
         throw new Error(errorData.message || `Error: ${response.status}`);
       }
   
-      localStorage.clear();
+      localStorage.removeItem(testData);
+      localStorage.removeItem(resultDataParsed)
+      localStorage.removeItem(selectedAnswers)
+      localStorage.removeItem(savedAnswers)
+      localStorage.removeItem(submittedQuestions)
+      localStorage.removeItem(results)
       navigate(`/createTest/${yearId}`);
     } catch (error) {
       console.error("Error in handleEndBlock:", error);
