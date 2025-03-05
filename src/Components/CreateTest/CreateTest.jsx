@@ -293,23 +293,13 @@ export default function CreateTest() {
   };
 
   const handleSystemChange = (systemId) => {
-    const system = systems.find(s => s.id === systemId);
-    if (!system || !system.open_user) return;
-  
     if (selectedSystems.includes(systemId)) {
       setSelectedSystems(prev => prev.filter(id => id !== systemId));
-      if (system.subtitles) {
-        const systemSubtitleIds = system.subtitles.map(sub => sub.id);
-        setSelectedSubtitles(prev => prev.filter(id => !systemSubtitleIds.includes(id)));
-      }
     } else {
       setSelectedSystems(prev => [...prev, systemId]);
-      if (system.subtitles) {
-        const systemSubtitleIds = system.subtitles.map(sub => sub.id);
-        setSelectedSubtitles(prev => Array.from(new Set([...prev, ...systemSubtitleIds])));
-      }
     }
   };
+  
 
   const toggleSubtitles = (systemId) => {
     setOpenSystems(prev => ({ ...prev, [systemId]: !prev[systemId] }));
@@ -340,22 +330,15 @@ export default function CreateTest() {
   };
 
   const handleAllSystemsChange = () => {
-    const approvedSystemIds = systems
-      .filter(system => system.open_user)
-      .map(system => system.id);
-
+    const approvedSystemIds = systems.filter(system => system.open_user).map(system => system.id);
+  
     if (selectedSystems.length === approvedSystemIds.length) {
       setSelectedSystems([]);
-      setSelectedSubtitles([]);
     } else {
       setSelectedSystems(approvedSystemIds);
-      setSelectedSubtitles(
-        systems.flatMap(system =>
-          system.open_user && system.subtitles ? system.subtitles.map(sub => sub.id) : []
-        )
-      );
     }
   };
+  
 
   const handleRequest = async (systemId) => {
     if (systemRequests[systemId] === "pending" || systemRequests[systemId] === "approved") return;
