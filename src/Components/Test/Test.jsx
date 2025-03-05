@@ -327,7 +327,7 @@ export default function Test() {
         const explantions = item.explantions || [];
         const explantionObj = explantions.length > 0 ? explantions[0] : null;
         const imagePath = explantionObj && explantionObj.image 
-          ? `${API_BASE_URL}${explantionObj.image.startsWith('/') ? '' : '/'}${explantionObj.image}` 
+          ? `${explantionObj.image.startsWith('/') ? '' : '/'}${explantionObj.image}` 
           : null;
          
       
