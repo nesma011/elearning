@@ -320,58 +320,39 @@ export default function Test() {
         throw new Error("API response is not an array");
       }
   
-      const newResults = {};
+     const newSubmitted = {
+        ...submittedQuestions,
+        [questionId]: true
+      };
+      setSubmittedQuestions(newSubmitted);
+      localStorage.setItem("submittedQuestions", JSON.stringify(newSubmitted));
   
-      data.forEach(item => {
-        const questionId = item.id;
-        const explantions = item.explantions || [];
-        const explantionObj = explantions.length > 0 ? explantions[0] : null;
-        const imagePath = explantionObj && explantionObj.image 
-          ? `${explantionObj.image}` 
-          : null;
-          console.log("Explantion Image Path:", imagePath);
-
-      
-          newResults[questionId] = {
-            status: selectedAnswers[questionId] === correctAnswerId ? "correct" : "incorrect",
-            correctAnswer: correctAnswerId,
-            correctAnswerText,
-            correctAnswerLetter,
-            content: explantionObj ? explantionObj.content : "",
-            image: imagePath,
-            text_image1: explantionObj?.text_image1 || null,
-            text_image2: explantionObj?.text_image2 || null,
-            text_image3: explantionObj?.text_image3 || null,
-            text_image4: explantionObj?.text_image4 || null,
-            text_image5: explantionObj?.text_image5 || null,
-            text_image6: explantionObj?.text_image6 || null,
-          };
-      });
+      const imagePath = data.image ? `${data.image}` : null;
+      console.log("Explantion Image Path:", imagePath);
+      const newResults = {
+        ...results,
+        [questionId]: {
+          status: data.answer.status,
+          correctAnswer: correctAnswerId,
+          correctAnswerText,
+          correctAnswerLetter,
+          content: data.content || "",
+          image: imagePath,
+          rate_answer: data.rate_answer,
+          text_image1: data.text_image1 || null,
+          text_image2: data.text_image2 || null,
+          text_image3: data.text_image3 || null,
+          text_image4: data.text_image4 || null,
+          text_image5: data.text_image5 || null,
+          text_image6: data.text_image6 || null,
+        }
+      };
   
-      console.log("New Results:", newResults);
-      console.log("Full Image Path:", `${API_BASE_URL}${currentQuestion.image}`);
-      console.log("Question Result Image:", questionResult?.image);
       setResults(newResults);
       localStorage.setItem("results", JSON.stringify(newResults));
-  
-      const allSubmitted = {};
-      testData.questions.forEach(question => {
-        if (question.id) {
-          allSubmitted[question.id] = true;
-        }
-      });
-      setSubmittedQuestions(allSubmitted);
-      localStorage.setItem("submittedQuestions", JSON.stringify(allSubmitted));
-  
-      setCurrentQuestionIndex(0);
-      localStorage.setItem("currentQuestionIndex", "0");
-  
-      toast.success("Test completed! Showing results.");
-      setLoading(false);
     } catch (err) {
-      console.error('Submit test error:', err);
-      toast.error('Error submitting test. Please try again.');
-      setLoading(false);
+      console.error('Submit answer error:', err);
+      alert('Error submitting answer. Check console for details.');
     }
   };
 
