@@ -225,7 +225,7 @@ export default function Test() {
       setSubmittedQuestions(newSubmitted);
       localStorage.setItem("submittedQuestions", JSON.stringify(newSubmitted));
   
-      const imagePath = data.image ? `${data.image.startsWith('/') ? '' : '/'}${data.image}` : null;
+      const imagePath = data.image ? `${data.image}` : null;
       console.log("Explantion Image Path:", imagePath);
       const newResults = {
         ...results,
@@ -327,9 +327,10 @@ export default function Test() {
         const explantions = item.explantions || [];
         const explantionObj = explantions.length > 0 ? explantions[0] : null;
         const imagePath = explantionObj && explantionObj.image 
-          ? `${explantionObj.image.startsWith('/') ? '' : '/'}${explantionObj.image}` 
+          ? `${explantionObj.image}` 
           : null;
-         
+          console.log("Explantion Image Path:", imagePath);
+
       
           newResults[questionId] = {
             status: selectedAnswers[questionId] === correctAnswerId ? "correct" : "incorrect",
