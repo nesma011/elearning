@@ -260,6 +260,12 @@ const TestCard = () => {
         return;
       }
   
+      localStorage.removeItem("resultData");
+      localStorage.removeItem("selectedAnswers");
+      localStorage.removeItem("results");
+      localStorage.removeItem("submittedQuestions");
+      localStorage.removeItem("currentQuestionIndex");
+  
       const formattedData = { test_id: test.id, questions: data };
       localStorage.setItem("resultData", JSON.stringify(formattedData));
   
@@ -273,7 +279,7 @@ const TestCard = () => {
         }
   
         const correctAnswer = question.answers.find(a => a.is_correct) || { id: null };
-        const userAnswerId = question.user_answer || null;
+        const userAnswerId = question.user_answer || null; 
   
         selectedAnswersObj[question.id] = userAnswerId;
   
@@ -282,7 +288,13 @@ const TestCard = () => {
             status: userAnswerId ? question.answers.find(a => a.id === userAnswerId)?.is_correct || false : null,
             correctAnswer: correctAnswer.id,
             content: question.explantions[0].content || "No explanation available",
-            image: question.explantions[0].image || null,
+            image: question.explantions[0].image ? `${API_BASE_URL}${question.explantions[0].image}` : null,
+            text_image1: question.explantions[0].text_image1 ? `${API_BASE_URL}${question.explantions[0].text_image1}` : null,
+            text_image2: question.explantions[0].text_image2 ? `${API_BASE_URL}${question.explantions[0].text_image2}` : null,
+            text_image3: question.explantions[0].text_image3 ? `${API_BASE_URL}${question.explantions[0].text_image3}` : null,
+            text_image4: question.explantions[0].text_image4 ? `${API_BASE_URL}${question.explantions[0].text_image4}` : null,
+            text_image5: question.explantions[0].text_image5 ? `${API_BASE_URL}${question.explantions[0].text_image5}` : null,
+            text_image6: question.explantions[0].text_image6 ? `${API_BASE_URL}${question.explantions[0].text_image6}` : null,
           };
         } else {
           resultsObj[question.id] = {
