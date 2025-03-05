@@ -159,9 +159,11 @@ const TestCard = () => {
         
         const correctAnswer = question.answers.find(a => a.is_correct) || { id: null };
         
+        // دايماً نعالج كل سؤال، مش بس لو فيه user_answer
         const userAnswerId = question.user_answer || null;
         selectedAnswersObj[question.id] = userAnswerId;
   
+        // لو فيه user_answer، السؤال اتسجل، فهنضع true
         if (userAnswerId) {
           submittedQuestionsObj[question.id] = true;
         }
