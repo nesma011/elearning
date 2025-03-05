@@ -974,7 +974,7 @@ export default function Test() {
         <h3 className="font-bold text-2xl text-blue-600">Explanation:</h3>
         {questionResult?.image && (
           <img
-             src={`${API_BASE_URL}${questionResult.image}`}
+             src={questionResult.image}
             alt="explantion"
             className="w-[750px] h-[500px] mt-2 mx-auto cursor-pointer"
             onClick={() => openModal(questionResult.image)}
