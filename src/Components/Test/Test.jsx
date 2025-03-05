@@ -295,7 +295,7 @@ export default function Test() {
     }
   };
 
-  const handleSubmitTimeMode = async () => {
+  const handleSubmitTimeMode = async (questionId) => {
     setIsPaused(true);
     try {
       setLoading(true);
