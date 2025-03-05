@@ -420,23 +420,23 @@ export default function Test() {
         throw new Error(errorData.message || `Error: ${response.status}`);
       }
   
-      localStorage.removeItem(testData);
-      localStorage.removeItem(resultDataParsed)
-      localStorage.removeItem(selectedAnswers)
-      localStorage.removeItem(savedAnswers)
-      localStorage.removeItem(submittedQuestions)
-      localStorage.removeItem(results)
+      localStorage.removeItem("testData");
+      localStorage.removeItem("resultDataParsed")
+      localStorage.removeItem("selectedAnswers")
+      localStorage.removeItem("savedAnswers")
+      localStorage.removeItem("submittedQuestions")
+      localStorage.removeItem("results")
       navigate(`/createTest/${yearId}`);
     } catch (error) {
       console.error("Error in handleEndBlock:", error);
       toast.error("An error occurred. Please try again later.");
     }finally{
-      localStorage.removeItem(testData);
-      localStorage.removeItem(resultDataParsed)
-      localStorage.removeItem(selectedAnswers)
-      localStorage.removeItem(savedAnswers)
-      localStorage.removeItem(submittedQuestions)
-      localStorage.removeItem(results)
+      localStorage.removeItem("testData");
+      localStorage.removeItem("resultDataParsed")
+      localStorage.removeItem("selectedAnswers")
+      localStorage.removeItem("savedAnswers")
+      localStorage.removeItem("submittedQuestions")
+      localStorage.removeItem("results")
     }
   };
 
