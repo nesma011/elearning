@@ -55,7 +55,7 @@ export default function Navbar() {
     }
   };
 
-  const navItems = isTokenValid() ? ["Home", "Resume", "Contact"] : ["Home", "Contact"];
+  const navItems = isTokenValid() ? ["Home", "Classes", "Contact"] : ["Home", "Contact"];
 
   return (
     <nav className="bg-gray-100 shadow-lg shadow-blue-200 dark:bg-gray-900 fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
