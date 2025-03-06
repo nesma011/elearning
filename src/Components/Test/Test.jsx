@@ -878,11 +878,12 @@ export default function Test() {
             Your browser does not support the audio element.
           </audio>
         )}
-        {currentQuestion.groupIndex === 1 && (
+           {/*        {currentQuestion.groupIndex === 1 && (
   <p className="text-lg font-semibold mb-2 text-gray-700">
     The following vignette applies to the next {currentQuestion.groupSize} items . The items in the set must be answered in sequential order.
   </p>
-)}
+     )} */}
+
 
 <p className="text-blue-700 font-bold mb-2">
   Item {currentQuestion.groupIndex} of {currentQuestion.groupSize}
