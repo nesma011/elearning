@@ -598,8 +598,8 @@ export default function Test() {
       onMouseUp={handleTextSelection}
       className="min-h-screen bg-gray-50 relative"
     >
-       <div className="absolute inset-0 flex justify-center items-center pointer-events-none z-0">
-    <span className="text-6xl text-blue-300 opacity-20">
+      <div className="fixed inset-0 flex justify-center items-center pointer-events-none z-0">
+      <span className="text-[10rem] text-gray-300 font-bold opacity-20 rotate-[-30deg] select-none">
       Alex-MedLearn
     </span>
   </div>
