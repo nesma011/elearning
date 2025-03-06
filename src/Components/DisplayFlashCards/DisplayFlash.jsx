@@ -126,13 +126,13 @@ export default function Displayflashcards() {
           >
             <h2 className="text-3xl font-bold mb-4">Flashcard Details</h2>
             <div className="mb-4">
-              <h3 className="text-xl font-semibold">Front</h3>
+              <h3 className="text-xl font-semibold">Question</h3>
               <p className="text-gray-700 dark:text-gray-300">
                 {selectedFlashcard.front_text}
               </p>
             </div>
             <div className="mb-4">
-              <h3 className="text-xl font-semibold">Back</h3>
+              <h3 className="text-xl font-semibold">Answer</h3>
               <p className="text-gray-700 dark:text-gray-300">
                 {selectedFlashcard.back_text}
               </p>
