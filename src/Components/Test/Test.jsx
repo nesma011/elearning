@@ -73,7 +73,7 @@ export default function Test() {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const token = localStorage.getItem("access_token");
     const questions = testData.questions || [];
-    
+
   //HIGH YIELD QUESTION
     useEffect(() => {
       const currentQuestion = questions[currentQuestionIndex];
@@ -596,8 +596,15 @@ export default function Test() {
     <section
       style={{ fontSize: `${fontSize}px` }}
       onMouseUp={handleTextSelection}
-      className="min-h-screen bg-gray-50"
+      className="min-h-screen bg-gray-50 relative"
     >
+       <div className="absolute inset-0 flex justify-center items-center pointer-events-none z-0">
+    <span className="text-6xl text-blue-300 opacity-20">
+      Alex-MedLearn
+    </span>
+  </div>
+  <div className="relative z-10">
+
       <nav className="bg-blue-800 w-full px-4 py-2 flex flex-col sm:flex-row sm:justify-between items-center">
         <div className="flex flex-col text-white mb-2 sm:mb-0">
           <span className="text-xl font-semibold">
@@ -1246,6 +1253,7 @@ export default function Test() {
           <LabValues />
         </div>
       )}
+      </div>
     </section>
   );
 }
