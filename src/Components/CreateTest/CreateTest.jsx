@@ -331,12 +331,97 @@ export default function CreateTest() {
         },
         body: JSON.stringify(bodyData),
       });
-  
+
       if (!response.ok) {
         throw new Error("Failed to create test");
       }
   
       const result = await response.json();
+      
+      function reorderLinkedPairs(questions) {
+        const byId = {};
+        questions.forEach((q) => {
+          byId[q.id] = q;
+        });
+      
+        const reordered = [];
+        const usedIds = new Set();
+      
+        for (let q of questions) {
+          if (usedIds.has(q.id)) continue;
+      
+          if (q.link_type !== "linked" || !q.linked_questions) {
+            reordered.push(q);
+            usedIds.add(q.id);
+      
+            const child = questions.find(
+              (x) => x.link_type === "linked" && x.linked_questions === q.id
+            );
+            if (child) {
+              reordered.push(child);
+              usedIds.add(child.id);
+            }
+          } else {
+            const parentId = q.linked_questions;
+            const parent = byId[parentId];
+      
+          if (parent && !usedIds.has(parent.id)) {
+              reordered.push(parent);
+              usedIds.add(parent.id);
+            }
+      
+            reordered.push(q);
+            usedIds.add(q.id);
+          }
+        }
+      
+        return reordered;
+      }
+      
+      function assignGroupData(questions) {
+        let i = 0;
+        while (i < questions.length) {
+          const parent = questions[i];
+          
+          if (parent.link_type !== 'linked') {
+      
+            let j = i + 1;
+            const children = [];
+            while (
+              j < questions.length &&
+              questions[j].link_type === 'linked' &&
+              questions[j].linked_questions === parent.id
+            ) {
+              children.push(questions[j]);
+              j++;
+            }
+            
+            const groupSize = 1 + children.length;
+            parent.groupSize = groupSize;
+            parent.groupIndex = 1;
+      
+            children.forEach((child, idx) => {
+              child.groupSize = groupSize;
+              child.groupIndex = idx + 2; 
+            });
+      
+            i = j;
+          } else {
+            
+            parent.groupSize = 1;
+            parent.groupIndex = 1;
+            i++;
+          }
+        }
+      
+        return questions;
+      }
+      
+      
+      const finalQuestions = reorderLinkedPairs(result.questions);
+      const withGroups = assignGroupData(finalQuestions);
+      result.questions = withGroups;
+
       const highYieldQuestions = result.questions?.filter(
         (question) => question.high_question === true
       ) || [];
@@ -345,7 +430,7 @@ export default function CreateTest() {
         toast.warning("No high yield questions found for the selected subtitles.");
         return;
       }
-  
+      
       localStorage.setItem("testData", JSON.stringify(result));
   
       navigate(`/test/${yearId}`, {
@@ -359,6 +444,7 @@ export default function CreateTest() {
           totalTime,
           createdTestId: result.test_id,
           isHighYield: showHighYield,
+          createdTestId: result.test_id,          
         },
       });
     } catch (error) {
@@ -368,6 +454,8 @@ export default function CreateTest() {
       setIsSubmitting(false);
     }
   };
+  
+ 
   
 
   if (!yearId) {
