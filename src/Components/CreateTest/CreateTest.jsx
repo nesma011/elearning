@@ -330,15 +330,16 @@ export default function CreateTest() {
   };
 
   const handleAllSystemsChange = () => {
-    const approvedSystemIds = systems.filter(system => system.open_user).map(system => system.id);
-  
-    if (selectedSystems.length === approvedSystemIds.length) {
+    const selectableSystemIds = systems
+      .filter(system => system.status === "free" || system.open_user === true)
+      .map(system => system.id);
+    
+    if (selectedSystems.length === selectableSystemIds.length) {
       setSelectedSystems([]);
     } else {
-      setSelectedSystems(approvedSystemIds);
+      setSelectedSystems(selectableSystemIds);
     }
-  };
-  
+  }
 
   const handleRequest = async (systemId) => {
     if (systemRequests[systemId] === "pending" || systemRequests[systemId] === "approved") return;
@@ -637,12 +638,12 @@ export default function CreateTest() {
                       <h2 className="text-xl font-bold">Choose System</h2>
                       <div className="flex items-center space-x-2">
                         <input
-                          type="checkbox"
-                          checked={
-                            selectedSystems.length === systems.filter(s => s.open_user).length &&
-                            systems.filter(s => s.open_user).length > 0
-                          }
-                          onChange={handleAllSystemsChange}
+                        type="checkbox"
+                        checked={
+                          selectedSystems.length === systems.filter(s => s.status === "free" || s.open_user === true).length &&
+                          systems.filter(s => s.status === "free" || s.open_user === true).length > 0
+                        }
+                        onChange={handleAllSystemsChange}
                           className="w-4 h-4"
                         />
                         <span>Check All Systems</span>
@@ -657,7 +658,7 @@ export default function CreateTest() {
                           <div className="flex items-center space-x-2">
                             <input
                               type="checkbox"
-                              disabled={!system.open_user}
+                              disabled={system.status !== "free" && system.open_user !== true}
                               checked={selectedSystems.includes(system.id)}
                               onChange={() => handleSystemChange(system.id)}
                               className="w-4 h-4"
@@ -671,8 +672,7 @@ export default function CreateTest() {
                             
                           </div>
                           <div className="flex items-center space-x-2">
-                          {system.open_user === true ? null : (
-                            <button
+                          {system.status === "paid" && system.open_user !== true && (                            <button
                               onClick={() => handleRequest(system.id)}
                               disabled={system.open_user === "waiting" || systemRequests[system.id] === "pending"}
                               className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-300"
