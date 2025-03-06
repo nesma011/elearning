@@ -338,7 +338,7 @@ export default function CreateTest() {
   
       const result = await response.json();
       
-    /*   function reorderLinkedPairs(questions) {
+      function reorderLinkedPairs(questions) {
         const byId = {};
         questions.forEach((q) => {
           byId[q.id] = q;
@@ -416,11 +416,11 @@ export default function CreateTest() {
       
         return questions;
       }
-       */
       
-    /*   const finalQuestions = reorderLinkedPairs(result.questions);
+      
+      const finalQuestions = reorderLinkedPairs(result.questions);
       const withGroups = assignGroupData(finalQuestions);
-      result.questions = withGroups; */
+      result.questions = withGroups;
 
       const highYieldQuestions = result.questions?.filter(
         (question) => question.high_question === true
