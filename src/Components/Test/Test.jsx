@@ -596,7 +596,7 @@ export default function Test() {
     <section
       style={{ fontSize: `${fontSize}px` }}
       onMouseUp={handleTextSelection}
-      className="min-h-screen bg-gray-50 relative"
+      className="min-h-screen bg-blue-200 relative"
     >
       <div className="fixed inset-0 flex justify-center items-center pointer-events-none z-0">
       <span className="text-[10rem] text-gray-300 font-bold opacity-20 rotate-[-30deg] select-none">
