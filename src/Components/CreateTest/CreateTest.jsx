@@ -195,11 +195,11 @@ export default function CreateTest() {
     const checked = e.target.checked;
     setShowHighYield(checked);
     if (checked) {
-      setShowIncorrect(false);
-      setShowUnanswered(false);
-      fetchHighYieldQuestions(); 
-    } else {
-      setSystems(allSystems);
+      setShowIncorrect(false); 
+      setShowUnanswered(false); 
+/*       fetchHighYieldCounts(); 
+ */    } else {
+      setSystems(allSystems); 
       setSelectedSystems([]);
       setSelectedSubtitles([]);
     }
@@ -207,67 +207,7 @@ export default function CreateTest() {
 
   
 
-  const fetchHighYieldQuestions = async () => {
-    if (selectedSubtitles.length === 0) {
-      toast.warning("Please select at least one subtitle first");
-      return;
-    }
-  
-    setIsLoading(true);
-    try {
-      const response = await fetch(`${API_BASE_URL}/Hight_heeld_question/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": authToken,
-        },
-        body: JSON.stringify({
-          id_subtitels: selectedSubtitles,
-          count: parseInt(questionCount) || 1,
-        }),
-      });
-  
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
-      }
-  
-      const data = await response.json();
-      const highYieldQuestions = data.questions?.filter(
-        (question) => question.high_question === true
-      ) || [];
-  
-      if (highYieldQuestions.length === 0) {
-        toast.warning("No high yield questions found for the selected subtitles.");
-        return;
-      }
-  
-      // حذف الرسالة من هنا
-      const filteredTestData = {
-        ...data,
-        questions: highYieldQuestions,
-        test_id: data.test_id,
-      };
-      localStorage.setItem("testData", JSON.stringify(filteredTestData));
-      navigate(`/test/${yearId}`, {
-        state: {
-          testName: testName || "High Yield Test",
-          selectedSubjects,
-          selectedSystems,
-          questionCount: highYieldQuestions.length,
-          selectedSubtitles,
-          mode,
-          totalTime: mode === "timed" ? highYieldQuestions.length * 1.5 : null,
-          createdTestId: data.test_id,
-          isHighYield: true,
-        },
-      });
-    } catch (error) {
-      console.error("Error fetching high yield questions:", error);
-      toast.error("Failed to fetch high yield questions");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+ 
 
   const handleSystemChange = (systemId) => {
     if (selectedSystems.includes(systemId)) {
@@ -358,37 +298,30 @@ export default function CreateTest() {
 
   const handleCreateTest = async (e) => {
     if (e) e.preventDefault();
-    if (isSubmitting) {
-      console.log("Already submitting, ignoring click");
-      return;
-    }
-    console.log("Starting submission");
-      
+    if (isSubmitting) return;
     setIsSubmitting(true);
+  
     try {
-      console.log("Preparing to submit with data:");
-
-      if (selectedSubjects.length === 0 || selectedSystems.length === 0 || !questionCount) return;
-        
+      if (selectedSubjects.length === 0 || selectedSystems.length === 0 || !questionCount) {
+        toast.warning("Please select subjects, systems, and question count");
+        return;
+      }
+  
       const parsedQuestionCount = parseInt(questionCount) || 1;
       const totalTime = mode === "timed" ? parsedQuestionCount * 1.5 : null;
   
       let createTestEndpoint = "";
-      if (showIncorrect) {
-        createTestEndpoint = `${API_BASE_URL}/create_Test_from_field_quetions/`;
-      } else if (showUnanswered) {
-        createTestEndpoint = `${API_BASE_URL}/create_Test_from_unanswer_quetions/`;
-      } else {
-        createTestEndpoint = `${API_BASE_URL}/test/create/`;
-      }
-  
-      const bodyData = {
+      let bodyData = {
         count: parsedQuestionCount,
         id_subtitels: selectedSubtitles,
-        type_test: mode === "timed" ? "time_mode" : "normal_test", 
+        type_test: mode === "timed" ? "time_mode" : "normal_test",
       };
   
-      console.log("Creating test with endpoint:", createTestEndpoint, "and body:", bodyData);
+      if (showHighYield) {
+        createTestEndpoint = `${API_BASE_URL}/Hight_heeld_question/`; // endpoint high yield
+      } else {
+        createTestEndpoint = `${API_BASE_URL}/test/create/`; // endpoint normal
+      }
   
       const response = await fetch(createTestEndpoint, {
         method: "POST",
@@ -400,60 +333,38 @@ export default function CreateTest() {
       });
   
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Test create error details:", errorText);
         throw new Error("Failed to create test");
       }
   
       const result = await response.json();
-      console.log("Test created:", result);
-      localStorage.setItem("testData", JSON.stringify(result));
-
-      // Check for high yield questions in the response
-      const hasHighYieldQuestions = result.questions && 
-        result.questions.some(question => question.high_question === true);
-
-      if (hasHighYieldQuestions) {
-        toast.info(
-          "⭐⭐⭐ HIGH YIELD QUESTIONS DETECTED! ⭐⭐⭐ These questions are particularly important for your exam.", 
-          {
-            position: "top-center",
-            autoClose: 60000, 
-            hideProgressBar: false,
-            closeOnClick: false,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            style: {
-              backgroundColor: '#ffc107',
-              color: '#000',
-              fontSize: '16px',
-              fontWeight: 'bold',
-              padding: '16px',
-              borderRadius: '8px',
-              boxShadow: '0 4px 8px rgba(0,0,0,0.2)'
-            }
-          }
-        );
+      const highYieldQuestions = result.questions?.filter(
+        (question) => question.high_question === true
+      ) || [];
+  
+      if (showHighYield && highYieldQuestions.length === 0) {
+        toast.warning("No high yield questions found for the selected subtitles.");
+        return;
       }
-        
+  
+      localStorage.setItem("testData", JSON.stringify(result));
+  
       navigate(`/test/${yearId}`, {
         state: {
-          testName,
+          testName: testName || "High Yield Test",
           selectedSubjects,
           selectedSystems,
-          questionCount: parsedQuestionCount,
-          selectedSubtitles: selectedSubtitles || [],
+          questionCount: showHighYield ? highYieldQuestions.length : parsedQuestionCount,
+          selectedSubtitles,
           mode,
           totalTime,
-          createdTestId: result?.test_id || null,
+          createdTestId: result.test_id,
+          isHighYield: showHighYield,
         },
       });
     } catch (error) {
-      console.error(error);
+      console.error("Error creating test:", error);
       toast.error("Failed to create test");
-    }
-    finally {
+    } finally {
       setIsSubmitting(false);
     }
   };
