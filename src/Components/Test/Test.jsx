@@ -879,7 +879,7 @@ export default function Test() {
           </audio>
         )}
          {currentQuestion.groupIndex === 1 && currentQuestion.groupSize > 1 && (
-  <p className="text-xl bg-gray-600 font-semibold mb-2 text-black rounded-xl p-2 ">
+  <p className="text-xl bg-gray-400 font-semibold mb-2 text-black rounded-xl p-2 ">
     The following vignette applies to the next {currentQuestion.groupSize} items. The items in the set must be answered in sequential order.
   </p>
              )}
