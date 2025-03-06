@@ -628,7 +628,8 @@ export default function CreateTest() {
                             onChange={() => handleSubjectChange(subject.id)}
                             className="w-4 h-4"
                           />
-                          
+                          <span>{subject.name}</span>
+
                           {showHighYield ? (
                             <span className="text-yellow-500 mx-2">
                               ({highYieldSubjectCounts[subject.id] || 0} High Yield)
