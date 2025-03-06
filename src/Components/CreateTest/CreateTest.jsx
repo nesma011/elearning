@@ -596,7 +596,10 @@ export default function CreateTest() {
                                     className="w-4 h-4"
                                   />
                                   <span className="text-sm text-gray-600 dark:text-gray-300">{subtitle.name}</span>
-                                </div>
+                                  <span className="text-xs text-green-600 ml-2">
+                                   ({subtitle.subtitles_remaining || 0})
+                                </span>
+                                  </div>
                               ))}
                             </div>
                           )}
