@@ -67,7 +67,6 @@ export default function Navbar() {
           </h1>
         </NavLink>
 
-        {/* عرض الروابط في الـ desktop view */}
         <div className="hidden md:flex flex-grow justify-center space-x-8">
           {navItems.map((item) => (
             <NavLink
@@ -132,7 +131,6 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* عرض الروابط في الـ mobile view */}
       {isOpen && (
         <div className="md:hidden absolute top-16 left-0 w-full bg-white dark:bg-gray-900 shadow-lg">
           <ul className="flex flex-col items-center space-y-4 py-4">
