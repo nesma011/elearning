@@ -72,6 +72,36 @@ export default function Test() {
 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const token = localStorage.getItem("access_token");
+    const questions = testData.questions || [];
+    
+  //HIGH YIELD QUESTION
+    useEffect(() => {
+      const currentQuestion = questions[currentQuestionIndex];
+      if (currentQuestion && currentQuestion.high_question === true) {
+        toast.info(
+          "⭐⭐⭐ HIGH YIELD QUESTION DETECTED! ⭐⭐⭐ This question is particularly important for your exam.",
+          {
+            position: "top-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            style: {
+              backgroundColor: "#ffc107",
+              color: "#000",
+              fontSize: "16px",
+              fontWeight: "bold",
+              padding: "16px",
+              borderRadius: "8px",
+              boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
+            },
+          }
+        );
+      }
+    }, [currentQuestionIndex, questions]);
+  
+  
 
   useEffect(() => {
     if (mode === 'timed' && totalTime) {

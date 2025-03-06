@@ -19,7 +19,8 @@ export default function CreateTest() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [systemRequests, setSystemRequests] = useState({});
-
+ /*  const [highYieldSubjectCounts, setHighYieldSubjectCounts] = useState({});
+  const [highYieldSystemCounts, setHighYieldSystemCounts] = useState({}); */
   const [showIncorrect, setShowIncorrect] = useState(false);
   const [showUnanswered, setShowUnanswered] = useState(false);
   const [showHighYield, setShowHighYield] = useState(false); 
@@ -32,8 +33,7 @@ export default function CreateTest() {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   let token = 
    localStorage.getItem("access_token") 
-
-
+ 
   const authToken = `Bearer ${token}`;
 
   useEffect(() => {
@@ -223,7 +223,7 @@ export default function CreateTest() {
         },
         body: JSON.stringify({
           id_subtitels: selectedSubtitles,
-          count: parseInt(questionCount) || 1
+          count: parseInt(questionCount) || 1,
         }),
       });
   
@@ -232,45 +232,21 @@ export default function CreateTest() {
       }
   
       const data = await response.json();
-      console.log("High Yield Questions Response:", data);
-  
-      const highYieldQuestions = data.questions?.filter(question => question.high_question === true) || [];
+      const highYieldQuestions = data.questions?.filter(
+        (question) => question.high_question === true
+      ) || [];
   
       if (highYieldQuestions.length === 0) {
         toast.warning("No high yield questions found for the selected subtitles.");
         return;
       }
   
-      toast.info(
-        "⭐⭐⭐ HIGH YIELD QUESTIONS DETECTED! ⭐⭐⭐ These questions are particularly important for your exam.", 
-        {
-          position: "top-center",
-          autoClose: 50000, 
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          style: {
-            backgroundColor: '#ffc107',
-            color: '#000',
-            fontSize: '16px',
-            fontWeight: 'bold',
-            padding: '16px',
-            borderRadius: '8px',
-            boxShadow: '0 4px 8px rgba(0,0,0,0.2)'
-          }
-        }
-      );
-  
       const filteredTestData = {
         ...data,
         questions: highYieldQuestions,
-        test_id: data.test_id 
+        test_id: data.test_id,
       };
-  
       localStorage.setItem("testData", JSON.stringify(filteredTestData));
-  
       navigate(`/test/${yearId}`, {
         state: {
           testName: testName || "High Yield Test",
@@ -281,7 +257,7 @@ export default function CreateTest() {
           mode,
           totalTime: mode === "timed" ? highYieldQuestions.length * 1.5 : null,
           createdTestId: data.test_id,
-          isHighYield: true
+          isHighYield: true,
         },
       });
     } catch (error) {
@@ -292,6 +268,34 @@ export default function CreateTest() {
     }
   };
 
+/*   useEffect(() => {
+    const fetchHighYieldCounts = async () => {
+      if (!showHighYield || !yearId) return;
+      try {
+        const response = await fetch(`${API_BASE_URL}/high_yield_counts/${yearId}/`, {
+          method: "GET",
+          headers: {
+            "Authorization": authToken,
+          },
+        });
+  
+        if (!response.ok) {
+          throw new Error(`Error fetching high yield counts: ${response.status}`);
+        }
+  
+        const data = await response.json();
+        setHighYieldSubjectCounts(data.subjects || {});
+        setHighYieldSystemCounts(data.systems || {});
+      } catch (error) {
+        console.error("Error fetching high yield counts:", error);
+      }
+    };
+  
+    fetchHighYieldCounts();
+  }, [showHighYield, yearId, API_BASE_URL, authToken]);
+ */
+ 
+ 
   const handleSystemChange = (systemId) => {
     if (selectedSystems.includes(systemId)) {
       setSelectedSystems(prev => prev.filter(id => id !== systemId));
@@ -624,9 +628,17 @@ export default function CreateTest() {
                             onChange={() => handleSubjectChange(subject.id)}
                             className="w-4 h-4"
                           />
-                          <span>{subject.name}</span>
-                          <span className="text-green-600 mx-2">({subject.count_question || 0})</span>
                           
+                          {showHighYield ? (
+                            <span className="text-yellow-500 mx-2">
+                              ({highYieldSubjectCounts[subject.id] || 0} High Yield)
+                            </span>
+                          ) : (
+                            <span className="text-green-600 mx-2">
+                              ({subject.count_question || 0})
+                            </span>
+                          )}
+
                         </div>
                       ))}
                   </div>
@@ -664,12 +676,18 @@ export default function CreateTest() {
                               className="w-4 h-4"
                             />
                             <span>{system.name}</span>
-                            { selectedSubjects.length > 0 ? (
-                              <span className="text-green-600 mx-2">({system.count_question || 0})</span>
-                            ) : (
-                              <span className="text-green-600 mx-2">(0)</span>
-                            )}
-                            
+                          {showHighYield ? (
+            <span className="text-yellow-500 mx-2">
+              ({highYieldSystemCounts[system.id] || 0} High Yield)
+            </span>
+          ) : selectedSubjects.length > 0 ? (
+            <span className="text-green-600 mx-2">
+              ({system.count_question || 0})
+            </span>
+          ) : (
+            <span className="text-green-600 mx-2">(0)</span>
+          )}
+                      
                           </div>
                           <div className="flex items-center space-x-2">
                           {system.status === "paid" && system.open_user !== true && (                            <button
