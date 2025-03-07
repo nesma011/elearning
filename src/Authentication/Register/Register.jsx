@@ -25,6 +25,7 @@ const getDeviceId = () => {
   const newDeviceId = crypto.randomUUID();
   localStorage.setItem('device_id', newDeviceId); 
   return newDeviceId;
+
 };
   
   // Form validation schema
@@ -79,6 +80,7 @@ const getDeviceId = () => {
       setLoading(true);
       setErrorApi(null);
       try {
+        localStorage.clear();
         const device_id = getDeviceId();
         const fullPhoneNumber = "+" + selectedCode.replace('+', '') + values.phone_number;
         const payload = { 
@@ -108,8 +110,6 @@ const getDeviceId = () => {
           localStorage.setItem("user", JSON.stringify(userData));
     
           await new Promise(resolve => setTimeout(resolve, 5000));
-          
-
         }
       } catch (error) {
         console.error('Error:', error); 
@@ -125,6 +125,7 @@ const getDeviceId = () => {
         setLoading(false);
       }
     },
+    
     
   });
 
