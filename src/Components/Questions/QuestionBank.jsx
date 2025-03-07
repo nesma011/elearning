@@ -17,7 +17,7 @@ export default function QuestionBank() {
 
   useEffect(() => {
     const fetchUpdates = async () => {
-      const token = localStorage.getItem('token'); 
+      const token = localStorage.getItem('access_token'); 
       try {
         const response = await fetch(`${API_BASE_URL}/update/`, {
           headers: {
@@ -28,7 +28,7 @@ export default function QuestionBank() {
           throw new Error('Error getting data');
         }
         const data = await response.json(); 
-        setUpdates(data); // Now we'll handle the actual structure in the render
+        setUpdates(data); 
       } catch (error) {
         console.error('error gitting updates', error);
       }
