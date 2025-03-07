@@ -12,7 +12,7 @@ import Usage from '../Analytics/Usage';
 
 export default function QuestionBank() {
   const [activeTab, setActiveTab] = useState('home'); 
-  const [updates, setUpdates] = useState([]); //
+  const [updates, setUpdates] = useState([]); 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; 
 
   useEffect(() => {
@@ -28,9 +28,9 @@ export default function QuestionBank() {
           throw new Error('Error getting data');
         }
         const data = await response.json(); 
-        setUpdates(data); 
+        setUpdates(data); // Now we'll handle the actual structure in the render
       } catch (error) {
-        console.error('خطأ في جلب التحديثات:', error);
+        console.error('error gitting updates', error);
       }
     };
     fetchUpdates();
@@ -97,12 +97,21 @@ export default function QuestionBank() {
                 <div className="text-center p-6 mx-8 rounded-lg border-4 border-blue-500 dark:border-purple-400 animate-border">
                   <h2 className="text-2xl font-bold mb-3">Updates</h2>
                   <div className="p-4 rounded-lg shadow-lg dark:bg-gray-800">
-                    {updates.map((update, index) => (
-                      <div
-                        key={index}
-                        dangerouslySetInnerHTML={{ __html: update }}
-                      />
-                    ))}
+                    {updates && updates.length > 0 ? (
+                      updates.map((update, index) => (
+                        <div key={index} className="mb-3 pb-3 border-b border-gray-300 dark:border-gray-700 last:border-0">
+                          {/* Handling the case where each update is an object with text property */}
+                          {update.text ? (
+                            <div dangerouslySetInnerHTML={{ __html: update.text }} />
+                          ) : (
+                            /* Fallback if the structure is different */
+                            <div dangerouslySetInnerHTML={{ __html: update }} />
+                          )}
+                        </div>
+                      ))
+                    ) : (
+                      <p>No updates available</p>
+                    )}
                   </div>
                 </div>
               </div>
