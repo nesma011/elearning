@@ -455,7 +455,17 @@ export default function CreateTest() {
     }
   };
   
- 
+  const systemCountKey = showIncorrect
+  ? 'count_question_field'
+  : showUnanswered
+  ? 'count_question_unanswer'
+  : 'count_question';
+
+const subtitleCountKey = showIncorrect
+  ? 'field'
+  : showUnanswered
+  ? 'unanswer'
+  : 'subtitles_remaining';
   
 
   if (!yearId) {
@@ -640,11 +650,7 @@ export default function CreateTest() {
                               className="w-4 h-4"
                             />
                             <span>{system.name}</span>
-                            { selectedSubjects.length > 0 ? (
-                              <span className="text-green-600 mx-2">({system.count_question || 0})</span>
-                            ) : (
-                              <span className="text-green-600 mx-2">(0)</span>
-                            )}
+                            <span className="text-green-600 mx-2">({system[systemCountKey] || 0})</span>
                             
                           </div>
                           <div className="flex items-center space-x-2">
@@ -684,9 +690,7 @@ export default function CreateTest() {
                                     className="w-4 h-4"
                                   />
                                   <span className="text-sm text-gray-600 dark:text-gray-300">{subtitle.name}</span>
-                                  <span className="text-xs text-green-600 ml-2">
-                                   ({subtitle.subtitles_remaining || 0})
-                                </span>
+                                  <span className="text-xs text-green-600 ml-2">({subtitle[subtitleCountKey] || 0})</span>
                                   </div>
                               ))}
                             </div>
