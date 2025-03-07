@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Nav from '../Nav/Nav';
 import Sidebar from '../SideBar/Sidebar';
 import Welcome from '../WelcomeMsg/Welcome';
@@ -10,10 +10,31 @@ import RadarScore from '../Analytics/RadarScore';
 import Score from '../Analytics/Score';
 import Usage from '../Analytics/Usage';
 
-
-
 export default function QuestionBank() {
-  const [activeTab, setActiveTab] = useState('home'); // "home" or "analytics"
+  const [activeTab, setActiveTab] = useState('home'); 
+  const [updates, setUpdates] = useState([]); //
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; 
+
+  useEffect(() => {
+    const fetchUpdates = async () => {
+      const token = localStorage.getItem('token'); 
+      try {
+        const response = await fetch(`${API_BASE_URL}/update/`, {
+          headers: {
+            'Authorization': `Bearer ${token}` 
+          }
+        });
+        if (!response.ok) {
+          throw new Error('Error getting data');
+        }
+        const data = await response.json(); 
+        setUpdates(data); 
+      } catch (error) {
+        console.error('خطأ في جلب التحديثات:', error);
+      }
+    };
+    fetchUpdates();
+  }, [API_BASE_URL]); 
 
   return (
     <div className="flex min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300">
@@ -21,8 +42,8 @@ export default function QuestionBank() {
 
       {/* Main Content */}
       <div className="flex-1 md:ml-72">
-      <Nav hasSidebar={true} />
-      <main className="flex-1">
+        <Nav hasSidebar={true} />
+        <main className="flex-1">
           <Welcome />
 
           <div className="p-6">
@@ -76,23 +97,12 @@ export default function QuestionBank() {
                 <div className="text-center p-6 mx-8 rounded-lg border-4 border-blue-500 dark:border-purple-400 animate-border">
                   <h2 className="text-2xl font-bold mb-3">Updates</h2>
                   <div className="p-4 rounded-lg shadow-lg dark:bg-gray-800">
-                    <p className="text-lg font-bold">
-                      🚀 Exciting News for All ALEX-MedLearn Preppers! 🎉
-                    </p>
-                    <p className="mt-2">
-                      🧠 The <strong className="font-bold">Question Bank</strong> is now{' '}
-                      <span className="font-bold text-green-500 dark:text-green-300">
-                        live
-                      </span>{' '}
-                      and{' '}
-                      <span className="font-bold text-blue-500 dark:text-blue-300">
-                        ready to use!
-                      </span>
-                    </p>
-                    <p className="mt-4">
-                      💪 Take your medical preparation to the next level with our meticulously curated questions and explanations,
-                      designed to help you master every concept with confidence!
-                    </p>
+                    {updates.map((update, index) => (
+                      <div
+                        key={index}
+                        dangerouslySetInnerHTML={{ __html: update }}
+                      />
+                    ))}
                   </div>
                 </div>
               </div>
@@ -104,10 +114,10 @@ export default function QuestionBank() {
                 <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">
                   Analytics Overview
                 </h2>
-                <RadarScore/>
-                <Score/>
-                <Usage/>
-               </div>
+                <RadarScore />
+                <Score />
+                <Usage />
+              </div>
             )}
           </div>
         </main>
