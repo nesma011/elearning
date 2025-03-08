@@ -525,25 +525,81 @@ const ErrorBoundary = ({children}) => {
   ? 'count_question_unanswer'
   : 'count_question';
 
-  const subjectCountKey = showIncorrect
-  ? 'count_question_field'
-  : showUnanswered
-  ? 'count_question_unanswer'
-  : 'count_question';
-
 const subtitleCountKey = showIncorrect
   ? 'field'
   : showUnanswered
   ? 'unanswer'
   : 'subtitles_remaining';
 
-/*   const allCountKey = showIncorrect
-  ? 'field'
-  : showUnanswered
-  ? 'unanswer'
-  : 'subtitles_remaining'; */
-  
 
+// دالة لحساب إجمالي الأسئلة التي لم تُحل لكل موضوع
+const calculateUnansweredCountForSubject = (subjectId) => {
+  let total = 0;
+  
+  // البحث عن كل الأنظمة التي تنتمي لهذا الموضوع
+  systems.forEach(system => {
+    // التحقق مما إذا كان هذا النظام ينتمي للموضوع المطلوب
+    if (system.subtitles && system.subtitles.length > 0) {
+      system.subtitles.forEach(subtitle => {
+        if (subtitle.subject === subjectId) {
+          // إضافة عدد الأسئلة التي لم تُحل من هذا القسم الفرعي
+          total += subtitle.unanswer || 0;
+        }
+      });
+    }
+  });
+  
+  return total;
+};
+
+// دالة مشابهة لحساب الأسئلة الخاطئة (إذا كان هناك خاصية مشابهة مثل field)
+const calculateIncorrectCountForSubject = (subjectId) => {
+  let total = 0;
+  
+  systems.forEach(system => {
+    if (system.subtitles && system.subtitles.length > 0) {
+      system.subtitles.forEach(subtitle => {
+        if (subtitle.subject === subjectId) {
+          // استبدل "field" بالخاصية الصحيحة في بياناتك
+          total += subtitle.field || 0;
+        }
+      });
+    }
+  });
+  
+  return total;
+};
+
+// دالة لحساب إجمالي الأسئلة غير المجابة من جميع الأنظمة والمواضيع
+const calculateTotalUnanswered = () => {
+  let total = 0;
+  
+  systems.forEach(system => {
+    if (system.subtitles && system.subtitles.length > 0) {
+      system.subtitles.forEach(subtitle => {
+        total += subtitle.unanswer || 0;
+      });
+    }
+  });
+  
+  return total;
+};
+
+// دالة لحساب إجمالي الأسئلة الخاطئة من جميع الأنظمة والمواضيع
+const calculateTotalIncorrect = () => {
+  let total = 0;
+  
+  systems.forEach(system => {
+    if (system.subtitles && system.subtitles.length > 0) {
+      system.subtitles.forEach(subtitle => {
+        // استبدل "field" بالخاصية الصحيحة في بياناتك
+        total += subtitle.field || 0;
+      });
+    }
+  });
+  
+  return total;
+};
 
   if (!yearId) {
     return (
@@ -655,8 +711,10 @@ const subtitleCountKey = showIncorrect
                           onChange={handleIncorrectChange}
                           className="w-4 h-4"
                         />
-                        <span className="text-red-600">Incorrect Questions ({incorrectCount})</span>
-                      </div>
+                        <span className="text-red-600">
+                        Incorrect Questions ({calculateTotalIncorrect()})
+                      </span>
+                       </div>
                       <div className="flex items-center space-x-2">
                         <input
                           type="checkbox"
@@ -664,8 +722,9 @@ const subtitleCountKey = showIncorrect
                           onChange={handleUnansweredChange}
                           className="w-4 h-4"
                         />
-                        <span className="text-green-600">Unanswered Questions ({unansweredCount})</span>
-                      </div>
+                        <span className="text-green-600">
+                        Unanswered Questions ({calculateTotalUnanswered()})
+                      </span>                      </div>
                       <div className="flex items-center space-x-2">
                       <input
                         type="checkbox"
@@ -690,8 +749,13 @@ const subtitleCountKey = showIncorrect
                             className="w-4 h-4"
                           />
                           <span>{subject.name}</span>
-                          <span className="text-green-600 mx-2">({subject[subjectCountKey] || 0})</span>
-                          
+                          <span className="text-green-600 mx-2">
+                          {showUnanswered 
+                            ? calculateUnansweredCountForSubject(subject.id) 
+                            : showIncorrect 
+                              ? calculateIncorrectCountForSubject(subject.id) 
+                              : (subject.count_question || 0)}
+                        </span>                          
                         </div>
                       ))}
                   </div>
