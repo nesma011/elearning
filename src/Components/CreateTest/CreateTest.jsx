@@ -293,6 +293,7 @@ const ErrorBoundary = ({children}) => {
   }
 
   const handleRequest = async (systemId) => {
+
     if (systemRequests[systemId] === "pending" || systemRequests[systemId] === "approved") return;
   
     try {
@@ -356,13 +357,10 @@ const ErrorBoundary = ({children}) => {
         type_test: mode === "timed" ? "time_mode" : "normal_test",
       };
   
-      // Add the filter type to the request body
       if (showIncorrect) {
-        bodyData.filter_type = "incorrect";
-        createTestEndpoint = `${API_BASE_URL}/field_test/create/`; // Change to your incorrect endpoint
+        createTestEndpoint = `${API_BASE_URL}/create_Test_from_field_quetions/`;
       } else if (showUnanswered) {
-        bodyData.filter_type = "unanswered";
-        createTestEndpoint = `${API_BASE_URL}/unanswer_test/create/`; // Change to your unanswered endpoint
+        createTestEndpoint = `${API_BASE_URL}/create_Test_from_unanswer_quetions/`;
       } else if (showHighYield) {
         createTestEndpoint = `${API_BASE_URL}/Hight_heeld_question/`;
       } else {
@@ -388,18 +386,96 @@ const ErrorBoundary = ({children}) => {
   
       const result = await response.json();
       
-      // Rest of your function remains the same...
       function reorderLinkedPairs(questions) {
-        // Existing code...
+        const byId = {};
+        questions.forEach((q) => {
+          byId[q.id] = q;
+        });
+      
+        const reordered = [];
+        const usedIds = new Set();
+      
+        for (let q of questions) {
+          if (usedIds.has(q.id)) continue;
+      
+          if (q.link_type !== "linked" || !q.linked_questions) {
+            reordered.push(q);
+            usedIds.add(q.id);
+      
+            const child = questions.find(
+              (x) => x.link_type === "linked" && x.linked_questions === q.id
+            );
+            if (child) {
+              reordered.push(child);
+              usedIds.add(child.id);
+            }
+          } else {
+            const parentId = q.linked_questions;
+            const parent = byId[parentId];
+      
+            if (parent && !usedIds.has(parent.id)) {
+              reordered.push(parent);
+              usedIds.add(parent.id);
+            }
+      
+            reordered.push(q);
+            usedIds.add(q.id);
+          }
+        }
+      
+        return reordered;
       }
       
       function assignGroupData(questions) {
-        // Existing code...
+        let i = 0;
+        while (i < questions.length) {
+          const parent = questions[i];
+          
+          if (parent.link_type !== 'linked') {
+      
+            let j = i + 1;
+            const children = [];
+            while (
+              j < questions.length &&
+              questions[j].link_type === 'linked' &&
+              questions[j].linked_questions === parent.id
+            ) {
+              children.push(questions[j]);
+              j++;
+            }
+            
+            const groupSize = 1 + children.length;
+            parent.groupSize = groupSize;
+            parent.groupIndex = 1;
+      
+            children.forEach((child, idx) => {
+              child.groupSize = groupSize;
+              child.groupIndex = idx + 2; 
+            });
+      
+            i = j;
+          } else {
+            
+            parent.groupSize = 1;
+            parent.groupIndex = 1;
+            i++;
+          }
+        }
+      
+        return questions;
       }
       
-      const finalQuestions = reorderLinkedPairs(result.questions);
-      const withGroups = assignGroupData(finalQuestions);
-      result.questions = withGroups;
+      // Process the questions
+      if (result.questions && Array.isArray(result.questions)) {
+        const finalQuestions = reorderLinkedPairs(result.questions);
+        const withGroups = assignGroupData(finalQuestions);
+        result.questions = withGroups;
+      } else {
+        console.warn("Warning: No questions found in API response", result);
+        toast.warning("No questions found for the selected criteria.");
+        setIsSubmitting(false);
+        return;
+      }
   
       const highYieldQuestions = result.questions?.filter(
         (question) => question.high_question === true
@@ -413,9 +489,18 @@ const ErrorBoundary = ({children}) => {
       
       localStorage.setItem("testData", JSON.stringify(result));
   
+      // Create a descriptive test name if none provided
+      const defaultTestName = showHighYield 
+        ? "High Yield Test" 
+        : showIncorrect 
+          ? "Incorrect Questions Test" 
+          : showUnanswered 
+            ? "Unanswered Questions Test" 
+            : "Custom Test";
+  
       navigate(`/test/${yearId}`, {
         state: {
-          testName: testName || (showHighYield ? "High Yield Test" : showIncorrect ? "Incorrect Questions Test" : showUnanswered ? "Unanswered Questions Test" : "Custom Test"),
+          testName: testName || defaultTestName,
           selectedSubjects,
           selectedSystems,
           questionCount: showHighYield ? highYieldQuestions.length : parsedQuestionCount,
@@ -430,11 +515,13 @@ const ErrorBoundary = ({children}) => {
       });
     } catch (error) {
       console.error("Error creating test:", error);
-      toast.error(`Failed to create test: ${error.message}`);
+      toast.error(`Failed to create test: ${error.message || "Unknown error"}`);
     } finally {
       setIsSubmitting(false);
     }
   };
+
+
   const systemCountKey = showIncorrect
   ? 'count_question_field'
   : showUnanswered
