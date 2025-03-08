@@ -53,7 +53,7 @@ const ErrorBoundary = ({children}) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [systemRequests, setSystemRequests] = useState({});
-
+  const [subtitleSearch, setSubtitleSearch] = useState({});
   const [showIncorrect, setShowIncorrect] = useState(false);
   const [showUnanswered, setShowUnanswered] = useState(false);
   const [showHighYield, setShowHighYield] = useState(false); 
@@ -185,7 +185,7 @@ const ErrorBoundary = ({children}) => {
           const incData = await incResponse.json();
           const totalIncorrect = incData.subjects?.reduce(
             (acc, subj) => acc + (subj.count_question || 0),
-            0
+            
           );
           setIncorrectCount(totalIncorrect || 0);
         }
@@ -206,6 +206,7 @@ const ErrorBoundary = ({children}) => {
     };
     fetchCounts();
   }, [yearId, API_BASE_URL]);
+
 
   const handleIncorrectChange = (e) => {
     const checked = e.target.checked;
@@ -238,10 +239,6 @@ const ErrorBoundary = ({children}) => {
       setSelectedSubtitles([]);
     }
   };
-
-  
-
- 
 
   const handleSystemChange = (systemId) => {
     if (selectedSystems.includes(systemId)) {
@@ -331,246 +328,204 @@ const ErrorBoundary = ({children}) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
 
-const [questionIds, setQuestionIds] = useState(new Set());
-const [filteredQuestions, setFilteredQuestions] = useState([]);
-
-useEffect(() => {
-  setQuestionIds(new Set());
-}, [showIncorrect, showUnanswered, showHighYield]);
-
-const handleCreateTest = async (e) => {
-  if (e) e.preventDefault();
-  if (isSubmitting) return;
-  if (isLoading || systems.length === 0) {
-    toast.warning("Loading Data , Please Wait");
-    return;
-  }
-  setIsSubmitting(true);
-
-  try {
-    if (selectedSubjects.length === 0 || selectedSystems.length === 0 || !questionCount) {
-      toast.warning("Please select subjects, systems, and question count");
-      setIsSubmitting(false);
+  const handleCreateTest = async (e) => {
+    if (e) e.preventDefault();
+    if (isSubmitting) return;
+    if (isLoading || systems.length === 0) {
+      toast.warning("Loading Data , Please Wait");
       return;
     }
-
-    const parsedQuestionCount = parseInt(questionCount) || 1;
-    const totalTime = mode === "timed" ? parsedQuestionCount * 1.5 : null;
-
-    let createTestEndpoint = "";
-    let bodyData = {
-      count: parsedQuestionCount,
-      id_subtitels: selectedSubtitles,
-      type_test: mode === "timed" ? "time_mode" : "normal_test",
-    };
-
-    // Set the correct endpoint based on the selected filter
-    if (showIncorrect) {
-      createTestEndpoint = `${API_BASE_URL}/create_Test_from_field_quetions/`;
-    } else if (showUnanswered) {
-      createTestEndpoint = `${API_BASE_URL}/create_Test_from_unanswer_quetions/`;
-    } else if (showHighYield) {
-      createTestEndpoint = `${API_BASE_URL}/Hight_heeld_question/`;
-    } else {
-      createTestEndpoint = `${API_BASE_URL}/test/create/`;
-    }
-
-    console.log("Creating test with:", { endpoint: createTestEndpoint, data: bodyData });
-
-    const response = await fetch(createTestEndpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": authToken,
-      },
-      body: JSON.stringify(bodyData),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => null);
-      console.error("API Error:", response.status, errorData);
-      throw new Error(`Failed to create test: ${response.status}`);
-    }
-
-    const result = await response.json();
-    
-    // Check if we have questions
-    if (!result.questions || !Array.isArray(result.questions) || result.questions.length === 0) {
-      toast.warning("No questions found for the selected criteria.");
-      setIsSubmitting(false);
-      return;
-    }
-    
-    // Filter out duplicate questions
-    const existingIds = new Set(questionIds);
-    const uniqueQuestions = result.questions.filter(q => {
-      // If we've already seen this question ID, filter it out
-      if (existingIds.has(q.id)) {
-        return false;
+    setIsSubmitting(true);
+  
+    try {
+      if (selectedSubjects.length === 0 || selectedSystems.length === 0 || !questionCount) {
+        toast.warning("Please select subjects, systems, and question count");
+        setIsSubmitting(false);
+        return;
       }
-      // Otherwise, add it to our set of seen IDs and keep it
-      existingIds.add(q.id);
-      return true;
-    });
-    
-    // Update our list of seen question IDs
-    setQuestionIds(existingIds);
-    
-    // If all questions were duplicates, show a warning
-    if (uniqueQuestions.length === 0) {
-      toast.warning("All questions have already been included in your test.");
-      setIsSubmitting(false);
-      return;
-    }
-    
-    // Update the questions in the result
-    result.questions = uniqueQuestions;
-    
-    function reorderLinkedPairs(questions) {
-      const byId = {};
-      questions.forEach((q) => {
-        byId[q.id] = q;
+  
+      const parsedQuestionCount = parseInt(questionCount) || 1;
+      const totalTime = mode === "timed" ? parsedQuestionCount * 1.5 : null;
+  
+      let createTestEndpoint = "";
+      let bodyData = {
+        count: parsedQuestionCount,
+        id_subtitels: selectedSubtitles,
+        type_test: mode === "timed" ? "time_mode" : "normal_test",
+      };
+  
+      if (showIncorrect) {
+        createTestEndpoint = `${API_BASE_URL}/create_Test_from_field_quetions/`;
+      } else if (showUnanswered) {
+        createTestEndpoint = `${API_BASE_URL}/create_Test_from_unanswer_quetions/`;
+      } else if (showHighYield) {
+        createTestEndpoint = `${API_BASE_URL}/Hight_heeld_question/`;
+      } else {
+        createTestEndpoint = `${API_BASE_URL}/test/create/`;
+      }
+  
+      console.log("Creating test with:", { endpoint: createTestEndpoint, data: bodyData });
+  
+      const response = await fetch(createTestEndpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": authToken,
+        },
+        body: JSON.stringify(bodyData),
       });
-    
-      const reordered = [];
-      const usedIds = new Set();
-    
-      for (let q of questions) {
-        if (usedIds.has(q.id)) continue;
-    
-        if (q.link_type !== "linked" || !q.linked_questions) {
-          reordered.push(q);
-          usedIds.add(q.id);
-    
-          const child = questions.find(
-            (x) => x.link_type === "linked" && x.linked_questions === q.id
-          );
-          if (child) {
-            reordered.push(child);
-            usedIds.add(child.id);
-          }
-        } else {
-          const parentId = q.linked_questions;
-          const parent = byId[parentId];
-    
-          if (parent && !usedIds.has(parent.id)) {
-            reordered.push(parent);
-            usedIds.add(parent.id);
-          }
-    
-          reordered.push(q);
-          usedIds.add(q.id);
-        }
+  
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        console.error("API Error:", response.status, errorData);
+        throw new Error(`Failed to create test: ${response.status}`);
       }
-    
-      return reordered;
-    }
-    
-    function assignGroupData(questions) {
-      let i = 0;
-      while (i < questions.length) {
-        const parent = questions[i];
-        
-        if (parent.link_type !== 'linked') {
-    
-          let j = i + 1;
-          const children = [];
-          while (
-            j < questions.length &&
-            questions[j].link_type === 'linked' &&
-            questions[j].linked_questions === parent.id
-          ) {
-            children.push(questions[j]);
-            j++;
+  
+      const result = await response.json();
+      
+      function reorderLinkedPairs(questions) {
+        const byId = {};
+        questions.forEach((q) => {
+          byId[q.id] = q;
+        });
+      
+        const reordered = [];
+        const usedIds = new Set();
+      
+        for (let q of questions) {
+          if (usedIds.has(q.id)) continue;
+      
+          if (q.link_type !== "linked" || !q.linked_questions) {
+            reordered.push(q);
+            usedIds.add(q.id);
+      
+            const child = questions.find(
+              (x) => x.link_type === "linked" && x.linked_questions === q.id
+            );
+            if (child) {
+              reordered.push(child);
+              usedIds.add(child.id);
+            }
+          } else {
+            const parentId = q.linked_questions;
+            const parent = byId[parentId];
+      
+            if (parent && !usedIds.has(parent.id)) {
+              reordered.push(parent);
+              usedIds.add(parent.id);
+            }
+      
+            reordered.push(q);
+            usedIds.add(q.id);
           }
-          
-          const groupSize = 1 + children.length;
-          parent.groupSize = groupSize;
-          parent.groupIndex = 1;
-    
-          children.forEach((child, idx) => {
-            child.groupSize = groupSize;
-            child.groupIndex = idx + 2; 
-          });
-    
-          i = j;
-        } else {
-          
-          parent.groupSize = 1;
-          parent.groupIndex = 1;
-          i++;
         }
+      
+        return reordered;
       }
-    
-      return questions;
-    }
-    
-    // Process the questions
-    const finalQuestions = reorderLinkedPairs(uniqueQuestions);
-    const withGroups = assignGroupData(finalQuestions);
-    result.questions = withGroups;
-    
-    // Store the filtered questions for potential future use
-    setFilteredQuestions([...filteredQuestions, ...uniqueQuestions]);
-
-    const highYieldQuestions = result.questions?.filter(
-      (question) => question.high_question === true
-    ) || [];
-
-    if (showHighYield && highYieldQuestions.length === 0) {
-      toast.warning("No high yield questions found for the selected subtitles.");
+      
+      function assignGroupData(questions) {
+        let i = 0;
+        while (i < questions.length) {
+          const parent = questions[i];
+          
+          if (parent.link_type !== 'linked') {
+      
+            let j = i + 1;
+            const children = [];
+            while (
+              j < questions.length &&
+              questions[j].link_type === 'linked' &&
+              questions[j].linked_questions === parent.id
+            ) {
+              children.push(questions[j]);
+              j++;
+            }
+            
+            const groupSize = 1 + children.length;
+            parent.groupSize = groupSize;
+            parent.groupIndex = 1;
+      
+            children.forEach((child, idx) => {
+              child.groupSize = groupSize;
+              child.groupIndex = idx + 2; 
+            });
+      
+            i = j;
+          } else {
+            
+            parent.groupSize = 1;
+            parent.groupIndex = 1;
+            i++;
+          }
+        }
+      
+        return questions;
+      }
+      
+      // Process the questions
+      if (result.questions && Array.isArray(result.questions)) {
+        const finalQuestions = reorderLinkedPairs(result.questions);
+        const withGroups = assignGroupData(finalQuestions);
+        result.questions = withGroups;
+      } else {
+        console.warn("Warning: No questions found in API response", result);
+        toast.warning("No questions found for the selected criteria.");
+        setIsSubmitting(false);
+        return;
+      }
+  
+      const highYieldQuestions = result.questions?.filter(
+        (question) => question.high_question === true
+      ) || [];
+  
+      if (showHighYield && highYieldQuestions.length === 0) {
+        toast.warning("No high yield questions found for the selected subtitles.");
+        setIsSubmitting(false);
+        return;
+      }
+      
+      localStorage.setItem("testData", JSON.stringify(result));
+  
+      // Create a descriptive test name if none provided
+      const defaultTestName = showHighYield 
+        ? "High Yield Test" 
+        : showIncorrect 
+          ? "Incorrect Questions Test" 
+          : showUnanswered 
+            ? "Unanswered Questions Test" 
+            : "Custom Test";
+  
+      navigate(`/test/${yearId}`, {
+        state: {
+          testName: testName || defaultTestName,
+          selectedSubjects,
+          selectedSystems,
+          questionCount: showHighYield ? highYieldQuestions.length : parsedQuestionCount,
+          selectedSubtitles,
+          mode,
+          totalTime,
+          createdTestId: result.test_id,
+          isHighYield: showHighYield,
+          isIncorrect: showIncorrect,
+          isUnanswered: showUnanswered
+        },
+      });
+    } catch (error) {
+      console.error("Error creating test:", error);
+      toast.error(`Failed to create test: ${error.message || "Unknown error"}`);
+    } finally {
       setIsSubmitting(false);
-      return;
     }
-    
-    // Adjust the question count if we filtered out some duplicates
-    const actualQuestionCount = result.questions.length;
-    if (actualQuestionCount < parsedQuestionCount) {
-      toast.info(`Only ${actualQuestionCount} unique questions available. Some duplicates were filtered out.`);
-    }
-    
-    localStorage.setItem("testData", JSON.stringify(result));
-
-    const defaultTestName = showHighYield 
-      ? "High Yield Test" 
-      : showIncorrect 
-        ? "Incorrect Questions Test" 
-        : showUnanswered 
-          ? "Unanswered Questions Test" 
-          : "Custom Test";
-
-    navigate(`/test/${yearId}`, {
-      state: {
-        testName: testName || defaultTestName,
-        selectedSubjects,
-        selectedSystems,
-        questionCount: actualQuestionCount,
-        selectedSubtitles,
-        mode,
-        totalTime,
-        createdTestId: result.test_id,
-        isHighYield: showHighYield,
-        isIncorrect: showIncorrect,
-        isUnanswered: showUnanswered
-      },
-    });
-  } catch (error) {
-    console.error("Error creating test:", error);
-    toast.error(`Failed to create test: ${error.message || "Unknown error"}`);
-  } finally {
-    setIsSubmitting(false);
-  }
-};
-
-/* // Add a reset function to clear the question tracking when needed
-const resetQuestionFilters = () => {
-  setQuestionIds(new Set());
-  setFilteredQuestions([]);
-}; */
-
+  };
 
 
   const systemCountKey = showIncorrect
+  ? 'count_question_field'
+  : showUnanswered
+  ? 'count_question_unanswer'
+  : 'count_question';
+
+  const subjectCountKey = showIncorrect
   ? 'count_question_field'
   : showUnanswered
   ? 'count_question_unanswer'
@@ -581,7 +536,14 @@ const subtitleCountKey = showIncorrect
   : showUnanswered
   ? 'unanswer'
   : 'subtitles_remaining';
+
+/*   const allCountKey = showIncorrect
+  ? 'field'
+  : showUnanswered
+  ? 'unanswer'
+  : 'subtitles_remaining'; */
   
+
 
   if (!yearId) {
     return (
@@ -728,7 +690,7 @@ const subtitleCountKey = showIncorrect
                             className="w-4 h-4"
                           />
                           <span>{subject.name}</span>
-                          <span className="text-green-600 mx-2">({subject.count_question || 0})</span>
+                          <span className="text-green-600 mx-2">({subject[subjectCountKey] || 0})</span>
                           
                         </div>
                       ))}
@@ -794,10 +756,12 @@ const subtitleCountKey = showIncorrect
                           </div>
                         </div>
 
+
                         {openSystems[system.id] &&
                           system.subtitles &&
                           system.subtitles.length > 0 && (
-                            <div className="mt-2 ml-6 border-l-2 pl-3 border-gray-200 dark:border-gray-700">
+                        
+                             <div className="mt-2 ml-6 border-l-2 pl-3 border-gray-200 dark:border-gray-700">
                               {system.subtitles.map((subtitle) => (
                                 <div key={subtitle.id} className="flex items-center space-x-2">
                                   <input
@@ -811,6 +775,8 @@ const subtitleCountKey = showIncorrect
                                   </div>
                               ))}
                             </div>
+                           
+                           
                           )}
                       </div>
                     ))}
