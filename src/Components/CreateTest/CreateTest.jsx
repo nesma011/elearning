@@ -240,8 +240,6 @@ const ErrorBoundary = ({children}) => {
     }
   };
 
-  
-
   const handleSystemChange = (systemId) => {
     if (selectedSystems.includes(systemId)) {
       setSelectedSystems(prev => prev.filter(id => id !== systemId));
@@ -527,12 +525,25 @@ const ErrorBoundary = ({children}) => {
   ? 'count_question_unanswer'
   : 'count_question';
 
+  const subjectCountKey = showIncorrect
+  ? 'count_question_field'
+  : showUnanswered
+  ? 'count_question_unanswer'
+  : 'count_question';
+
 const subtitleCountKey = showIncorrect
   ? 'field'
   : showUnanswered
   ? 'unanswer'
   : 'subtitles_remaining';
+
+/*   const allCountKey = showIncorrect
+  ? 'field'
+  : showUnanswered
+  ? 'unanswer'
+  : 'subtitles_remaining'; */
   
+
 
   if (!yearId) {
     return (
@@ -679,7 +690,7 @@ const subtitleCountKey = showIncorrect
                             className="w-4 h-4"
                           />
                           <span>{subject.name}</span>
-                          <span className="text-green-600 mx-2">({subject.count_question || 0})</span>
+                          <span className="text-green-600 mx-2">({subject[subjectCountKey] || 0})</span>
                           
                         </div>
                       ))}
