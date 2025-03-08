@@ -170,7 +170,7 @@ const ErrorBoundary = ({children}) => {
   }, [selectedSubjects, allSystems, yearId, API_BASE_URL, showIncorrect, showUnanswered]);
 
 
-  
+
   useEffect(() => {
     const fetchCounts = async () => {
       if (!yearId) return;
@@ -181,7 +181,7 @@ const ErrorBoundary = ({children}) => {
         if (incResponse.ok) {
           const incData = await incResponse.json();
           const totalIncorrect = incData.subjects?.reduce(
-            (acc, subj) => acc + (subj.count_question || 0),
+            (acc, subj) => acc + (subj.count_question || 0), 0
             
           );
           setIncorrectCount(totalIncorrect || 0);
