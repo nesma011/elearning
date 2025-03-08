@@ -711,10 +711,9 @@ const calculateTotalIncorrect = () => {
                           onChange={handleIncorrectChange}
                           className="w-4 h-4"
                         />
-                        <span className="text-red-600">
-                        Incorrect Questions ({calculateTotalIncorrect()})
-                      </span>
-                       </div>
+                        <span className="text-red-600">  Incorrect Questions ({calculateTotalIncorrect()})
+                        </span>
+                      </div>
                       <div className="flex items-center space-x-2">
                         <input
                           type="checkbox"
@@ -722,9 +721,8 @@ const calculateTotalIncorrect = () => {
                           onChange={handleUnansweredChange}
                           className="w-4 h-4"
                         />
-                        <span className="text-green-600">
-                        Unanswered Questions ({calculateTotalUnanswered()})
-                      </span>                      </div>
+                        <span className="text-green-600"> Unanswered Questions ({calculateTotalUnanswered()})</span>
+                      </div>
                       <div className="flex items-center space-x-2">
                       <input
                         type="checkbox"
@@ -750,9 +748,9 @@ const calculateTotalIncorrect = () => {
                           />
                           <span>{subject.name}</span>
                           <span className="text-green-600 mx-2">
-                          {showUnanswered 
+                          {(showUnanswered) 
                             ? calculateUnansweredCountForSubject(subject.id) 
-                            : showIncorrect 
+                            : (showIncorrect )
                               ? calculateIncorrectCountForSubject(subject.id) 
                               : (subject.count_question || 0)}
                         </span>                          
