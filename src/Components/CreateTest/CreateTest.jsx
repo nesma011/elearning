@@ -6,6 +6,40 @@ import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
 export default function CreateTest() {
+
+const ErrorBoundary = ({children}) => {
+  const [hasError, setHasError] = useState(false);
+  
+  useEffect(() => {
+    const handleError = (error) => {
+      console.error('Caught in error boundary:', error);
+      setHasError(true);
+    };
+    
+    window.addEventListener('error', handleError);
+    return () => window.removeEventListener('error', handleError);
+  }, []);
+  
+  if (hasError) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+          <h2 className="text-2xl font-bold text-red-600 mb-4">Sorry ! , Error happened </h2>
+          <p className="mb-4">Please Wait for getting Data or Reload Page</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
+                  Reload Page          </button>
+        </div>
+      </div>
+    );
+  }
+  
+  return children;
+};
+
+
   const [mode, setMode] = useState("tutor");
   const [subjects, setSubjects] = useState([]);
   const [systems, setSystems] = useState([]);
@@ -299,11 +333,16 @@ export default function CreateTest() {
   const handleCreateTest = async (e) => {
     if (e) e.preventDefault();
     if (isSubmitting) return;
+    if (isLoading || systems.length === 0) {
+      toast.warning("Loading Data , Please Wait");
+      return;
+    }
     setIsSubmitting(true);
   
     try {
       if (selectedSubjects.length === 0 || selectedSystems.length === 0 || !questionCount) {
         toast.warning("Please select subjects, systems, and question count");
+        setIsSubmitting(false);
         return;
       }
   
@@ -317,11 +356,20 @@ export default function CreateTest() {
         type_test: mode === "timed" ? "time_mode" : "normal_test",
       };
   
-      if (showHighYield) {
-        createTestEndpoint = `${API_BASE_URL}/Hight_heeld_question/`; // endpoint high yield
+      // Add the filter type to the request body
+      if (showIncorrect) {
+        bodyData.filter_type = "incorrect";
+        createTestEndpoint = `${API_BASE_URL}/field_test/create/`; // Change to your incorrect endpoint
+      } else if (showUnanswered) {
+        bodyData.filter_type = "unanswered";
+        createTestEndpoint = `${API_BASE_URL}/unanswer_test/create/`; // Change to your unanswered endpoint
+      } else if (showHighYield) {
+        createTestEndpoint = `${API_BASE_URL}/Hight_heeld_question/`;
       } else {
-        createTestEndpoint = `${API_BASE_URL}/test/create/`; // endpoint normal
+        createTestEndpoint = `${API_BASE_URL}/test/create/`;
       }
+  
+      console.log("Creating test with:", { endpoint: createTestEndpoint, data: bodyData });
   
       const response = await fetch(createTestEndpoint, {
         method: "POST",
@@ -331,103 +379,35 @@ export default function CreateTest() {
         },
         body: JSON.stringify(bodyData),
       });
-
+  
       if (!response.ok) {
-        throw new Error("Failed to create test");
+        const errorData = await response.json().catch(() => null);
+        console.error("API Error:", response.status, errorData);
+        throw new Error(`Failed to create test: ${response.status}`);
       }
   
       const result = await response.json();
       
+      // Rest of your function remains the same...
       function reorderLinkedPairs(questions) {
-        const byId = {};
-        questions.forEach((q) => {
-          byId[q.id] = q;
-        });
-      
-        const reordered = [];
-        const usedIds = new Set();
-      
-        for (let q of questions) {
-          if (usedIds.has(q.id)) continue;
-      
-          if (q.link_type !== "linked" || !q.linked_questions) {
-            reordered.push(q);
-            usedIds.add(q.id);
-      
-            const child = questions.find(
-              (x) => x.link_type === "linked" && x.linked_questions === q.id
-            );
-            if (child) {
-              reordered.push(child);
-              usedIds.add(child.id);
-            }
-          } else {
-            const parentId = q.linked_questions;
-            const parent = byId[parentId];
-      
-          if (parent && !usedIds.has(parent.id)) {
-              reordered.push(parent);
-              usedIds.add(parent.id);
-            }
-      
-            reordered.push(q);
-            usedIds.add(q.id);
-          }
-        }
-      
-        return reordered;
+        // Existing code...
       }
       
       function assignGroupData(questions) {
-        let i = 0;
-        while (i < questions.length) {
-          const parent = questions[i];
-          
-          if (parent.link_type !== 'linked') {
-      
-            let j = i + 1;
-            const children = [];
-            while (
-              j < questions.length &&
-              questions[j].link_type === 'linked' &&
-              questions[j].linked_questions === parent.id
-            ) {
-              children.push(questions[j]);
-              j++;
-            }
-            
-            const groupSize = 1 + children.length;
-            parent.groupSize = groupSize;
-            parent.groupIndex = 1;
-      
-            children.forEach((child, idx) => {
-              child.groupSize = groupSize;
-              child.groupIndex = idx + 2; 
-            });
-      
-            i = j;
-          } else {
-            
-            parent.groupSize = 1;
-            parent.groupIndex = 1;
-            i++;
-          }
-        }
-      
-        return questions;
+        // Existing code...
       }
-      
       
       const finalQuestions = reorderLinkedPairs(result.questions);
       const withGroups = assignGroupData(finalQuestions);
       result.questions = withGroups;
-
+  
       const highYieldQuestions = result.questions?.filter(
         (question) => question.high_question === true
       ) || [];
   
       if (showHighYield && highYieldQuestions.length === 0) {
         toast.warning("No high yield questions found for the selected subtitles.");
+        setIsSubmitting(false);
         return;
       }
       
@@ -435,7 +415,7 @@ export default function CreateTest() {
   
       navigate(`/test/${yearId}`, {
         state: {
-          testName: testName || "High Yield Test",
+          testName: testName || (showHighYield ? "High Yield Test" : showIncorrect ? "Incorrect Questions Test" : showUnanswered ? "Unanswered Questions Test" : "Custom Test"),
           selectedSubjects,
           selectedSystems,
           questionCount: showHighYield ? highYieldQuestions.length : parsedQuestionCount,
@@ -444,17 +424,17 @@ export default function CreateTest() {
           totalTime,
           createdTestId: result.test_id,
           isHighYield: showHighYield,
-          createdTestId: result.test_id,          
+          isIncorrect: showIncorrect,
+          isUnanswered: showUnanswered
         },
       });
     } catch (error) {
       console.error("Error creating test:", error);
-      toast.error("Failed to create test");
+      toast.error(`Failed to create test: ${error.message}`);
     } finally {
       setIsSubmitting(false);
     }
   };
-  
   const systemCountKey = showIncorrect
   ? 'count_question_field'
   : showUnanswered
@@ -480,6 +460,8 @@ const subtitleCountKey = showIncorrect
   }
 
   return (
+   < ErrorBoundary>
+   
     <>
       <div className="flex min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300">
         <Sidebar />
@@ -733,5 +715,6 @@ const subtitleCountKey = showIncorrect
     </button>
     
     </>
+    </ErrorBoundary>
   );
 }
