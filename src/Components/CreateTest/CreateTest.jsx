@@ -69,52 +69,53 @@ const ErrorBoundary = ({children}) => {
 
 
   const authToken = `Bearer ${token}`;
-
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
         setError(null);
-
+  
         if (!yearId) {
           throw new Error("Year ID is required");
         }
-
+  
         let endpoint = `${API_BASE_URL}/subjects/${yearId}/`;
         if (showIncorrect) {
-          endpoint = `${API_BASE_URL}/field_quetion/${yearId}/`; 
+          endpoint = `${API_BASE_URL}/field_quetion/${yearId}/`;
         } else if (showUnanswered) {
           endpoint = `${API_BASE_URL}/unanswer_quetion/${yearId}/`;
         }
-
+  
         const response = await fetch(endpoint, {
           method: "GET",
           headers: {
             "Authorization": authToken,
           },
         });
-        
+  
         if (!response.ok) {
           throw new Error(`API error: ${response.status}`);
         }
-
+  
         const data = await response.json();
         console.log("API Response:", data);
-        
-        setSubjects(data.subjects || []);
-        setSystems(data.systems || []);
-        setAllSystems(data.systems || []);
+  
+        // Ensure arrays
+        setSubjects(Array.isArray(data.subjects) ? data.subjects : []);
+        setSystems(Array.isArray(data.systems) ? data.systems : []);
+        setAllSystems(Array.isArray(data.systems) ? data.systems : []);
         setIsLoading(false);
-
       } catch (err) {
         console.error("Fetch error:", err);
         setError(err.message);
         setIsLoading(false);
       }
     };
-
+  
     fetchData();
   }, [yearId, API_BASE_URL, showIncorrect, showUnanswered]);
+
+
 
   useEffect(() => {
     const fetchSystems = async () => {
@@ -125,13 +126,13 @@ const ErrorBoundary = ({children}) => {
           setSelectedSubtitles([]);
           return;
         }
-
+  
         let systemEndpoint = `${API_BASE_URL}/systems/`;
-        let bodyData = { 
+        let bodyData = {
           subject_id: selectedSubjects,
           group_id: parseInt(yearId),
         };
-
+  
         if (showIncorrect) {
           systemEndpoint = `${API_BASE_URL}/systems_filed/`;
           bodyData = { subject_id: selectedSubjects };
@@ -139,7 +140,7 @@ const ErrorBoundary = ({children}) => {
           systemEndpoint = `${API_BASE_URL}/systems_unanswer/`;
           bodyData = { subject_id: selectedSubjects };
         }
-
+  
         const response = await fetch(systemEndpoint, {
           method: "POST",
           headers: {
@@ -148,24 +149,18 @@ const ErrorBoundary = ({children}) => {
           },
           body: JSON.stringify(bodyData),
         });
-        
+  
         if (!response.ok) {
           throw new Error(`Error fetching systems: ${response.status}`);
         }
-        
+  
         const data = await response.json();
         console.log("Systems Response:", data);
-        
-        if (data.systems) {
-          setSystems(data.systems);
-        } else if (Array.isArray(data)) {
-          setSystems(data);
-        } else {
-          setSystems([]);
-        }
+  
+        // Ensure systems is always an array
+        setSystems(Array.isArray(data.systems) ? data.systems : Array.isArray(data) ? data : []);
         setSelectedSystems([]);
         setSelectedSubtitles([]);
-
       } catch (error) {
         console.error("Error:", error);
       }
@@ -174,6 +169,8 @@ const ErrorBoundary = ({children}) => {
     fetchSystems();
   }, [selectedSubjects, allSystems, yearId, API_BASE_URL, showIncorrect, showUnanswered]);
 
+
+  
   useEffect(() => {
     const fetchCounts = async () => {
       if (!yearId) return;
@@ -670,21 +667,20 @@ const subtitleCountKey = showIncorrect
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {[...new Map(subjects.map((item) => [item.name, item])).values()]
-                      .sort((a, b) => a.name.localeCompare(b.name))
-                      .map((subject) => (
-                        <div key={subject.id} className="flex items-center space-x-2 p-2 border rounded border-gray-200 dark:border-gray-700">
-                          <input
-                            type="checkbox"
-                            checked={selectedSubjects.includes(subject.id)}
-                            onChange={() => handleSubjectChange(subject.id)}
-                            className="w-4 h-4"
-                          />
-                          <span>{subject.name}</span>
-                          <span className="text-green-600 mx-2">({subject.count_question || 0})</span>
-                          
-                        </div>
-                      ))}
+                  {[...new Map(subjects.map((item) => [item.name, item])).values()]
+                    .sort((a, b) => a.name.localeCompare(b.name))
+                    .map((subject) => (
+                      <div key={subject.id} className="flex items-center space-x-2 p-2 border rounded border-gray-200 dark:border-gray-700">
+                        <input
+                          type="checkbox"
+                          checked={selectedSubjects.includes(subject.id)}
+                          onChange={() => handleSubjectChange(subject.id)}
+                          className="w-4 h-4"
+                        />
+                        <span>{subject.name}</span>
+                        <span className="text-green-600 mx-2">({subject.count_question || 0})</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
 
