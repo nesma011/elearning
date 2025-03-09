@@ -6,7 +6,7 @@ const Home = () => {
   const [data, setData] = useState([]);
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   useEffect(() => {
-    fetch(`${API_BASE_URL}/media/`)
+    fetch(`${API_BASE_URL}/media_content/`)
       .then((res) => res.json())
       .then((data) => setData(data))
       .catch((error) => console.error("Error fetching data:", error));
