@@ -180,7 +180,7 @@ const [incorrectCount, setIncorrectCount] = useState(0);
         });
         if (incResponse.ok) {
           const incData = await incResponse.json();
-          setIncorrectCount(incData.incorret_count || 0);
+          setIncorrectCount(incData.incorrect_count || 0);
         }
   
         const unResponse = await fetch(`${API_BASE_URL}/unanswer_quetion/${yearId}/`, {
