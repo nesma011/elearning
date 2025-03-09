@@ -57,9 +57,9 @@ const ErrorBoundary = ({children}) => {
   const [showIncorrect, setShowIncorrect] = useState(false);
   const [showUnanswered, setShowUnanswered] = useState(false);
   const [showHighYield, setShowHighYield] = useState(false); 
-
-  const [incorrectCount, setIncorrectCount] = useState(0);
   const [unansweredCount, setUnansweredCount] = useState(0);
+const [incorrectCount, setIncorrectCount] = useState(0);
+
 
   const navigate = useNavigate();
   const { yearId } = useParams();
@@ -180,25 +180,18 @@ const ErrorBoundary = ({children}) => {
         });
         if (incResponse.ok) {
           const incData = await incResponse.json();
-          const totalIncorrect = incData.subjects?.reduce(
-            (acc, subj) => acc + (subj.count_question || 0), 0
-            
-          );
-          setIncorrectCount(totalIncorrect || 0);
+          setIncorrectCount(incData.incorret_count || 0);
         }
+  
         const unResponse = await fetch(`${API_BASE_URL}/unanswer_quetion/${yearId}/`, {
           headers: { "Authorization": authToken },
         });
         if (unResponse.ok) {
           const unData = await unResponse.json();
-          const totalUnanswered = unData.subjects?.reduce(
-            (acc, subj) => acc + (subj.count_question || 0),
-            0
-          );
-          setUnansweredCount(totalUnanswered || 0);
+          setUnansweredCount(unData.unanswer || 0);
         }
       } catch (err) {
-        console.error("Count fetch error:", err);
+        console.error("Error getting data", err);
       }
     };
     fetchCounts();
@@ -643,8 +636,7 @@ const subtitleCountKey = showIncorrect
                           onChange={handleIncorrectChange}
                           className="w-4 h-4"
                         />
-                        <span className="text-red-600">Incorrect Questions ({incorrectCount})</span>
-                      </div>
+                        <span className="text-red-600">Incorrect Questions ({incorrectCount})</span>                      </div>
                       <div className="flex items-center space-x-2">
                         <input
                           type="checkbox"
@@ -652,8 +644,7 @@ const subtitleCountKey = showIncorrect
                           onChange={handleUnansweredChange}
                           className="w-4 h-4"
                         />
-                        <span className="text-green-600">Unanswered Questions ({unansweredCount})</span>
-                      </div>
+                        <span className="text-green-600">Unanswered Questions ({unansweredCount})</span>                      </div>
                       <div className="flex items-center space-x-2">
                       <input
                         type="checkbox"

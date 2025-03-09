@@ -890,7 +890,6 @@ export default function Test() {
     Item {currentQuestion.groupIndex} of {currentQuestion.groupSize}
      </p>
      )}
-
         <div className="w-full border-2 my-8 border-blue-300 shadow-xl shadow-blue-400">
           {currentQuestion.answers && currentQuestion.answers.length > 0 && (
             <div className="mt-4 border border-gray-200 rounded-lg overflow-hidden">
