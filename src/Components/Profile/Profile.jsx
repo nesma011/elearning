@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; // لازم تستوردي الستايل
+import "react-toastify/dist/ReactToastify.css"; 
 import Welcome from "../WelcomeMsg/Welcome";
 import Nav from "../Nav/Nav";
 
