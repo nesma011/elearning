@@ -7,7 +7,7 @@ import {
   FiRefreshCw,
   FiUserPlus,
 } from 'react-icons/fi';
-import logo from "../../assets/logo.webp";
+import logo from "../../../public/logo.webp";
 import Darkmode from '../../Darkmode';
 import  { useReferFriendModal } from  "../../Context/ReferContext"; // Update the import path as needed
 
