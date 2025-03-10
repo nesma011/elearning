@@ -18,7 +18,7 @@ const BooksList = () => {
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/${systemId}/`, {
+        const response = await fetch(`${API_BASE_URL}/books_System${systemId}/`, {
           method: "GET",
           headers: {
             "Authorization": `Bearer ${token}`,
