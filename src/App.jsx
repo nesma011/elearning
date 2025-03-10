@@ -7,6 +7,8 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ThemeProvider } from './Context/ThemeContext';
 import { ReferFriendModalProvider } from './Context/ReferContext';
+import ErrorBoundary from './Components/ErrorBoundry/ErrorBoundry';
+import ErrorPage from './Components/ErrorPage/ErrorPage';
 
 const Home = React.lazy(() => import('./Components/Home/Home'));
 const ContactUs = React.lazy(() => import('./Components/ContactUs/ContactUs'));
@@ -68,6 +70,8 @@ export default function App() {
         { path: "displayFlashCards/:yearId", element: <Displayflashcards /> },
         { path: "resetAcc/:yearId", element: <ResetAccount /> },
         { path: "performance/:yearId", element: <Performance /> },
+        { path: "*", element: <ErrorPage/> },
+
       ]
     }
   ]);
@@ -78,7 +82,9 @@ export default function App() {
         <ToastContainer />
         <ReferFriendModalProvider>
           <Suspense fallback={<div>Loading...</div>}>
+          <ErrorBoundary>
             <RouterProvider router={paths} />
+            </ErrorBoundary>
           </Suspense>
         </ReferFriendModalProvider>
       </ThemeProvider>
