@@ -94,14 +94,14 @@ export default function QuestionBank() {
                 </div>
 
                 {/* Updates Section */}
-                <div className="text-center p-6 mx-8 rounded-lg border-4 border-blue-500 dark:border-purple-400 animate-border">
+                <div className="text-center p-6 mx-8 ">
                 <h2 className="text-2xl font-bold mb-3">Updates</h2>
                 <div className="flex flex-col gap-4">
                   {updates && updates.length > 0 ? (
                     updates.map((update, index) => (
                       <div
                         key={index}
-                        className="p-6 rounded-lg shadow-lg bg-white dark:bg-gray-800 border-4 border-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-center relative"
+                        className="p-6  bg-white dark:bg-gray-800 rounded-lg border-4 border-blue-500 dark:border-purple-400 animate-border text-center relative"
                       >
                         {update.text ? (
                           <div dangerouslySetInnerHTML={{ __html: update.text }} />
