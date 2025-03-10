@@ -97,8 +97,10 @@ export default function Nav({ hasSidebar = false }) {
               to="/login"
               className="p-4 text-red-600 font-semibold text-lg"
               onClick={() => {
-                localStorage.removeItem("userToken");
+                localStorage.removeItem("access_token");
                 localStorage.removeItem("user");
+                localStorage.removeItem("refresh_token");
+
                 window.location.href = "/login";
               }}
             >
