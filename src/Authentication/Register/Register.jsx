@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom'
 import countryCodes from "../../../countrycodes.json"; 
 import React, { useContext, useState } from 'react';
 import { useFormik } from 'formik';
-import logo from "../../assets/logo.webp"
+import logo from "../../../public/logo.webp"
 import axios from 'axios';
 import * as yup from 'yup';
 /* import { useNavigate } from 'react-router-dom';

@@ -5,7 +5,7 @@ import * as yup from 'yup';
 import { BallTriangle } from 'react-loader-spinner';
 import { userContext } from '../../Context/UserContext';
 import { NavLink } from "react-router-dom";
-import logo from "../../assets/logo.webp"
+import logo from "../../../public/logo.webp"
 import { toast } from 'react-toastify';
 import Navbar from '../../Components/Navbar/Navbar';
 import Footer from '../../Components/Footer/Footer';

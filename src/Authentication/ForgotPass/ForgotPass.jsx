@@ -1,6 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import logo from "../../assets/logo.webp"
+import logo from "../../../public/logo.webp"
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import axios from 'axios'
