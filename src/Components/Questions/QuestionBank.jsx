@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Nav from '../Nav/Nav';
 import Sidebar from '../SideBar/Sidebar';
 import Welcome from '../WelcomeMsg/Welcome';
-import face from "../../../public/face.png";
+import face from "../../../public/face.jpg";
 import whats from "../../../public/whats.png";
 import telegram from "../../../public/telegram.png";
 import { NavLink } from 'react-router-dom';
