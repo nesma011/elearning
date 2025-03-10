@@ -95,25 +95,28 @@ export default function QuestionBank() {
 
                 {/* Updates Section */}
                 <div className="text-center p-6 mx-8 rounded-lg border-4 border-blue-500 dark:border-purple-400 animate-border">
-                  <h2 className="text-2xl font-bold mb-3">Updates</h2>
-                  <div className="p-4 rounded-lg shadow-lg dark:bg-gray-800">
-                    {updates && updates.length > 0 ? (
-                      updates.map((update, index) => (
-                        <div key={index} className="mb-3 pb-3 border-b border-gray-300 dark:border-gray-700 last:border-0">
-                          {/* Handling the case where each update is an object with text property */}
-                          {update.text ? (
-                            <div dangerouslySetInnerHTML={{ __html: update.text }} />
-                          ) : (
-                            /* Fallback if the structure is different */
-                            <div dangerouslySetInnerHTML={{ __html: update }} />
-                          )}
-                        </div>
-                      ))
-                    ) : (
-                      <p>No updates available</p>
-                    )}
-                  </div>
+                <h2 className="text-2xl font-bold mb-3">Updates</h2>
+                <div className="flex flex-col gap-4">
+                  {updates && updates.length > 0 ? (
+                    updates.map((update, index) => (
+                      <div
+                        key={index}
+                        className="p-6 rounded-lg shadow-lg bg-white dark:bg-gray-800 border-4 border-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-center relative"
+                      >
+                        {update.text ? (
+                          <div dangerouslySetInnerHTML={{ __html: update.text }} />
+                        ) : (
+                          <div dangerouslySetInnerHTML={{ __html: update }} />
+                        )}
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-center">No updates available</p>
+                  )}
                 </div>
+              </div>
+
+
               </div>
             )}
 
