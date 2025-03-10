@@ -16,9 +16,9 @@ export default function ContactUs() {
       .catch((err) => console.error("Error fetching contact details:", err));
   }, []);
 
-  if (!contact) {
+ /*  if (!contact) {
     return <div className="text-center text-gray-500">Loading...</div>;
-  }
+  } */
 
   return (<>
   <Navbar/>
