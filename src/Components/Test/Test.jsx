@@ -611,7 +611,7 @@ export default function Test() {
             Item {currentQuestionIndex + 1} of {testData.questions?.length}
           </span>
           <h2 className="text-xl pt-1 font-bold">
-            Question ID: {questionData?.id|| 'N/A'}
+            Question ID: {currentQuestion?.id|| 'N/A'}
           </h2>
         </div>
 
