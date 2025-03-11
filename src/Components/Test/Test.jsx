@@ -891,111 +891,113 @@ export default function Test() {
      </p>
      )}
         <div className="w-full border-2 my-8 border-blue-300 shadow-xl shadow-blue-400">
-          {currentQuestion.answers && currentQuestion.answers.length > 0 && (
-            <div className="mt-4 border border-gray-200 rounded-lg overflow-hidden">
-              {currentQuestion.answers.map((answer) => {
-                if (!answer || !answer.id) return null;
+  {currentQuestion.answers && currentQuestion.answers.length > 0 && (
+    <div className="mt-4 border border-gray-200 rounded-lg overflow-hidden">
+      {[...currentQuestion.answers]
+        .sort((a, b) => a.letter.localeCompare(b.letter))
+        .map((answer) => {
+          if (!answer || !answer.id) return null;
 
-                const questionResult = results[currentQuestion.id];
-                const isCorrectAnswer = questionResult?.correctAnswer === answer.id;
-                const userAnswerId = selectedAnswers[currentQuestion.id];
-                const isUserAnswer = userAnswerId === answer.id;
+          const questionResult = results[currentQuestion.id];
+          const isCorrectAnswer = questionResult?.correctAnswer === answer.id;
+          const userAnswerId = selectedAnswers[currentQuestion.id];
+          const isUserAnswer = userAnswerId === answer.id;
 
-                return (
-                  <label 
-                    key={answer.id} 
-                    className="flex justify-between p-4 cursor-pointer hover:bg-gray-50"
+          return (
+            <label 
+              key={answer.id} 
+              className="flex justify-between p-4 cursor-pointer hover:bg-gray-50"
+            >
+              <div className="flex items-center space-x-3">
+                <input
+                  type="radio"
+                  name={`question-${currentQuestion.id}`}
+                  value={answer.id}
+                  checked={isUserAnswer}
+                  onChange={() => handleAnswerChange(currentQuestion.id, answer.id)}
+                  disabled={!!questionResult || isViewResults}
+                  className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                />
+                <span className="font-medium text-gray-700">{answer.letter}.</span>
+                
+                {answer.text && (
+                  <span className="text-gray-900 px-4 text-lg font-semibold">
+                    {answer.text}
+                  </span>
+                )}
+
+                {answer.image && (
+                  <img
+                    src={`${API_BASE_URL}${answer.image}`}
+                    alt={`Option ${answer.letter}`}
+                    className="mt-2 max-w-xs h-auto object-contain cursor-zoom-in"
+                    onClick={() => openModal(`${API_BASE_URL}${answer.image}`)}
+                  />
+                )}
+
+                {answer.answer_json ? (
+                  <div className="mt-3 overflow-x-auto">
+                    {Object.keys(answer.answer_json).length === 0 ? (
+                      <div>No data available</div>
+                    ) : (
+                      <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                          <tr className="divide-x divide-gray-200">
+                            {Object.keys(answer.answer_json).map((key) => (
+                              <th
+                                key={key}
+                                className="px-6 py-3 text-left text-sm font-medium text-gray-900 uppercase tracking-wider"
+                              >
+                                {key}
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                          <tr className="divide-x divide-gray-200">
+                            {Object.keys(answer.answer_json).map((key) => (
+                              <td
+                                key={key}
+                                className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
+                              >
+                                {answer.answer_json[key]}
+                              </td>
+                            ))}
+                          </tr>
+                        </tbody>
+                      </table>
+                    )}
+                  </div>
+                ) : (
+                  <div></div>
+                )}
+              </div>
+
+              <div className="flex items-center justify-start">
+                {questionResult && (
+                  <span
+                    className={`ml-2 font-bold ${
+                      isCorrectAnswer ? 'text-green-600' : 'text-red-500'
+                    }`}
                   >
-                    <div className="flex items-center space-x-3">
-                      <input
-                        type="radio"
-                        name={`question-${currentQuestion.id}`}
-                        value={answer.id}
-                        checked={isUserAnswer}
-                        onChange={() => handleAnswerChange(currentQuestion.id, answer.id)}
-                        disabled={!!questionResult || isViewResults}
-                          className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                      />
-                      <span className="font-medium text-gray-700">{answer.letter}.</span>
-                      
-                      {answer.text && (
-                        <span className="text-gray-900 px-4 text-lg font-semibold">
-                          {answer.text}
-                        </span>
-                      )}
+                    {isCorrectAnswer ? '✓' : '✗'}
+                  </span>
+                )}
 
-                      {answer.image && (
-                        <img
-                          src={`${API_BASE_URL}${answer.image}`}
-                          alt={`Option ${answer.letter}`}
-                          className="mt-2 max-w-xs h-auto object-contain cursor-zoom-in"
-                          onClick={() => openModal(`${API_BASE_URL}${answer.image}`)}
-                        />
-                      )}
-
-                      {answer.answer_json ? (
-                        <div className="mt-3 overflow-x-auto">
-                          {Object.keys(answer.answer_json).length === 0 ? (
-                            <div>No data available</div>
-                          ) : (
-                            <table className="min-w-full divide-y divide-gray-200">
-                              <thead className="bg-gray-50">
-                                <tr className="divide-x divide-gray-200">
-                                  {Object.keys(answer.answer_json).map((key) => (
-                                    <th
-                                      key={key}
-                                      className="px-6 py-3 text-left text-sm font-medium text-gray-900 uppercase tracking-wider"
-                                    >
-                                      {key}
-                                    </th>
-                                  ))}
-                                </tr>
-                              </thead>
-                              <tbody className="bg-white divide-y divide-gray-200">
-                                <tr className="divide-x divide-gray-200">
-                                  {Object.keys(answer.answer_json).map((key) => (
-                                    <td
-                                      key={key}
-                                      className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
-                                    >
-                                      {answer.answer_json[key]}
-                                    </td>
-                                  ))}
-                                </tr>
-                              </tbody>
-                            </table>
-                          )}
-                        </div>
-                      ) : (
-                        <div></div>
-                      )}
-                    </div>
-
-                    <div className="flex items-center justify-start">
-                      {questionResult && (
-                        <span
-                          className={`ml-2 font-bold ${
-                            isCorrectAnswer ? 'text-green-600' : 'text-red-500'
-                          }`}
-                        >
-                          {isCorrectAnswer ? '✓' : '✗'}
-                        </span>
-                      )}
-
-                      {questionResult?.rate_answer && (
-                        <div className="ml-4">
-                          <span className="text-blue-600 font-semibold">
-                            ({questionResult.rate_answer[answer.id]})%
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </label>
-                );
-              })}
-            </div>
-          )}
-        </div>
+                {questionResult?.rate_answer && (
+                  <div className="ml-4">
+                    <span className="text-blue-600 font-semibold">
+                      ({questionResult.rate_answer[answer.id]}%)
+                    </span>
+                  </div>
+                )}
+              </div>
+            </label>
+          );
+        })}
+    </div>
+  )}
+</div>
 
         {currentQuestion.id && !results[currentQuestion.id] && (
           <>
