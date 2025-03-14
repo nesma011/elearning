@@ -70,13 +70,15 @@ export default function QuestionBank() {
               >
                 Analytics
               </button>
+
+              <h1 className='text-4xl'>Ramadan Kareem 🌙🌙</h1>
             </div>
 
             {/* Home Tab Content */}
             {activeTab === 'home' && (
               <div className="flex flex-col gap-4 lg:flex-row mb-10">
                 {/* Social Media Section */}
-                <div className="bg-gradient-to-r mx-12 px-10 from-green-400 via-blue-500 to-purple-500 animate-gradient text-center p-4 rounded-lg shadow-lg mb-6 md:mb-0 md:mr-4">
+                <div className="bg-gradient-to-r mx-12 px-10 h-64  from-green-400 via-blue-500 to-purple-500 animate-gradient text-center p-4 rounded-lg shadow-lg mb-6 md:mb-0 md:mr-4">
                   <h2 className="text-black dark:text-white font-bold text-lg mb-3">
                     Follow Us For More Offers:
                   </h2>
