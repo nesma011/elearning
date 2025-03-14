@@ -75,7 +75,7 @@ export default function QuestionBank() {
             {/* Home Tab Content */}
             {activeTab === 'home' && (
               <div className="flex flex-col gap-4 lg:flex-row mb-10">
-                <div className="relative top-[600px] left-0 lg:ml-72 z-10 bg-gradient-to-r mx-12 px-10 from-green-400 via-blue-500 to-purple-500 animate-gradient text-center p-4 rounded-lg shadow-lg">
+                <div className="relative lg:ml-72 z-10 bg-gradient-to-r mx-12 px-10 from-green-400 via-blue-500 to-purple-500 animate-gradient text-center p-4 rounded-lg shadow-lg">
                   <h2 className="text-black dark:text-white font-bold text-lg mb-3">
                     Follow Us For More Offers:
                   </h2>
@@ -93,9 +93,8 @@ export default function QuestionBank() {
                 </div>
                 
                 <div className="lg:ml-64">
-                  {/* Updates Section with Ramadan Greeting */}
+                  {/* Updates Section */}
                   <div className="text-center p-6 mx-8">
-                   
                     <h2 className="text-2xl font-bold mb-3">Updates</h2>
                     <div className="flex flex-col gap-4">
                       {updates && updates.length > 0 ? (
@@ -119,6 +118,7 @@ export default function QuestionBank() {
                 </div>
               </div>
             )}
+            
 
             {/* Analytics Tab Content */}
             {activeTab === 'analytics' && (
