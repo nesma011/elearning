@@ -74,26 +74,44 @@ export default function QuestionBank() {
 
             {/* Home Tab Content */}
             {activeTab === 'home' && (
-              <div className="flex flex-col gap-4 lg:flex-row mb-10">
-                <div className="relative lg:ml-72 z-10 bg-gradient-to-r mx-12 px-10 from-green-400 via-blue-500 to-purple-500 animate-gradient text-center p-4 rounded-lg shadow-lg">
-                  <h2 className="text-black dark:text-white font-bold text-lg mb-3">
-                    Follow Us For More Offers:
-                  </h2>
-                  <div className="flex justify-center gap-4 pt-8">
-                    <NavLink to="https://www.facebook.com/share/18aNvC8sCJ/">
-                      <img src={face} alt="Facebook" className="w-10" />
+              <>
+                {/* Navbar Header مع الجملة والروابط */}
+                <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-900 shadow">
+                  <div className="text-xl font-bold">
+                    Ramadan Kareem 🌙🌙
+                  </div>
+                  <div className="flex gap-4">
+                    <NavLink to="/home" className="hover:underline">
+                      Home
                     </NavLink>
-                    <NavLink to="https://wa.me/201229733297">
-                      <img src={whats} alt="WhatsApp" className="w-10" />
-                    </NavLink>
-                    <NavLink to="https://t.me/ddfffgry">
-                      <img src={telegram} alt="Telegram" className="w-10" />
+                    <NavLink to="/analytics" className="hover:underline">
+                      Analytics
                     </NavLink>
                   </div>
                 </div>
-                
-                <div className="lg:ml-64">
-                  {/* Updates Section */}
+            
+                {/* المحتوى الرئيسي */}
+                <div className="flex flex-col gap-4 lg:flex-row mb-10">
+                  
+                  {/* قسم Follow Us ثابت مع التمرير */}
+                  <div className="sticky top-4 bg-gradient-to-r mx-12 px-10 from-green-400 via-blue-500 to-purple-500 animate-gradient text-center p-4 rounded-lg shadow-lg mb-6 md:mb-0 md:mr-4">
+                    <h2 className="text-black dark:text-white font-bold text-lg mb-3">
+                      Follow Us For More Offers:
+                    </h2>
+                    <div className="flex justify-center gap-4 pt-8">
+                      <NavLink to="https://www.facebook.com/share/18aNvC8sCJ/">
+                        <img src={face} alt="Facebook" className="w-10" />
+                      </NavLink>
+                      <NavLink to="https://wa.me/201229733297">
+                        <img src={whats} alt="WhatsApp" className="w-10" />
+                      </NavLink>
+                      <NavLink to="https://t.me/ddfffgry">
+                        <img src={telegram} alt="Telegram" className="w-10" />
+                      </NavLink>
+                    </div>
+                  </div>
+            
+                  {/* قسم Updates */}
                   <div className="text-center p-6 mx-8">
                     <h2 className="text-2xl font-bold mb-3">Updates</h2>
                     <div className="flex flex-col gap-4">
@@ -116,7 +134,7 @@ export default function QuestionBank() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </>
             )}
             
 
@@ -131,11 +149,6 @@ export default function QuestionBank() {
                 <Usage />
               </div>
             )}
-            {/* Ramadan Kareem Heading */}
-            <h1 className="text-4xl font-bold mb-6 text-amber-500 dark:text-amber-400">
-              Ramadan Kareem 🌙🌙
-            </h1>
-            
           </div>
         </main>
       </div>
