@@ -44,7 +44,7 @@ const ErrorBoundary = ({children}) => {
   const [subjects, setSubjects] = useState([]);
   const [systems, setSystems] = useState([]);
   const [allSystems, setAllSystems] = useState([]);
-  const [questionCount, setQuestionCount] = useState(1);
+  const [questionCount, setQuestionCount] = useState("");
   const [selectedSubjects, setSelectedSubjects] = useState([]);
   const [selectedSystems, setSelectedSystems] = useState([]);
   const [selectedSubtitles, setSelectedSubtitles] = useState([]);
