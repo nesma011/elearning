@@ -73,15 +73,36 @@ export default function QuestionBank() {
             </div>
 
             {/* Home Tab Content */}
-            {/* Home Tab Content */}
+            <div className="flex items-center">
+              {/* Your existing tabs */}
+              <button 
+                className={`px-4 py-2 ${activeTab === 'home' ? 'text-blue-500 border-b-2 border-blue-500' : ''}`}
+                onClick={() => setActiveTab('home')}
+              >
+                Home
+              </button>
+              <button 
+                className={`px-4 py-2 ${activeTab === 'analytics' ? 'text-blue-500 border-b-2 border-blue-500' : ''}`}
+                onClick={() => setActiveTab('analytics')}
+              >
+                Analytics
+              </button>
+              
+              {/* Ramadan Kareem greeting inline with tabs */}
+              <h1 className="text-4xl font-bold ml-8 text-amber-500 dark:text-amber-400">
+                Ramadan Kareem 🌙🌙
+              </h1>
+            </div>
+            
+            {/* Main content area */}
             {activeTab === 'home' && (
-              <div className="flex flex-col gap-4 lg:flex-row mb-10">
-                {/* Social Media Section - Fixed Position */}
-                <div className="fixed top-[450px] left-0 lg:ml-72 z-10 bg-gradient-to-r mx-12 px-10 from-green-400 via-blue-500 to-purple-500 animate-gradient text-center p-4 rounded-lg shadow-lg">
+              <div className="flex flex-col gap-4 mb-10">
+                {/* Social Media Section - Below Navigation */}
+                <div className="bg-gradient-to-r from-green-400 via-blue-500 to-purple-500 animate-gradient text-center p-4 rounded-lg shadow-lg mt-4 mx-auto max-w-md">
                   <h2 className="text-black dark:text-white font-bold text-lg mb-3">
                     Follow Us For More Offers:
                   </h2>
-                  <div className="flex justify-center gap-4 pt-8">
+                  <div className="flex justify-center gap-4 pt-4 pb-2">
                     <NavLink to="https://www.facebook.com/share/18aNvC8sCJ/">
                       <img src={face} alt="Facebook" className="w-10" />
                     </NavLink>
@@ -93,35 +114,27 @@ export default function QuestionBank() {
                     </NavLink>
                   </div>
                 </div>
-                
-                {/* Added margin to prevent overlap with fixed element */}
-                <div className="lg:ml-64">
-                  {/* Updates Section with Ramadan Greeting */}
-                  <div className="text-center p-6 mx-8">
-                    {/* Ramadan Kareem Heading */}
-                    <h1 className="text-4xl font-bold mb-6 text-amber-500 dark:text-amber-400">
-                      Ramadan Kareem 🌙🌙
-                    </h1>
-                    
-                    <h2 className="text-2xl font-bold mb-3">Updates</h2>
-                    <div className="flex flex-col gap-4">
-                      {updates && updates.length > 0 ? (
-                        updates.map((update, index) => (
-                          <div
-                            key={index}
-                            className="p-6 bg-white dark:bg-gray-800 rounded-lg border-4 border-blue-500 dark:border-purple-400 animate-border text-center relative"
-                          >
-                            {update.text ? (
-                              <div dangerouslySetInnerHTML={{ __html: update.text }} />
-                            ) : (
-                              <div dangerouslySetInnerHTML={{ __html: update }} />
-                            )}
-                          </div>
-                        ))
-                      ) : (
-                        <p className="text-center">No updates available</p>
-                      )}
-                    </div>
+                            
+                {/* Updates Section */}
+                <div className="text-center p-6 mx-8">
+                  <h2 className="text-2xl font-bold mb-3">Updates</h2>
+                  <div className="flex flex-col gap-4">
+                    {updates && updates.length > 0 ? (
+                      updates.map((update, index) => (
+                        <div
+                          key={index}
+                          className="p-6 bg-white dark:bg-gray-800 rounded-lg border-4 border-blue-500 dark:border-purple-400 animate-border text-center relative"
+                        >
+                          {update.text ? (
+                            <div dangerouslySetInnerHTML={{ __html: update.text }} />
+                          ) : (
+                            <div dangerouslySetInnerHTML={{ __html: update }} />
+                          )}
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-center">No updates available</p>
+                    )}
                   </div>
                 </div>
               </div>
