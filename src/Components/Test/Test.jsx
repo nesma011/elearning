@@ -7,6 +7,7 @@ import Calculator from '../../ToolBar/Calculator';
 import LabValues from '../../ToolBar/LabValue';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import confetti from 'canvas-confetti';
 
 
 export default function Test() {
@@ -25,6 +26,7 @@ export default function Test() {
 
   const [timeLeft, setTimeLeft] = useState(null);
   const [isPaused, setIsPaused] = useState(false);
+  const [celebratedQuestions, setCelebratedQuestions] = useState({});
 
   const [testData, setTestData] = useState(() => {
     const savedTestData = localStorage.getItem("testData");
@@ -69,6 +71,7 @@ export default function Test() {
   const [activeComponent, setActiveComponent] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const token = localStorage.getItem("access_token");
@@ -591,6 +594,27 @@ export default function Test() {
   const totalTimeUsed = mode === 'timed'
     ? (totalTime * 60 - timeLeft)
     : null;
+
+    useEffect(() => {
+      const currentQuestion = testData.questions[currentQuestionIndex];
+      const questionResult = currentQuestion ? results[currentQuestion.id] : null;
+    
+      if (
+        questionResult &&
+        selectedAnswers[currentQuestion.id] === questionResult.correctAnswer &&
+        !celebratedQuestions[currentQuestion.id]
+      ) {
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+        });
+        setCelebratedQuestions((prev) => ({
+          ...prev,
+          [currentQuestion.id]: true,
+        }));
+      }
+    }, [questionResult, currentQuestionIndex, selectedAnswers, celebratedQuestions, testData.questions]);
 
   return (
     <section
