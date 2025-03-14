@@ -44,7 +44,7 @@ const ErrorBoundary = ({children}) => {
   const [subjects, setSubjects] = useState([]);
   const [systems, setSystems] = useState([]);
   const [allSystems, setAllSystems] = useState([]);
-  const [questionCount, setQuestionCount] = useState("");
+  const [questionCount, setQuestionCount] = useState(1);
   const [selectedSubjects, setSelectedSubjects] = useState([]);
   const [selectedSystems, setSelectedSystems] = useState([]);
   const [selectedSubtitles, setSelectedSubtitles] = useState([]);
@@ -200,8 +200,11 @@ const [incorrectCount, setIncorrectCount] = useState(0);
   const inputRef = useRef(null);
 
   const handleChange = (e) => {
-    setQuestionCount(e.target.value);
-    inputRef.current.focus();
+    const newValue = parseInt(e.target.value, 10);
+    setQuestionCount(newValue);
+    setTimeout(() => {
+      inputRef.current && inputRef.current.focus();
+    }, 0);
   };
 
   const handleIncorrectChange = (e) => {
@@ -776,14 +779,15 @@ const subtitleCountKey = showIncorrect
       <label className="block text-lg font-bold mb-2">Number of Questions:</label>
       <input
       ref={inputRef}
-      type="number"
+      type="text"           
+      inputMode="numeric"   
+      pattern="[0-9]*"      
       value={questionCount}
       onChange={handleChange}
       placeholder="Enter number of questions (max 40)"
       className="w-full p-2 border rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-      min="1"
-      max="40"
     />
+  );
     
       <small className="text-gray-600 dark:text-gray-300">Max 40 questions</small>
     </div>
