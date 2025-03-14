@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import Sidebar from '../SideBar/Sidebar';
 import { useNavigate, useParams } from "react-router-dom";
 import { FiPlusCircle, FiMinusCircle } from "react-icons/fi";
@@ -202,13 +202,14 @@ const [incorrectCount, setIncorrectCount] = useState(0);
   const handleChange = (e) => {
     const val = e.target.value;
     if (val === "") {
-      setQuestionCount(""); 
+      setQuestionCount("");
     } else {
       setQuestionCount(e.target.value);
     }
-     inputRef.current && inputRef.current.focus();
-
   };
+  useLayoutEffect(() => {
+    inputRef.current && inputRef.current.focus();
+  }, [questionCount]);
 
   const handleIncorrectChange = (e) => {
     const checked = e.target.checked;
