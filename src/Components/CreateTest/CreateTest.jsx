@@ -200,7 +200,8 @@ const [incorrectCount, setIncorrectCount] = useState(0);
   const inputRef = useRef(null);
 
   const handleChange = (e) => {
-    if (value === "") {
+    const val = e.target.value;
+    if (val === "") {
       setQuestionCount(""); 
     } else {
       setQuestionCount(e.target.value);
