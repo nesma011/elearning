@@ -73,10 +73,11 @@ export default function QuestionBank() {
             </div>
 
             {/* Home Tab Content */}
+            {/* Home Tab Content */}
             {activeTab === 'home' && (
               <div className="flex flex-col gap-4 lg:flex-row mb-10">
-                {/* Social Media Section */}
-                <div className="bg-gradient-to-r mx-12 px-10 from-green-400 via-blue-500 to-purple-500 animate-gradient text-center p-4 rounded-lg shadow-lg mb-6 md:mb-0 md:mr-4">
+                {/* Social Media Section - Fixed Position */}
+                <div className="fixed top-20 left-0 z-10 bg-gradient-to-r mx-12 px-10 from-green-400 via-blue-500 to-purple-500 animate-gradient text-center p-4 rounded-lg shadow-lg">
                   <h2 className="text-black dark:text-white font-bold text-lg mb-3">
                     Follow Us For More Offers:
                   </h2>
@@ -92,31 +93,37 @@ export default function QuestionBank() {
                     </NavLink>
                   </div>
                 </div>
-
-                {/* Updates Section */}
-                <div className="text-center p-6 mx-8 ">
-                <h2 className="text-2xl font-bold mb-3">Updates</h2>
-                <div className="flex flex-col gap-4">
-                  {updates && updates.length > 0 ? (
-                    updates.map((update, index) => (
-                      <div
-                        key={index}
-                        className="p-6  bg-white dark:bg-gray-800 rounded-lg border-4 border-blue-500 dark:border-purple-400 animate-border text-center relative"
-                      >
-                        {update.text ? (
-                          <div dangerouslySetInnerHTML={{ __html: update.text }} />
-                        ) : (
-                          <div dangerouslySetInnerHTML={{ __html: update }} />
-                        )}
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-center">No updates available</p>
-                  )}
+                
+                {/* Added margin to prevent overlap with fixed element */}
+                <div className="lg:ml-64">
+                  {/* Updates Section with Ramadan Greeting */}
+                  <div className="text-center p-6 mx-8">
+                    {/* Ramadan Kareem Heading */}
+                    <h1 className="text-4xl font-bold mb-6 text-amber-500 dark:text-amber-400">
+                      Ramadan Kareem 🌙🌙
+                    </h1>
+                    
+                    <h2 className="text-2xl font-bold mb-3">Updates</h2>
+                    <div className="flex flex-col gap-4">
+                      {updates && updates.length > 0 ? (
+                        updates.map((update, index) => (
+                          <div
+                            key={index}
+                            className="p-6 bg-white dark:bg-gray-800 rounded-lg border-4 border-blue-500 dark:border-purple-400 animate-border text-center relative"
+                          >
+                            {update.text ? (
+                              <div dangerouslySetInnerHTML={{ __html: update.text }} />
+                            ) : (
+                              <div dangerouslySetInnerHTML={{ __html: update }} />
+                            )}
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-center">No updates available</p>
+                      )}
+                    </div>
+                  </div>
                 </div>
-              </div>
-
-
               </div>
             )}
 
