@@ -77,7 +77,7 @@ export default function QuestionBank() {
             {activeTab === 'home' && (
               <div className="flex flex-col gap-4 lg:flex-row mb-10">
                 {/* Social Media Section - Fixed Position */}
-                <div className="fixed top-20 left-0 z-10 bg-gradient-to-r mx-12 px-10 from-green-400 via-blue-500 to-purple-500 animate-gradient text-center p-4 rounded-lg shadow-lg">
+                <div className="fixed top-20 left-0 lg:ml-64 z-10 bg-gradient-to-r mx-12 px-10 from-green-400 via-blue-500 to-purple-500 animate-gradient text-center p-4 rounded-lg shadow-lg">
                   <h2 className="text-black dark:text-white font-bold text-lg mb-3">
                     Follow Us For More Offers:
                   </h2>
