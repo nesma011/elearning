@@ -1130,7 +1130,7 @@ export default function Test() {
 {isViewResults && currentQuestion && results[currentQuestion.id] && (
   <div className="mt-4">
     <div className="p-3 border-t w-full">
-      <h3 className="font-bold text-xl">Question {currentQuestion.id} Explanation:</h3>
+      <h3 className="font-bold text-xl"> Explanation: </h3>
       {results[currentQuestion.id]?.image && (
         <img
           src={results[currentQuestion.id].image}

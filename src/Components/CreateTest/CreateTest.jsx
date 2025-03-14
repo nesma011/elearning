@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Sidebar from '../SideBar/Sidebar';
 import { useNavigate, useParams } from "react-router-dom";
 import { FiPlusCircle, FiMinusCircle } from "react-icons/fi";
@@ -197,6 +197,12 @@ const [incorrectCount, setIncorrectCount] = useState(0);
     fetchCounts();
   }, [yearId, API_BASE_URL]);
 
+  const inputRef = useRef(null);
+
+  const handleChange = (e) => {
+    setQuestionCount(e.target.value);
+    inputRef.current.focus();
+  };
 
   const handleIncorrectChange = (e) => {
     const checked = e.target.checked;
@@ -769,14 +775,16 @@ const subtitleCountKey = showIncorrect
       <div className="bg-gray-300 md:w-1/4 w-1/2 dark:bg-gray-800 rounded-lg shadow-md p-6 md:ms-80 ms-20 my-6">
       <label className="block text-lg font-bold mb-2">Number of Questions:</label>
       <input
-        type="number"
-        value={questionCount}
-        onChange={(e) => setQuestionCount(e.target.value)}
-        placeholder="Enter number of questions (max 40)"
-        className="w-full p-2 border rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-        min="1"
-        max="40"
-      />
+      ref={inputRef}
+      type="number"
+      value={questionCount}
+      onChange={handleChange}
+      placeholder="Enter number of questions (max 40)"
+      className="w-full p-2 border rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+      min="1"
+      max="40"
+    />
+    
       <small className="text-gray-600 dark:text-gray-300">Max 40 questions</small>
     </div>
     
