@@ -7,11 +7,9 @@ import Calculator from '../../ToolBar/Calculator';
 import LabValues from '../../ToolBar/LabValue';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Confetti from 'react-confetti';
 
 
 export default function Test() {
-  const [celebratedQuestions, setCelebratedQuestions] = useState({});
   const { yearId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
@@ -607,19 +605,7 @@ export default function Test() {
     </span>
   </div>
   <div className="relative z-10">
-  {questionResult && 
-       selectedAnswers[currentQuestion.id] === questionResult.correctAnswer && 
-       !celebratedQuestions[currentQuestion.id] && (
-        <Confetti
-          width={window.innerWidth}
-          height={window.innerHeight}
-          recycle={false} 
-          numberOfPieces={200} 
-          onConfettiComplete={() => {
-            setCelebratedQuestions(prev => ({ ...prev, [currentQuestion.id]: true }));
-          }} 
-        />
-      )}
+
       <nav className="bg-blue-800 w-full px-4 py-2 flex flex-col sm:flex-row sm:justify-between items-center">
         <div className="flex flex-col text-white mb-2 sm:mb-0">
           <span className="text-xl font-semibold">
