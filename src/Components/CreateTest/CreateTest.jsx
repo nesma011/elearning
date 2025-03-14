@@ -200,11 +200,13 @@ const [incorrectCount, setIncorrectCount] = useState(0);
   const inputRef = useRef(null);
 
   const handleChange = (e) => {
-    const newValue = parseInt(e.target.value, 10);
-    setQuestionCount(newValue);
-    setTimeout(() => {
-      inputRef.current && inputRef.current.focus();
-    }, 0);
+    const value = e.target.value;
+    if (value === "") {
+      setQuestionCount(""); 
+    } else {
+      const newValue = parseInt(value, 10);
+      setQuestionCount(newValue);
+    }
   };
 
   const handleIncorrectChange = (e) => {
@@ -253,12 +255,33 @@ const [incorrectCount, setIncorrectCount] = useState(0);
   };
 
   const handleSubtitleChange = (subtitleId) => {
-    setSelectedSubtitles(prev =>
-      prev.includes(subtitleId)
-        ? prev.filter(id => id !== subtitleId)
-        : [...prev, subtitleId]
-    );
+    let newSelectedSubtitles;
+    if (selectedSubtitles.includes(subtitleId)) {
+      newSelectedSubtitles = selectedSubtitles.filter(id => id !== subtitleId);
+      const parentSystem = systems.find(
+        system => system.subtitles && system.subtitles.some(sub => sub.id === subtitleId)
+      );
+      if (parentSystem) {
+        const systemSubtitleIds = parentSystem.subtitles.map(sub => sub.id);
+        const stillSelected = newSelectedSubtitles.filter(id =>
+          systemSubtitleIds.includes(id)
+        );
+        if (stillSelected.length === 0) {
+          setSelectedSystems(prev => prev.filter(id => id !== parentSystem.id));
+        }
+      }
+    } else {
+      newSelectedSubtitles = [...selectedSubtitles, subtitleId];
+      const parentSystem = systems.find(
+        system => system.subtitles && system.subtitles.some(sub => sub.id === subtitleId)
+      );
+      if (parentSystem && !selectedSystems.includes(parentSystem.id)) {
+        setSelectedSystems(prev => [...prev, parentSystem.id]);
+      }
+    }
+    setSelectedSubtitles(newSelectedSubtitles);
   };
+  
 
   const handleSubjectChange = (subjectId) => {
     setSelectedSubjects(prev =>
