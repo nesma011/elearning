@@ -200,12 +200,10 @@ const [incorrectCount, setIncorrectCount] = useState(0);
   const inputRef = useRef(null);
 
   const handleChange = (e) => {
-    const value = e.target.value;
     if (value === "") {
       setQuestionCount(""); 
     } else {
-      const newValue = parseInt(value, 10);
-      setQuestionCount(newValue);
+      setQuestionCount(e.target.value);
     }
   };
 
@@ -810,7 +808,6 @@ const subtitleCountKey = showIncorrect
       placeholder="Enter number of questions (max 40)"
       className="w-full p-2 border rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
     />
-  );
     
       <small className="text-gray-600 dark:text-gray-300">Max 40 questions</small>
     </div>
