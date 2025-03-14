@@ -206,6 +206,8 @@ const [incorrectCount, setIncorrectCount] = useState(0);
     } else {
       setQuestionCount(e.target.value);
     }
+     inputRef.current && inputRef.current.focus();
+
   };
 
   const handleIncorrectChange = (e) => {
