@@ -30,7 +30,7 @@ export default function QuestionBank() {
         const data = await response.json(); 
         setUpdates(data); 
       } catch (error) {
-        console.error('error gitting updates', error);
+        console.error('error getting updates', error);
       }
     };
     fetchUpdates();
@@ -46,86 +46,88 @@ export default function QuestionBank() {
         <main className="flex-1">
           <Welcome />
 
-          <div className="p-6">
+          <div className="p-4 md:p-6">
             {/* Tabs Navigation */}
-            <div className="flex space-x-4 mb-6">
-              <button
-                onClick={() => setActiveTab('home')}
-                className={`px-6 py-2 rounded-lg text-lg font-semibold ${
-                  activeTab === 'home'
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
-                }`}
-              >
-                Home
-              </button>
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+              <div className="flex space-x-4 mb-4 md:mb-0">
+                <button
+                  onClick={() => setActiveTab('home')}
+                  className={`px-4 md:px-6 py-2 rounded-lg text-base md:text-lg font-semibold ${
+                    activeTab === 'home'
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                  }`}
+                >
+                  Home
+                </button>
 
-              <button
-                onClick={() => setActiveTab('analytics')}
-                className={`px-6 py-2 rounded-lg text-lg font-semibold ${
-                  activeTab === 'analytics'
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
-                }`}
-              >
-                Analytics
-              </button>
+                <button
+                  onClick={() => setActiveTab('analytics')}
+                  className={`px-4 md:px-6 py-2 rounded-lg text-base md:text-lg font-semibold ${
+                    activeTab === 'analytics'
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                  }`}
+                >
+                  Analytics
+                </button>
+              </div>
 
-              <h1 className='text-5xl font-semibold ps-32'>Ramadan Kareem 🌙🌙</h1>
+              <h1 className="text-2xl md:text-5xl font-semibold md:pl-32 text-center md:text-left">
+                Ramadan Kareem 🌙🌙
+              </h1>
             </div>
 
             {/* Home Tab Content */}
             {activeTab === 'home' && (
-              <div className="flex flex-col gap-4 lg:flex-row mb-10">
+              <div className="flex flex-col lg:flex-row gap-4 mb-10">
                 {/* Social Media Section */}
-                <div className="bg-gradient-to-r mx-12 px-10 h-64 mt-16 from-green-400 via-blue-500 to-purple-500 animate-gradient text-center p-4 rounded-lg shadow-lg mb-6 md:mb-0 md:mr-4">
+                <div className="bg-gradient-to-r from-green-400 via-blue-500 to-purple-500 mx-4 md:mx-12 px-4 md:px-10 h-48 md:h-64 mt-8 md:mt-16 animate-gradient text-center p-4 rounded-lg shadow-lg">
                   <h2 className="text-black dark:text-white font-bold text-lg mb-3">
                     Follow Us For More Offers:
                   </h2>
-                  <div className="flex justify-center gap-4 pt-8">
+                  <div className="flex justify-center gap-4 pt-4 md:pt-8">
                     <NavLink to="https://www.facebook.com/share/18aNvC8sCJ/">
-                      <img src={face} alt="Facebook" className="w-[150px] p-3" />
+                      <img src={face} alt="Facebook" className="w-20 md:w-[150px] p-2" />
                     </NavLink>
                     <NavLink to="https://wa.me/201229733297">
-                      <img src={whats} alt="WhatsApp" className="w-16 p-1" />
+                      <img src={whats} alt="WhatsApp" className="w-20 md:w-[150px] p-2" />
                     </NavLink>
                     <NavLink to="https://t.me/ddfffgry">
-                      <img src={telegram} alt="Telegram" className="w-16 p-1" />
+                      <img src={telegram} alt="Telegram" className="w-20 md:w-[150px] p-2" />
                     </NavLink>
                   </div>
                 </div>
 
                 {/* Updates Section */}
-                <div className="text-center p-6 mx-8 ">
-                <h2 className="text-2xl font-bold mb-3">Updates</h2>
-                <div className="flex flex-col gap-4">
-                  {updates && updates.length > 0 ? (
-                    updates.map((update, index) => (
-                      <div
-                        key={index}
-                        className="p-6  bg-white dark:bg-gray-800 rounded-lg border-4 border-blue-500 dark:border-purple-400 animate-border text-center relative"
-                      >
-                        {update.text ? (
-                          <div dangerouslySetInnerHTML={{ __html: update.text }} />
-                        ) : (
-                          <div dangerouslySetInnerHTML={{ __html: update }} />
-                        )}
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-center">No updates available</p>
-                  )}
+                <div className="text-center p-4 md:p-6 mx-4 md:mx-8">
+                  <h2 className="text-xl md:text-2xl font-bold mb-3">Updates</h2>
+                  <div className="flex flex-col gap-4">
+                    {updates && updates.length > 0 ? (
+                      updates.map((update, index) => (
+                        <div
+                          key={index}
+                          className="p-4 md:p-6 bg-white dark:bg-gray-800 rounded-lg border-4 border-blue-500 dark:border-purple-400 animate-border text-center relative"
+                        >
+                          {update.text ? (
+                            <div dangerouslySetInnerHTML={{ __html: update.text }} />
+                          ) : (
+                            <div dangerouslySetInnerHTML={{ __html: update }} />
+                          )}
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-center">No updates available</p>
+                    )}
+                  </div>
                 </div>
-              </div>
-
-
               </div>
             )}
 
             {/* Analytics Tab Content */}
             {activeTab === 'analytics' && (
-              <div className="p-6 text-center bg-gray-100 dark:bg-gray-800 rounded-lg shadow-lg">
-                <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">
+              <div className="p-4 md:p-6 text-center bg-gray-100 dark:bg-gray-800 rounded-lg shadow-lg">
+                <h2 className="text-xl md:text-2xl font-bold mb-4 text-gray-800 dark:text-white">
                   Analytics Overview
                 </h2>
                 <RadarScore />

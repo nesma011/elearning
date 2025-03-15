@@ -15,7 +15,7 @@ export default function Nav({ hasSidebar = true }) {
 
   return (
     <nav
-      className={`h-16 z-20 flex-shrink-0 fixed top-0 right-0 ${
+      className={`h-16 z-20 flex-shrink-0 fixed top-0 left-0 right-0 md:left-[256px] ${
         hasSidebar ? "left-[256px]" : "left-0"
       } bg-gray-100 dark:bg-gray-800 dark:text-white border-b flex items-center justify-between py-4 px-4`}
     >

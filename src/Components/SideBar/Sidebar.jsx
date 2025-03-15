@@ -9,7 +9,7 @@ import {
 } from 'react-icons/fi';
 import logo from "../../../public/logo.webp";
 import Darkmode from '../../Darkmode';
-import  { useReferFriendModal } from  "../../Context/ReferContext"; // Update the import path as needed
+import  { useReferFriendModal } from  "../../Context/ReferContext"; 
 
 export default function Sidebar() {
   useContext(useReferFriendModal)
