@@ -19,7 +19,7 @@ export default function Nav() {
       bg-gray-100 dark:bg-gray-800 dark:text-white border-b flex items-center justify-between py-4 px-4`}
     >
       <NavLink to="/classes" className="flex justify-center items-center gap-2">
-        <img src={logo} className="w-16 ms-16" alt="Logo" />
+        <img src={logo} className="w-16 ms-16 py-4" alt="Logo" />
         <h1 className="text-3xl font-semibold text-blue-600">
           <span className="text-3xl font-extrabold text-blue-600">ALEX</span>
           -MedLearn
