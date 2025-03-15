@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import logo from "../../../public/logo.webp";
 import { NavLink } from 'react-router-dom';
 
-export default function Nav({ hasSidebar = true }) {
+export default function Nav({ hasSidebar = false }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [userData, setUserData] = useState(null);
 
@@ -17,7 +17,7 @@ export default function Nav({ hasSidebar = true }) {
     <nav
     className={`h-16 z-20 flex-shrink-0 fixed top-0 right-0 left-0 ${
       hasSidebar ? " md:left-[256px] left-[256px]" : " left-0 "
-    } w-full bg-gray-100 dark:bg-gray-800 dark:text-white border-b flex items-center justify-between py-4 px-4`}
+    } bg-gray-100 dark:bg-gray-800 dark:text-white border-b flex items-center justify-between py-4 px-4`}
   >
       <NavLink to="/classes" className="flex justify-center items-center gap-2">
         <img src={logo} className="w-16 ms-16" alt="Logo" />

@@ -73,7 +73,7 @@ export default function QuestionBank() {
                 </button>
               </div>
 
-              <h1 className="text-2xl md:text-4xl font-semibold md:ps-20 text-center md:text-left">
+              <h1 className="text-2xl md:text-5xl font-semibold md:ps-6 text-center md:text-left">
                 Ramadan Kareem 🌙🌙
               </h1>
             </div>
