@@ -15,8 +15,8 @@ export default function Nav({ hasSidebar = true }) {
 
   return (
     <nav
-    className={`h-16 z-20 flex-shrink-0 fixed top-0 right-0 ${
-      hasSidebar ? "md:left-[256px] left-[256px]" : "left-0"
+    className={`h-16 z-20 flex-shrink-0 fixed top-0 right-0 left-0 ${
+      hasSidebar ? " md:left-[256px] left-[256px]" : " left-0 "
     } w-full bg-gray-100 dark:bg-gray-800 dark:text-white border-b flex items-center justify-between py-4 px-4`}
   >
       <NavLink to="/classes" className="flex justify-center items-center gap-2">
