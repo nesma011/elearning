@@ -84,7 +84,7 @@ export default function QuestionBank() {
                   </h2>
                   <div className="flex justify-center gap-4 pt-8">
                     <NavLink to="https://www.facebook.com/share/18aNvC8sCJ/">
-                      <img src={face} alt="Facebook" className="w-16 p-1" />
+                      <img src={face} alt="Facebook" className="w-[150px] p-3" />
                     </NavLink>
                     <NavLink to="https://wa.me/201229733297">
                       <img src={whats} alt="WhatsApp" className="w-16 p-1" />

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import logo from "../../../public/logo.webp";
 import { NavLink } from 'react-router-dom';
 
-export default function Nav({ hasSidebar = false }) {
+export default function Nav({ hasSidebar = true }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [userData, setUserData] = useState(null);
 
