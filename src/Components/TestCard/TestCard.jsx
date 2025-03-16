@@ -197,7 +197,7 @@ const TestCard = () => {
       localStorage.setItem("submittedQuestions", JSON.stringify(submittedQuestionsObj));
       localStorage.setItem("results", JSON.stringify(resultsObj));
   
-      const answeredQuestionIds = Object.keys(submittedQuestionsObj); // نستخدم submittedQuestionsObj بدل selectedAnswersObj
+      const answeredQuestionIds = Object.keys(submittedQuestionsObj); 
       const newIndex = answeredQuestionIds.length > 0 ? 
         data.findIndex(q => q.id.toString() === answeredQuestionIds[answeredQuestionIds.length - 1]) : 0;
       
@@ -207,7 +207,13 @@ const TestCard = () => {
         state: {
           mode: test.type_test === "time_mode" ? "timed" : "regular",
           totalTime: test.type_test === "time_mode" ? (parseInt(test.time) / 60) : undefined,
-          resume: true
+          resume: true ,
+          testDetails: {
+            version: test.version ? test.version.split('T')[0] : 'N/A',
+            subject_name: test.subject_name || 'N/A',
+            system_name: test.system_name || 'N/A',
+            subtitle_name: test.subtitle_name || 'N/A'
+          }
         }
       });
     } catch (error) {
@@ -329,7 +335,13 @@ const TestCard = () => {
         state: {
           mode: test.type_test === "time_mode" ? "timed" : "regular",
           totalTime: test.type_test === "time_mode" ? (parseInt(test.time) / 60) : undefined,
-          viewResults: true
+          viewResults: true ,
+          testDetails: {
+            version: test.version ? test.version.split('T')[0] : 'N/A',
+            subject_name: test.subject_name || 'N/A',
+            system_name: test.system_name || 'N/A',
+            subtitle_name: test.subtitle_name || 'N/A'
+          }
         }
       });
     } catch (error) {
