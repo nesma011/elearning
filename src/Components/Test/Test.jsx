@@ -21,23 +21,9 @@ export default function Test() {
   const [fontSize, setFontSize] = useState(16);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
-
   const [timeLeft, setTimeLeft] = useState(null);
   const [isPaused, setIsPaused] = useState(false);
   const [celebratedQuestions, setCelebratedQuestions] = useState({});
-
-  const [currentDate, setCurrentDate] = useState(new Date().toISOString().split('T')[0]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentDate(new Date().toISOString().split('T')[0]);
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-
-
-
   const [testData, setTestData] = useState(() => {
     const savedTestData = localStorage.getItem('testData');
     const savedResultData = localStorage.getItem('resultData');
@@ -1173,7 +1159,7 @@ export default function Test() {
                     <div className="px-4 hover:bg-blue-100 transition-colors">
                       <p className="font-semibold text-blue-600">Version</p>
                       <p className="text-sm text-gray-700">
-                      {currentDate}
+                      {questionResult?.version ? questionResult.version.split('T')[0] : 'N/A'}
                       </p>
                     </div>
                     <div className="px-4 hover:bg-blue-100 transition-colors">
