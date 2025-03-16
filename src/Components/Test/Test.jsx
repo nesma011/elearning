@@ -1122,7 +1122,6 @@ export default function Test() {
                     )}
                   </div>
 
-                  {/* زر الحفظ أو الإرسال (حسب المود) */}
                   {currentQuestion.id && !results[currentQuestion.id] && (
                     <>
                       {mode === 'timed' ? (
@@ -1150,44 +1149,44 @@ export default function Test() {
 
             {questionResult && (
               <div className={separateView ? 'col-span-1' : 'mt-4'}>
-                <div className="mt-4 p-4 bg-white border rounded shadow-sm">
+                <div className="mt-4 p-6 bg-gradient-to-r from-blue-50 to-gray-50 border border-blue-600 rounded-lg shadow-lg">
                   <h2
-                    className={`text-2xl font-bold mb-2 ${
-                      questionResult.status ? 'text-green-600' : 'text-red-600'
+                    className={`text-2xl font-bold mb-4 ${
+                      questionResult.status ? 'text-blue-600' : 'text-gray-800'
                     }`}
                   >
                     {questionResult.status ? 'Correct' : 'Incorrect'}
                   </h2>
-                  <p className="text-lg font-semibold mb-2">
-                    The Correct Answer:{' '}
-                    {questionResult.correctAnswerLetter} -{' '}
-                    {questionResult.correctAnswerText}
-                  </p>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <p>
-                      <strong>Time Spent:</strong>{' '}
-                      {questionResult.time_spent || 'N/A'}
-                    </p>
-                    <p>
-                      <strong>Version:</strong>{' '}
-                      {questionResult.version || 'N/A'}
-                    </p>
-                    <p>
-                      <strong>Subject Name:</strong>{' '}
-                      {questionResult.subject_name || 'N/A'}
-                    </p>
-                    <p>
-                      <strong>System Name:</strong>{' '}
-                      {questionResult.system_name || 'N/A'}
-                    </p>
-                    <p>
-                      <strong>Subtitle Name:</strong>{' '}
-                      {questionResult.subtitle_name || 'N/A'}
-                    </p>
+                  <div className="flex divide-x divide-blue-600">
+                    <div className="px-4 hover:bg-blue-100 transition-colors">
+                      <p className="font-semibold text-blue-600">Version</p>
+                      <p className="text-sm text-gray-700">
+                        {questionResult.version || 'N/A'}
+                      </p>
+                    </div>
+                    <div className="px-4 hover:bg-blue-100 transition-colors">
+                      <p className="font-semibold text-blue-600">Subject Name</p>
+                      <p className="text-sm text-gray-700">
+                        {questionResult.subject_name || 'N/A'}
+                      </p>
+                    </div>
+                    <div className="px-4 hover:bg-blue-100 transition-colors">
+                      <p className="font-semibold text-blue-600">System Name</p>
+                      <p className="text-sm text-gray-700">
+                        {questionResult.system_name || 'N/A'}
+                      </p>
+                    </div>
+                    <div className="px-4 hover:bg-blue-100 transition-colors">
+                      <p className="font-semibold text-blue-600">Subtitle Name</p>
+                      <p className="text-sm text-gray-700">
+                        {questionResult.subtitle_name || 'N/A'}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
             )}
+            
 
             {/* Explanation Section (timed) */}
             {mode === 'timed' &&
