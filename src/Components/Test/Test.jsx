@@ -26,14 +26,15 @@ export default function Test() {
   const [isPaused, setIsPaused] = useState(false);
   const [celebratedQuestions, setCelebratedQuestions] = useState({});
 
-  const [currentDate, setCurrentDate] = useState(new Date().toISOString());
+  const [currentDate, setCurrentDate] = useState(new Date().toISOString().split('T')[0]);
+
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentDate(new Date().toISOString());
-    }, 1000); 
+      setCurrentDate(new Date().toISOString().split('T')[0]);
+    }, 1000);
     return () => clearInterval(interval);
   }, []);
-  
+
 
 
 
