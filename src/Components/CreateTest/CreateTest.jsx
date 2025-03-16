@@ -143,7 +143,7 @@ const [incorrectCount, setIncorrectCount] = useState(0);
           systemEndpoint = `${API_BASE_URL}/system_hight_question/`;
           bodyData = {
             subject_id: selectedSubjects,
-            year_id: yearId,
+            group_id: yearId,
           };
         }
   
@@ -163,7 +163,7 @@ const [incorrectCount, setIncorrectCount] = useState(0);
         const data = await response.json();
         console.log("Systems Response:", data);
   
-        // التأكد من أن الأنظمة دائمًا عبارة عن مصفوفة
+        
         setSystems(Array.isArray(data.systems) ? data.systems : Array.isArray(data) ? data : []);
         setSelectedSystems([]);
         setSelectedSubtitles([]);
