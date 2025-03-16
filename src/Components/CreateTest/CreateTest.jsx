@@ -543,7 +543,7 @@ const [incorrectCount, setIncorrectCount] = useState(0);
   };
 
   const systemCountKey = showHighYield
-  ? 'count_question'  
+  ? 'count_question_hight'  
   : showIncorrect
   ? 'count_question_field'
   : showUnanswered
