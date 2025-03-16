@@ -25,15 +25,17 @@ export default function Test() {
   const [timeLeft, setTimeLeft] = useState(null);
   const [isPaused, setIsPaused] = useState(false);
   const [celebratedQuestions, setCelebratedQuestions] = useState({});
-  const [currentDate, setCurrentDate] = useState(new Date().toISOString());
 
+  const [currentDate, setCurrentDate] = useState(new Date().toISOString());
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentDate(new Date().toISOString());
     }, 1000); 
-
     return () => clearInterval(interval);
   }, []);
+  
+
+
 
   const [testData, setTestData] = useState(() => {
     const savedTestData = localStorage.getItem('testData');
