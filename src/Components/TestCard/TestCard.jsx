@@ -181,6 +181,12 @@ const TestCard = () => {
               text_image4: explanation.text_image4 ? `${API_BASE_URL}${explanation.text_image4}` : null,
               text_image5: explanation.text_image5 ? `${API_BASE_URL}${explanation.text_image5}` : null,
               text_image6: explanation.text_image6 ? `${API_BASE_URL}${explanation.text_image6}` : null,
+              testDetails: {
+                version: test.version ? test.version.split('T')[0] : 'N/A',
+                subject_name: test.subject_name || 'N/A',
+                system_name: test.system_name || 'N/A',
+                subtitle_name: test.subtitle_name || 'N/A'
+              }
             };
           } else {
             resultsObj[question.id] = {
@@ -317,6 +323,12 @@ const TestCard = () => {
             text_image4: question.explantions[0].text_image4 ? `${API_BASE_URL}${question.explantions[0].text_image4}` : null,
             text_image5: question.explantions[0].text_image5 ? `${API_BASE_URL}${question.explantions[0].text_image5}` : null,
             text_image6: question.explantions[0].text_image6 ? `${API_BASE_URL}${question.explantions[0].text_image6}` : null,
+            testDetails: {
+              version: test.version ? test.version.split('T')[0] : 'N/A',
+              subject_name: test.subject_name || 'N/A',
+              system_name: test.system_name || 'N/A',
+              subtitle_name: test.subtitle_name || 'N/A'
+            }
           };
         } else {
           resultsObj[question.id] = {
