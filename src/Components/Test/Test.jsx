@@ -874,20 +874,21 @@ export default function Test() {
   <div className={separateView ? 'col-span-1' : ''}>
     {testData && currentQuestion ? (
       <div className="mb-4 p-1 rounded flex flex-col items-start">
-        {currentQuestion.text && (
-          <p
-            className="mb-1 text-xl"
-            style={{ backgroundColor: hideHighlights ? 'transparent' : 'inherit' }}
-            dangerouslySetInnerHTML={{
-              __html: submittedQuestions[currentQuestion.id]
-                ? currentQuestion.text.replace(
-                    /<u>(.*?)<\/u>/g,
-                    '<span style="text-decoration: underline; text-decoration-color: #ed1212; text-decoration-thickness: 4px;">$1</span>'
-                  )
-                : currentQuestion.text.replace(/<u>(.*?)<\/u>/g, '$1'),
-            }}
-          />
-        )}
+     {currentQuestion.text && (
+  <p
+    className="mb-1 text-xl"
+    style={{ backgroundColor: hideHighlights ? 'transparent' : 'inherit' }}
+    dangerouslySetInnerHTML={{
+      __html: submittedQuestions[currentQuestion.id]
+        ? currentQuestion.text.replace(
+            /<u>(.*?)<\/u>/g,
+            '<span style="text-decoration: underline; text-decoration-color: #ed1212; text-decoration-thickness: 4px; text-decoration-skip-ink: none;">$1</span>'
+          )
+        : currentQuestion.text.replace(/<u>(.*?)<\/u>/g, '$1'),
+    }}
+  />
+)}
+
 
         {currentQuestion.image && (
           <img

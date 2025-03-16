@@ -40,3 +40,8 @@
   .animate-border {
     animation: borderColorChange 4s infinite linear;
   }
+
+  .underline-text {
+    text-decoration: underline;
+    text-decoration-skip-ink: none;
+}
