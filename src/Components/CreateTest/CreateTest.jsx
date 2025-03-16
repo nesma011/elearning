@@ -143,7 +143,7 @@ const [incorrectCount, setIncorrectCount] = useState(0);
           systemEndpoint = `${API_BASE_URL}/system_hight_question/`;
           bodyData = {
             subject_id: selectedSubjects,
-            group_id: yearId,
+            group_id: parseInt(yearId),
           };
         }
   
