@@ -139,6 +139,12 @@ const [incorrectCount, setIncorrectCount] = useState(0);
         } else if (showUnanswered) {
           systemEndpoint = `${API_BASE_URL}/systems_unanswer/`;
           bodyData = { subject_id: selectedSubjects };
+        } else if (showHighYield) {
+          systemEndpoint = `${API_BASE_URL}/system_hight_question/`;
+          bodyData = {
+            subject_id: selectedSubjects,
+            year_id: yearId,
+          };
         }
   
         const response = await fetch(systemEndpoint, {
@@ -157,7 +163,7 @@ const [incorrectCount, setIncorrectCount] = useState(0);
         const data = await response.json();
         console.log("Systems Response:", data);
   
-        // Ensure systems is always an array
+        // التأكد من أن الأنظمة دائمًا عبارة عن مصفوفة
         setSystems(Array.isArray(data.systems) ? data.systems : Array.isArray(data) ? data : []);
         setSelectedSystems([]);
         setSelectedSubtitles([]);
@@ -167,8 +173,7 @@ const [incorrectCount, setIncorrectCount] = useState(0);
     };
   
     fetchSystems();
-  }, [selectedSubjects, allSystems, yearId, API_BASE_URL, showIncorrect, showUnanswered]);
-
+  }, [selectedSubjects, allSystems, yearId, API_BASE_URL, showIncorrect, showUnanswered, showHighYield]);
 
 
   useEffect(() => {
@@ -233,13 +238,8 @@ const [incorrectCount, setIncorrectCount] = useState(0);
     const checked = e.target.checked;
     setShowHighYield(checked);
     if (checked) {
-      setShowIncorrect(false); 
-      setShowUnanswered(false); 
-/*       fetchHighYieldCounts(); 
- */    } else {
-      setSystems(allSystems); 
-      setSelectedSystems([]);
-      setSelectedSubtitles([]);
+      setShowIncorrect(false);
+      setShowUnanswered(false);
     }
   };
 
@@ -542,22 +542,21 @@ const [incorrectCount, setIncorrectCount] = useState(0);
     }
   };
 
-
-  const systemCountKey = showIncorrect
+  const systemCountKey = showHighYield
+  ? 'count_question'  
+  : showIncorrect
   ? 'count_question_field'
   : showUnanswered
   ? 'count_question_unanswer'
-  : 'count_question';
+  : 'count_question'; 
 
-
-
-const subtitleCountKey = showIncorrect
+const subtitleCountKey = showHighYield
+  ? 'subtitles_remaining'  
+  : showIncorrect
   ? 'field'
   : showUnanswered
   ? 'unanswer'
-  : 'subtitles_remaining';
-
-
+  : 'subtitles_remaining'; 
 
 
   if (!yearId) {
