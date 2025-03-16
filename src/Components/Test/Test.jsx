@@ -12,6 +12,8 @@ import confetti from 'canvas-confetti';
 export default function Test() {
   const { yearId } = useParams();
   const location = useLocation();
+  const { state } = location;
+  const testDetails = state?.testDetails || {};
   const navigate = useNavigate();
   const { mode, totalTime } = location.state || {};
   const [highlightOn, setHighlightOn] = useState(true);
@@ -271,7 +273,6 @@ export default function Test() {
           system_name: data.system_name || '',
           subtitle_name: data.subtitle_name || '',
           version: data.version || '',
-          time_spent: data.time_spent || '',
         },
       };
 
@@ -426,6 +427,12 @@ export default function Test() {
           text_image6: explanation.text_image6
             ? `${API_BASE_URL}${explanation.text_image6}`
             : null,
+            subject_name: questionData.subject_name || '',
+            system_name: questionData.system_name || '',
+            subtitle_name: questionData.subtitle_name || '',
+            version: questionData.version || '',
+            time_spent: questionData.time_spent || '',
+
         };
       });
 
@@ -617,12 +624,10 @@ export default function Test() {
       ? testData.questions[currentQuestionIndex]
       : null;
 
-  // هنا نقرأ الـ questionResult لكل سؤال حالي
   const questionResult = currentQuestion ? results[currentQuestion.id] : null;
 
   const totalTimeUsed = mode === 'timed' ? totalTime * 60 - timeLeft : null;
 
-  // احتفالية الأسئلة الصحيحة (Confetti)
   useEffect(() => {
     const currentQuestion = testData.questions[currentQuestionIndex];
     const questionResult = currentQuestion ? results[currentQuestion.id] : null;
