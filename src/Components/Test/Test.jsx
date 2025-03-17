@@ -1151,7 +1151,7 @@ export default function Test() {
             </div>
 
             {questionResult && (
-              <div className={separateView ? 'col-span-1' : 'mt-4'}>
+              <div className={'mt-4'}>
                 <div className="mt-4 p-6 bg-gradient-to-r from-blue-50 to-gray-50 border border-blue-600 rounded-lg shadow-lg">
                   <h2
                     className={`text-2xl font-bold mb-4 ${
