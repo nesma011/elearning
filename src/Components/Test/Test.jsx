@@ -1150,64 +1150,112 @@ export default function Test() {
               )}
             </div>
 
-            <div className={separateView ? 'grid grid-cols-2 gap-4' : ''}>
-            {/* First Section: Question + Result Bar */}
-            <div className={separateView ? 'col-span-1' : ''}>
-              {/* Question Rendering (assumed) */}
-              {currentQuestion && (
-                <div>
-                  {/* Replace with your actual question content */}
-                  <p>Question content goes here</p>
+            {questionResult && (
+              <div className={separateView ? 'col-span-1' : 'mt-4'}>
+                <div className="mt-4 p-6 bg-gradient-to-r from-blue-50 to-gray-50 border border-blue-600 rounded-lg shadow-lg">
+                  <h2
+                    className={`text-2xl font-bold mb-4 ${
+                      questionResult.status ? 'text-green-600' : 'text-red-600'
+                    }`}
+                  >
+                    {questionResult.status ? 'Correct' : 'Incorrect'}
+                  </h2>
+                  <div className="flex divide-x divide-blue-600 gap-10">
+                    <div className="px-4 hover:bg-blue-100 transition-colors">
+                      <p className="font-semibold text-blue-600">Version</p>
+                      <p className="text-sm text-gray-700">
+                      {questionResult?.version ? questionResult.version.split('T')[0] : 'N/A'}
+                      </p>
+                    </div>
+                    <div className="px-4 hover:bg-blue-100 transition-colors">
+                      <p className="font-semibold text-blue-600">Subject Name</p>
+                      <p className="text-sm text-gray-700">
+                        {questionResult.subject_name || 'N/A'}
+                      </p>
+                    </div>
+                    <div className="px-4 hover:bg-blue-100 transition-colors">
+                      <p className="font-semibold text-blue-600">System Name</p>
+                      <p className="text-sm text-gray-700">
+                        {questionResult.system_name || 'N/A'}
+                      </p>
+                    </div>
+                    <div className="px-4 hover:bg-blue-100 transition-colors">
+                      <p className="font-semibold text-blue-600">Subtitle Name</p>
+                      <p className="text-sm text-gray-700">
+                        {questionResult.subtitle_name || 'N/A'}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              )}
-              {/* Result Bar */}
-              {questionResult && (
-                <div className={separateView ? '' : 'mt-4'}>
-                  <div className="mt-4 p-6 bg-gradient-to-r from-blue-50 to-gray-50 border border-blue-600 rounded-lg shadow-lg">
-                    <h2
-                      className={`text-2xl font-bold mb-4 ${
-                        questionResult.status ? 'text-green-600' : 'text-red-600'
-                      }`}
-                    >
-                      {questionResult.status ? 'Correct' : 'Incorrect'}
-                    </h2>
-                    <div className="flex divide-x divide-blue-600 gap-10">
-                      <div className="px-4 hover:bg-blue-100 transition-colors">
-                        <p className="font-semibold text-blue-600">Version</p>
-                        <p className="text-sm text-gray-700">
-                          {questionResult?.version ? questionResult.version.split('T')[0] : 'N/A'}
-                        </p>
-                      </div>
-                      <div className="px-4 hover:bg-blue-100 transition-colors">
-                        <p className="font-semibold text-blue-600">Subject Name</p>
-                        <p className="text-sm text-gray-700">
-                          {questionResult.subject_name || 'N/A'}
-                        </p>
-                      </div>
-                      <div className="px-4 hover:bg-blue-100 transition-colors">
-                        <p className="font-semibold text-blue-600">System Name</p>
-                        <p className="text-sm text-gray-700">
-                          {questionResult.system_name || 'N/A'}
-                        </p>
-                      </div>
-                      <div className="px-4 hover:bg-blue-100 transition-colors">
-                        <p className="font-semibold text-blue-600">Subtitle Name</p>
-                        <p className="text-sm text-gray-700">
-                          {questionResult.subtitle_name || 'N/A'}
-                        </p>
-                      </div>
+              </div>
+            )}
+            
+
+            {/* Explanation Section (timed) */}
+            {mode === 'timed' &&
+              submittedQuestions[currentQuestion?.id] &&
+              questionResult && (
+                <div className={separateView ? 'col-span-1' : 'mt-4'}>
+                  <div className="p-3 border-t w-full">
+                    <h3 className="font-bold text-2xl text-blue-600">
+                      Explanation:
+                    </h3>
+                    {questionResult?.image && (
+                      <img
+                        src={questionResult.image}
+                        alt="explanation"
+                        className="w-[750px] h-[500px] mt-2 mx-auto cursor-pointer"
+                        onClick={() => openModal(questionResult.image)}
+                      />
+                    )}
+                    <div className="text-gray-700 mt-2">
+                      {(() => {
+                        const imagesArray = [
+                          questionResult?.text_image1,
+                          questionResult?.text_image2,
+                          questionResult?.text_image3,
+                          questionResult?.text_image4,
+                          questionResult?.text_image5,
+                          questionResult?.text_image6,
+                        ].filter((image) => image);
+                        let underlineCounter = 0;
+
+                        if (!questionResult?.content)
+                          return <p>No explanation available.</p>;
+
+                        return parse(questionResult.content, {
+                          replace: (domNode) => {
+                            if (domNode.type === 'tag' && domNode.name === 'u') {
+                              const currentImage = imagesArray[underlineCounter];
+                              underlineCounter++;
+                              if (currentImage) {
+                                return (
+                                  <u
+                                    className="cursor-pointer text-blue-500 underline"
+                                    onClick={() => openModal(currentImage)}
+                                  >
+                                    {domToReact(domNode.children)}
+                                  </u>
+                                );
+                              }
+                              return <u>{domToReact(domNode.children)}</u>;
+                            }
+                            return undefined;
+                          },
+                        });
+                      })()}
                     </div>
                   </div>
                 </div>
               )}
-            </div>
-          
-            {/* Second Section: Explanation */}
-            <div className={separateView ? 'col-span-1' : 'mt-4'}>
-              {/* Explanation Section (timed) */}
-              {mode === 'timed' && submittedQuestions[currentQuestion?.id] && questionResult && (
+
+            {/* Explanation Section (not timed) */}
+            {questionResult && !isViewResults && mode !== 'timed' && (
+              <div className={separateView ? 'col-span-1' : 'mt-4'}>
                 <div className="p-3 border-t w-full">
-                  <h3 className="font-bold text-2xl text-blue-600">Explanation:</h3>
+                  <h3 className="font-bold text-2xl text-blue-600">
+                    Explanation:
+                  </h3>
                   {questionResult?.image && (
                     <img
                       src={questionResult.image}
@@ -1227,9 +1275,10 @@ export default function Test() {
                         questionResult?.text_image6,
                       ].filter((image) => image);
                       let underlineCounter = 0;
-          
-                      if (!questionResult?.content) return <p>No explanation available.</p>;
-          
+
+                      if (!questionResult?.content)
+                        return <p>No explanation available.</p>;
+
                       return parse(questionResult.content, {
                         replace: (domNode) => {
                           if (domNode.type === 'tag' && domNode.name === 'u') {
@@ -1253,68 +1302,21 @@ export default function Test() {
                     })()}
                   </div>
                 </div>
-              )}
-          
-              {/* Explanation Section (not timed) */}
-              {questionResult && !isViewResults && mode !== 'timed' && (
-                <div className="p-3 border-t w-full">
-                  <h3 className="font-bold text-2xl text-blue-600">Explanation:</h3>
-                  {questionResult?.image && (
-                    <img
-                      src={questionResult.image}
-                      alt="explanation"
-                      className="w-[750px] h-[500px] mt-2 mx-auto cursor-pointer"
-                      onClick={() => openModal(questionResult.image)}
-                    />
-                  )}
-                  <div className="text-gray-700 mt-2">
-                    {(() => {
-                      const imagesArray = [
-                        questionResult?.text_image1,
-                        questionResult?.text_image2,
-                        questionResult?.text_image3,
-                        questionResult?.text_image4,
-                        questionResult?.text_image5,
-                        questionResult?.text_image6,
-                      ].filter((image) => image);
-                      let underlineCounter = 0;
-          
-                      if (!questionResult?.content) return <p>No explanation available.</p>;
-          
-                      return parse(questionResult.content, {
-                        replace: (domNode) => {
-                          if (domNode.type === 'tag' && domNode.name === 'u') {
-                            const currentImage = imagesArray[underlineCounter];
-                            underlineCounter++;
-                            if (currentImage) {
-                              return (
-                                <u
-                                  className="cursor-pointer text-blue-500 underline"
-                                  onClick={() => openModal(currentImage)}
-                                >
-                                  {domToReact(domNode.children)}
-                                </u>
-                              );
-                            }
-                            return <u>{domToReact(domNode.children)}</u>;
-                          }
-                          return undefined;
-                        },
-                      });
-                    })()}
-                  </div>
-                </div>
-              )}
-          
-              {/* Explanation Section in View Results */}
-              {isViewResults && currentQuestion && results[currentQuestion.id] && (
+              </div>
+            )}
+
+            {/* Explanation Section in View Results */}
+            {isViewResults && currentQuestion && results[currentQuestion.id] && (
+              <div className="mt-4">
                 <div className="p-3 border-t w-full">
                   <h3 className="font-bold text-xl">Explanation:</h3>
                   {results[currentQuestion.id]?.image && (
                     <img
                       src={results[currentQuestion.id].image}
                       className="w-[750px] h-[500px] mt-2 mx-auto cursor-pointer"
-                      onClick={() => openModal(results[currentQuestion.id].image)}
+                      onClick={() =>
+                        openModal(results[currentQuestion.id].image)
+                      }
                     />
                   )}
                   <div className="text-gray-700 mt-2">
@@ -1328,9 +1330,10 @@ export default function Test() {
                         results[currentQuestion.id]?.text_image6,
                       ].filter((image) => image);
                       let underlineCounter = 0;
-          
-                      if (!results[currentQuestion.id]?.content) return <p>No explanation available.</p>;
-          
+
+                      if (!results[currentQuestion.id]?.content)
+                        return <p>No explanation available.</p>;
+
                       return parse(results[currentQuestion.id].content, {
                         replace: (domNode) => {
                           if (domNode.type === 'tag' && domNode.name === 'u') {
@@ -1354,9 +1357,8 @@ export default function Test() {
                     })()}
                   </div>
                 </div>
-              )}
-            </div>
-          </div>
+              </div>
+            )}
 
             <button
               onClick={handleEndBlock}
