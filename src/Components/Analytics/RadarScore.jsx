@@ -85,37 +85,43 @@ const RadarScore = () => {
       </div>
 
       <div className="flex items-center justify-center p-4">
-        <RadarChart
-          cx={250}
-          cy={250}
-          outerRadius={100}
-          width={600}
-          height={600}
-          data={analytics}
-        >
-          <PolarGrid stroke="#e5e5e5" />
-          <PolarAngleAxis dataKey="name" tick={{ fill: '#333', fontSize: 12 }} />
-          <PolarRadiusAxis
-            angle={90}
-            domain={[0, maxValue]}
-            axisLine={false}
-            tick={{ fill: '#666', fontSize: 10 }}
-          />
-          <Radar
-            name="You Used (%)"
-            dataKey="value"
-            stroke="#f43f5e"
-            fill="#f43f5e"
-            fillOpacity={0.3}
-          />
-          <Legend
-            wrapperStyle={{
-              paddingTop: '20px',
-              fontSize: '12px',
-            }}
-          />
-          <Tooltip />
-        </RadarChart>
+      <RadarChart
+  cx={300}
+  cy={300}
+  outerRadius={180}
+  width={800}
+  height={800}
+  data={analytics}
+  margin={{ top: 50, right: 50, bottom: 50, left: 50 }}
+>
+  <PolarGrid stroke="#e5e5e5" />
+  <PolarAngleAxis
+    dataKey="name"
+    tick={{ fill: '#333', fontSize: 12 }}
+    tickMargin={20} 
+  />
+  <PolarRadiusAxis
+    angle={90}
+    domain={[0, 100]}
+    axisLine={false}
+    tick={{ fill: '#666', fontSize: 10 }}
+  />
+  <Radar
+    name="You Used (%)"
+    dataKey="value"
+    stroke="#f43f5e"
+    fill="#f43f5e"
+    fillOpacity={0.3}
+  />
+  <Legend
+    wrapperStyle={{
+      paddingTop: '20px',
+      fontSize: '12px',
+    }}
+  />
+  <Tooltip />
+</RadarChart>
+
       </div>
     </div>
   );
