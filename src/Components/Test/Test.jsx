@@ -1170,19 +1170,19 @@ export default function Test() {
                       <div className="px-4 hover:bg-blue-100 transition-colors">
                         <p className="font-semibold text-blue-600">Subject Name</p>
                         <p className="text-sm text-gray-700">
-                          {questionResult.subject_name || 'N/A'}
+                          {questionResult?.subject_name || 'N/A'}
                         </p>
                       </div>
                       <div className="px-4 hover:bg-blue-100 transition-colors">
                         <p className="font-semibold text-blue-600">System Name</p>
                         <p className="text-sm text-gray-700">
-                          {questionResult.system_name || 'N/A'}
+                          {questionResult?.system_name || 'N/A'}
                         </p>
                       </div>
                       <div className="px-4 hover:bg-blue-100 transition-colors">
                         <p className="font-semibold text-blue-600">Subtitle Name</p>
                         <p className="text-sm text-gray-700">
-                          {questionResult.subtitle_name || 'N/A'}
+                          {questionResult?.subtitle_name || 'N/A'}
                         </p>
                       </div>
                     </div>
@@ -1356,19 +1356,19 @@ export default function Test() {
                   <div className="px-4 hover:bg-blue-100 transition-colors">
                     <p className="font-semibold text-blue-600">Subject Name</p>
                     <p className="text-sm text-gray-700">
-                      {questionResult.subject_name || 'N/A'}
+                      {questionResult?.subject_name || 'N/A'}
                     </p>
                   </div>
                   <div className="px-4 hover:bg-blue-100 transition-colors">
                     <p className="font-semibold text-blue-600">System Name</p>
                     <p className="text-sm text-gray-700">
-                      {questionResult.system_name || 'N/A'}
+                      {questionResult?.system_name || 'N/A'}
                     </p>
                   </div>
                   <div className="px-4 hover:bg-blue-100 transition-colors">
                     <p className="font-semibold text-blue-600">Subtitle Name</p>
                     <p className="text-sm text-gray-700">
-                      {questionResult.subtitle_name || 'N/A'}
+                      {questionResult?.subtitle_name || 'N/A'}
                     </p>
                   </div>
                 </div>
