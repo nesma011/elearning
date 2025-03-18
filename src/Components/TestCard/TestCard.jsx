@@ -168,14 +168,7 @@ const TestCard = () => {
         if (userAnswerId) {
           submittedQuestionsObj[question.id] = true;
           
-          const testDetails = {
-            version: question.version ? question.version.split('T')[0] : 'N/A',
-            subject_name: question.subject_name || 'N/A',
-            system_name: question.system_name || 'N/A',
-            subtitle_name: question.subtitle_name || 'N/A'
-          };
-
-          console.log('Question for results:', question.id, question.subject_name, question.system_name, question.subtitle_name, question.version);
+        
 
           if (question.explantions && question.explantions.length > 0) {
             const explanation = question.explantions[0];
@@ -191,7 +184,10 @@ const TestCard = () => {
               text_image4: explanation.text_image4 ? `${API_BASE_URL}${explanation.text_image4}` : null,
               text_image5: explanation.text_image5 ? `${API_BASE_URL}${explanation.text_image5}` : null,
               text_image6: explanation.text_image6 ? `${API_BASE_URL}${explanation.text_image6}` : null,
-              testDetails: testDetails
+              subject_name: question.subject_name || 'N/A',
+              system_name: question.system_name || 'N/A',
+              subtitle_name: question.subtitle_name || 'N/A',
+              version: question.version ? question.version.split('T')[0] : 'N/A'
             };
           } else {
             resultsObj[question.id] = {
@@ -200,7 +196,6 @@ const TestCard = () => {
               content: "No explanation available",
               image: null,
               rate_answer: {},
-              testDetails: testDetails
             };
           }
         }
