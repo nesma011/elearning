@@ -852,7 +852,7 @@ const subtitleCountKey = showHighYield
       pattern="[0-9]*"      
       value={questionCount}
       onChange={handleChange}
-      placeholder="Enter number of questions (max 40)"
+      placeholder="Enter number of questions"
       className="w-full p-2 border rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
     />
     
