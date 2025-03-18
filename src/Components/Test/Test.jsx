@@ -1158,7 +1158,7 @@ export default function Test() {
               </div>
             )}
 
-            {questionResult &&isViewResults && currentQuestion && results[currentQuestion.id]  (
+            {questionResult &&isViewResults && currentQuestion &&  (
               <div className={separateView ? '' : 'mt-4'}>
                 <div className="mt-4 p-6 bg-gradient-to-r from-blue-50 to-gray-50 border border-blue-600 rounded-lg shadow-lg">
                   <h2
