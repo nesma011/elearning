@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   RadarChart,
   Radar,
@@ -15,15 +15,14 @@ const RadarScore = () => {
   const [analytics, setAnalytics] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  let token = localStorage.getItem("access_token")
-  
+
+  const token = localStorage.getItem("access_token");
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/analyticsSystem/${yearId}`, {
       headers: {
-        Authorization:
-          `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     })
       .then((res) => {
@@ -33,7 +32,6 @@ const RadarScore = () => {
         return res.json();
       })
       .then((data) => {
-       
         if (data && Array.isArray(data.performance)) {
           const formattedData = data.performance.map((item) => ({
             name: item.name,
@@ -53,49 +51,51 @@ const RadarScore = () => {
   }, [yearId, API_BASE_URL]);
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64 bg-white">
-        <p>Loading...</p>
-      </div>
-    );
+    return <div>Loading...</div>;
   }
 
   if (error) {
-    return (
-      <div className="flex justify-center items-center h-64 bg-white">
-        <p className="text-red-500">{error}</p>
-      </div>
-    );
+    return <div>{error}</div>;
   }
 
   if (!analytics || analytics.length === 0) {
-    return (
-      <div className="flex justify-center items-center h-64 bg-white">
-        <p>No data available</p>
-      </div>
-    );
+    return <div>No data available</div>;
   }
 
   const maxValue = 100;
 
   return (
-    <div className="bg-white text-black rounded shadow">
-      <div className="bg-gray-800 text-white p-2">
-        <h2 className="font-bold text-lg">Your Radar</h2>
-      </div>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}
+    >
+      <h3 style={{ fontSize: '1.5rem' }}>Your Radar</h3>
 
-      <div className="flex items-center justify-center p-4">
       <RadarChart
         cx="50%"
         cy="50%"
-        outerRadius="80%"
-        width={500}
-        height={500}
+        // يمكنك زيادة العرض والارتفاع حسب الحاجة
+        width={800}
+        height={800}
         data={analytics}
-        margin={{ top: 50, right: 50, bottom: 50, left: 50 }}
+        // تكبير الـ margin لتوفير مساحة للنصوص الطويلة
+        margin={{ top: 100, right: 100, bottom: 100, left: 100 }}
+        outerRadius="60%"
       >
         <PolarGrid />
-        <PolarAngleAxis dataKey="name" tick={{ fontSize: 12 }} />
+        
+        {/* تصغير حجم الخط على محور الزوايا */}
+        <PolarAngleAxis
+          dataKey="name"
+          tick={{
+            fontSize: 10, // قلل حجم الخط
+            fill: '#333',
+          }}
+        />
+
         <PolarRadiusAxis angle={30} domain={[0, maxValue]} />
         <Radar
           name="Score"
@@ -107,8 +107,6 @@ const RadarScore = () => {
         <Legend />
         <Tooltip />
       </RadarChart>
-
-      </div>
     </div>
   );
 };
