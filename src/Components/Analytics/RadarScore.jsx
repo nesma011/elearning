@@ -67,45 +67,68 @@ const RadarScore = () => {
   return (
     <div
       style={{
+        /* خلفية داكنة */
+        backgroundColor: '#333',
+        color: '#fff',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
+        minHeight: '100vh',
+        padding: '20px',
       }}
     >
-      <h3 style={{ fontSize: '1.5rem' }}>Your Radar</h3>
+      <h3 style={{ fontSize: '1.5rem', color: '#fff' }}>Your Radar</h3>
 
       <RadarChart
         cx="50%"
         cy="50%"
-        // يمكنك زيادة العرض والارتفاع حسب الحاجة
         width={800}
         height={800}
         data={analytics}
-        // تكبير الـ margin لتوفير مساحة للنصوص الطويلة
         margin={{ top: 100, right: 100, bottom: 100, left: 100 }}
         outerRadius="60%"
       >
-        <PolarGrid />
+        {/* خطوط الشبكة باللون الرمادي الفاتح مع شفافية بسيطة */}
+        <PolarGrid stroke="#ccc" strokeOpacity={0.3} />
         
-        {/* تصغير حجم الخط على محور الزوايا */}
+        {/* تسميات المحاور باللون الأبيض وحجم خط أصغر */}
         <PolarAngleAxis
           dataKey="name"
           tick={{
-            fontSize: 10, // قلل حجم الخط
-            fill: '#333',
+            fontSize: 10,
+            fill: '#fff',
           }}
         />
+        
+        {/* محور القيم: اللون الأبيض للنص مع مجال من 0 إلى 100 */}
+        <PolarRadiusAxis
+          angle={30}
+          domain={[0, maxValue]}
+          tick={{ fill: '#fff', fontSize: 10 }}
+          stroke="#ccc"
+          strokeOpacity={0.3}
+        />
 
-        <PolarRadiusAxis angle={30} domain={[0, maxValue]} />
+        {/* تغيير لون الـRadar (Score) إلى أحمر */}
         <Radar
           name="Score"
           dataKey="value"
-          stroke="#8884d8"
-          fill="#8884d8"
+          stroke="#ff0000"
+          fill="#ff0000"
           fillOpacity={0.6}
         />
-        <Legend />
-        <Tooltip />
+
+        {/* جعل لون النص في الـLegend أبيض */}
+        <Legend
+          wrapperStyle={{ color: '#fff' }}
+        />
+
+        {/* خلفية التولتيب داكنة مع نص أبيض */}
+        <Tooltip
+          contentStyle={{ backgroundColor: '#222', border: 'none', color: '#fff' }}
+          itemStyle={{ color: '#fff' }}
+          cursor={{ stroke: '#fff', strokeWidth: 1 }}
+        />
       </RadarChart>
     </div>
   );
