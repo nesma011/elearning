@@ -592,22 +592,21 @@ export default function Test() {
 
   const handleTextSelection = () => {
     if (!highlightOn || hideHighlights) return;
-
     const selection = window.getSelection();
     if (!selection || selection.toString().trim() === '') return;
-
+  
     const range = selection.getRangeAt(0);
+    const extractedContent = range.extractContents();
     const span = document.createElement('span');
     span.setAttribute('data-highlight', 'true');
     span.style.backgroundColor = highlightColor;
-    span.style.color = '#000';
-    span.textContent = selection.toString();
-
-    range.deleteContents();
+    span.style.color = 'inherit';
+    span.appendChild(extractedContent);
+  
     range.insertNode(span);
-
     selection.removeAllRanges();
   };
+  
 
   const reportQuestion = () => {
     alert('Question reported!');
