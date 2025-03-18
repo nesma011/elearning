@@ -431,8 +431,8 @@ export default function Test() {
             system_name: questionData.system_name || '',
             subtitle_name: questionData.subtitle_name || '',
             version: questionData.version || '',
-            time_spent: questionData.time_spent || '',
-
+/*             time_spent: questionData.time_spent || '',
+ */
         };
       });
 

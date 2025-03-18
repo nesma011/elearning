@@ -182,10 +182,10 @@ const TestCard = () => {
               text_image5: explanation.text_image5 ? `${API_BASE_URL}${explanation.text_image5}` : null,
               text_image6: explanation.text_image6 ? `${API_BASE_URL}${explanation.text_image6}` : null,
               testDetails: {
-                version: test.version ? test.version.split('T')[0] : 'N/A',
-                subject_name: test.subject_name || 'N/A',
-                system_name: test.system_name || 'N/A',
-                subtitle_name: test.subtitle_name || 'N/A'
+                version: question.version ? question.version.split('T')[0] : 'N/A',
+                subject_name: question.subject_name || 'N/A',
+                system_name: question.system_name || 'N/A',
+                subtitle_name: question.subtitle_name || 'N/A'
               }
             };
           } else {
@@ -324,10 +324,10 @@ const TestCard = () => {
             text_image5: question.explantions[0].text_image5 ? `${API_BASE_URL}${question.explantions[0].text_image5}` : null,
             text_image6: question.explantions[0].text_image6 ? `${API_BASE_URL}${question.explantions[0].text_image6}` : null,
             testDetails: {
-              version: test.version ? test.version.split('T')[0] : 'N/A',
-              subject_name: test.subject_name || 'N/A',
-              system_name: test.system_name || 'N/A',
-              subtitle_name: test.subtitle_name || 'N/A'
+              version: question.version ? question.version.split('T')[0] : 'N/A',
+              subject_name: question.subject_name || 'N/A',
+              system_name: question.system_name || 'N/A',
+              subtitle_name: question.subtitle_name || 'N/A'
             }
           };
         } else {
