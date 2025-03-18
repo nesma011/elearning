@@ -1157,6 +1157,7 @@ export default function Test() {
                 </div>
               </div>
             )}
+            {/* Metadata in view result*/}
 
             {questionResult &&isViewResults && currentQuestion &&  (
               <div className={separateView ? '' : 'mt-4'}>

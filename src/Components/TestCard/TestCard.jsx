@@ -189,7 +189,7 @@ const TestCard = () => {
               text_image4: explanation.text_image4 ? `${API_BASE_URL}${explanation.text_image4}` : null,
               text_image5: explanation.text_image5 ? `${API_BASE_URL}${explanation.text_image5}` : null,
               text_image6: explanation.text_image6 ? `${API_BASE_URL}${explanation.text_image6}` : null,
-             testDetails: testDetails
+              testDetails: testDetails
             };
           } else {
             resultsObj[question.id] = {
