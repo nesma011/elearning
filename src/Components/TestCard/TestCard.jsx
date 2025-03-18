@@ -308,9 +308,8 @@ const TestCard = () => {
   
         const correctAnswer = question.answers.find(a => a.is_correct) || { id: null };
         const userAnswerId = question.user_answer || null;
-        
+  
         selectedAnswersObj[question.id] = userAnswerId;
-
   
         if (question.explantions && question.explantions.length > 0) {
           resultsObj[question.id] = {
@@ -344,8 +343,6 @@ const TestCard = () => {
       localStorage.setItem("selectedAnswers", JSON.stringify(selectedAnswersObj));
       localStorage.setItem("results", JSON.stringify(resultsObj));
       localStorage.setItem("currentQuestionIndex", "0");
-      const questionTestDetails = resultsObj[question.id].testDetails; 
-
   
       navigate(`/test/${yearId}`, {
         state: {
@@ -353,10 +350,10 @@ const TestCard = () => {
           totalTime: test.type_test === "time_mode" ? (parseInt(test.time) / 60) : undefined,
           viewResults: true ,
           testDetails: {
-            version: questionTestDetails .version ? questionTestDetails .version.split('T')[0] : 'N/A',
-            subject_name: questionTestDetails .subject_name || 'N/A',
-            system_name: questionTestDetails .system_name || 'N/A',
-            subtitle_name: questionTestDetails .subtitle_name || 'N/A'
+            version: test.version ? test.version.split('T')[0] : 'N/A',
+            subject_name: test.subject_name || 'N/A',
+            system_name: test.system_name || 'N/A',
+            subtitle_name: test.subtitle_name || 'N/A'
           }
         }
       });
