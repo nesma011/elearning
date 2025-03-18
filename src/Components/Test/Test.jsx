@@ -1161,6 +1161,7 @@ export default function Test() {
         
           {/* Right Column: Explanation */}
           <div className={separateView ? 'col-span-1' : 'mt-4'}>
+          
             {/* Explanation for Timed Mode */}
             {mode === 'timed' && submittedQuestions[currentQuestion?.id] && questionResult && (
               <div className="p-3 border-t w-full">
@@ -1307,6 +1308,7 @@ export default function Test() {
                 </div>
               </div>
             )}
+
           </div>
         
           {/* Fixed Buttons */}
