@@ -1172,25 +1172,25 @@ export default function Test() {
                     <div className="px-4 hover:bg-blue-100 transition-colors">
                       <p className="font-semibold text-blue-600">Version</p>
                       <p className="text-sm text-gray-700">
-                        {questionResult.testDetails?.version || 'N/A'}
+                        {questionResult?.testDetails?.version || 'N/A'}
                       </p>
                     </div>
                     <div className="px-4 hover:bg-blue-100 transition-colors">
                       <p className="font-semibold text-blue-600">Subject Name</p>
                       <p className="text-sm text-gray-700">
-                        {questionResult.testDetails?.subject_name || 'N/A'}
+                        {questionResult?.testDetails?.subject_name || 'N/A'}
                       </p>
                     </div>
                     <div className="px-4 hover:bg-blue-100 transition-colors">
                       <p className="font-semibold text-blue-600">System Name</p>
                       <p className="text-sm text-gray-700">
-                        {questionResult.testDetails?.system_name || 'N/A'}
+                        {questionResult?.testDetails?.system_name || 'N/A'}
                       </p>
                     </div>
                     <div className="px-4 hover:bg-blue-100 transition-colors">
                       <p className="font-semibold text-blue-600">Subtitle Name</p>
                       <p className="text-sm text-gray-700">
-                        {questionResult.testDetails?.subtitle_name || 'N/A'}
+                        {questionResult?.testDetails?.subtitle_name || 'N/A'}
                       </p>
                     </div>
                   </div>
