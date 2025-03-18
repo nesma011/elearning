@@ -244,10 +244,35 @@ const [incorrectCount, setIncorrectCount] = useState(0);
   };
 
   const handleSystemChange = (systemId) => {
-    if (selectedSystems.includes(systemId)) {
-      setSelectedSystems(prev => prev.filter(id => id !== systemId));
-    } else {
+    const isSelecting = !selectedSystems.includes(systemId);
+    
+    if (isSelecting) {
       setSelectedSystems(prev => [...prev, systemId]);
+      
+      const system = systems.find(sys => sys.id === systemId);
+      if (system && system.subtitles && system.subtitles.length > 0) {
+        const systemSubtitleIds = system.subtitles.map(sub => sub.id);
+        
+        setSelectedSubtitles(prev => {
+          // Create a new array with all existing selections plus new ones
+          const newSelections = [...prev];
+          systemSubtitleIds.forEach(id => {
+            if (!newSelections.includes(id)) {
+              newSelections.push(id);
+            }
+          });
+          return newSelections;
+        });
+      }
+    } else {
+      setSelectedSystems(prev => prev.filter(id => id !== systemId));
+      
+      const system = systems.find(sys => sys.id === systemId);
+      if (system && system.subtitles && system.subtitles.length > 0) {
+        const systemSubtitleIds = system.subtitles.map(sub => sub.id);
+        
+        setSelectedSubtitles(prev => prev.filter(id => !systemSubtitleIds.includes(id)));
+      }
     }
   };
   
@@ -306,12 +331,30 @@ const [incorrectCount, setIncorrectCount] = useState(0);
       .filter(system => system.status === "free" || system.open_user === true)
       .map(system => system.id);
     
-    if (selectedSystems.length === selectableSystemIds.length) {
-      setSelectedSystems([]);
-    } else {
+    const isSelectingAll = selectedSystems.length !== selectableSystemIds.length;
+    
+    if (isSelectingAll) {
       setSelectedSystems(selectableSystemIds);
+      
+      const allSubtitleIds = [];
+      systems.forEach(system => {
+        if ((system.status === "free" || system.open_user === true) && 
+            system.subtitles && 
+            system.subtitles.length > 0) {
+          system.subtitles.forEach(subtitle => {
+            if (!allSubtitleIds.includes(subtitle.id)) {
+              allSubtitleIds.push(subtitle.id);
+            }
+          });
+        }
+      });
+      
+      setSelectedSubtitles(allSubtitleIds);
+    } else {
+      setSelectedSystems([]);
+      setSelectedSubtitles([]);
     }
-  }
+  };
 
   const handleRequest = async (systemId) => {
 
@@ -713,15 +756,16 @@ const subtitleCountKey = showHighYield
                     <div className="flex items-center space-x-4">
                       <h2 className="text-xl font-bold">Choose System</h2>
                       <div className="flex items-center space-x-2">
-                        <input
-                        type="checkbox"
-                        checked={
-                          selectedSystems.length === systems.filter(s => s.status === "free" || s.open_user === true).length &&
-                          systems.filter(s => s.status === "free" || s.open_user === true).length > 0
-                        }
-                        onChange={handleAllSystemsChange}
-                          className="w-4 h-4"
-                        />
+                      <input
+                      type="checkbox"
+                      checked={
+                        selectedSystems.length > 0 && 
+                        selectedSystems.length === systems.filter(s => s.status === "free" || s.open_user === true).length &&
+                        systems.filter(s => s.status === "free" || s.open_user === true).length > 0
+                      }
+                      onChange={handleAllSystemsChange}
+                      className="w-4 h-4"
+                    />
                         <span>Check All Systems</span>
                       </div>
                     </div>
