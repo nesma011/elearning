@@ -67,9 +67,9 @@ const RadarScore = () => {
   return (
     <div
       style={{
-        /* خلفية داكنة */
-        backgroundColor: '#333',
-        color: '#fff',
+        // خلفية بيضاء دائمًا
+        backgroundColor: '#fff',
+        color: '#000',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -77,7 +77,7 @@ const RadarScore = () => {
         padding: '20px',
       }}
     >
-      <h3 style={{ fontSize: '1.5rem', color: '#fff' }}>Your Radar</h3>
+      <h3 style={{ fontSize: '1.5rem', color: '#000' }}>Your Radar</h3>
 
       <RadarChart
         cx="50%"
@@ -88,28 +88,24 @@ const RadarScore = () => {
         margin={{ top: 100, right: 100, bottom: 100, left: 100 }}
         outerRadius="60%"
       >
-        {/* خطوط الشبكة باللون الرمادي الفاتح مع شفافية بسيطة */}
         <PolarGrid stroke="#ccc" strokeOpacity={0.3} />
-        
-        {/* تسميات المحاور باللون الأبيض وحجم خط أصغر */}
+
         <PolarAngleAxis
           dataKey="name"
           tick={{
             fontSize: 10,
-            fill: '#fff',
+            fill: '#000',
           }}
         />
-        
-        {/* محور القيم: اللون الأبيض للنص مع مجال من 0 إلى 100 */}
+
         <PolarRadiusAxis
           angle={30}
           domain={[0, maxValue]}
-          tick={{ fill: '#fff', fontSize: 10 }}
+          tick={{ fill: '#000', fontSize: 10 }}
           stroke="#ccc"
           strokeOpacity={0.3}
         />
 
-        {/* تغيير لون الـRadar (Score) إلى أحمر */}
         <Radar
           name="Score"
           dataKey="value"
@@ -118,16 +114,12 @@ const RadarScore = () => {
           fillOpacity={0.6}
         />
 
-        {/* جعل لون النص في الـLegend أبيض */}
-        <Legend
-          wrapperStyle={{ color: '#fff' }}
-        />
+        <Legend wrapperStyle={{ color: '#000' }} />
 
-        {/* خلفية التولتيب داكنة مع نص أبيض */}
         <Tooltip
-          contentStyle={{ backgroundColor: '#222', border: 'none', color: '#fff' }}
-          itemStyle={{ color: '#fff' }}
-          cursor={{ stroke: '#fff', strokeWidth: 1 }}
+          contentStyle={{ backgroundColor: '#fff', border: 'none', color: '#000' }}
+          itemStyle={{ color: '#000' }}
+          cursor={{ stroke: '#000', strokeWidth: 1 }}
         />
       </RadarChart>
     </div>
