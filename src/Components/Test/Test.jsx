@@ -599,13 +599,18 @@ export default function Test() {
     const extractedContent = range.extractContents();
     const span = document.createElement('span');
     span.setAttribute('data-highlight', 'true');
+  
     span.style.backgroundColor = highlightColor;
     span.style.color = 'inherit';
+    span.style.display = 'inline';       
+    span.style.whiteSpace = 'pre-wrap';  
+  
     span.appendChild(extractedContent);
   
     range.insertNode(span);
     selection.removeAllRanges();
   };
+  
   
 
   const reportQuestion = () => {
