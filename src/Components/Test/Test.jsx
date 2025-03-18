@@ -1124,7 +1124,41 @@ export default function Test() {
             )}
         
             {/* Metadata */}
-            {questionResult && (
+            {questionResult && !isViewResults && (
+              <div className={separateView ? '' : 'mt-4'}>
+                <div className="mt-4 p-6 bg-gradient-to-r from-blue-50 to-gray-50 border border-blue-600 rounded-lg shadow-lg">
+                  <h2
+                    className={`text-2xl font-bold mb-4 ${
+                      questionResult?.status ? 'text-green-600' : 'text-red-600'
+                    }`}
+                  >
+                    {questionResult?.status ? 'Correct' : 'Incorrect'}
+                  </h2>
+                  <div className="flex divide-x divide-blue-600 gap-10">
+                    <div className="px-4 hover:bg-blue-100 transition-colors">
+                      <p className="font-semibold text-blue-600">Version</p>
+                      <p className="text-sm text-gray-700">
+                        {questionResult?.version ? questionResult.version.split('T')[0] : 'N/A'}
+                      </p>
+                    </div>
+                    <div className="px-4 hover:bg-blue-100 transition-colors">
+                      <p className="font-semibold text-blue-600">Subject Name</p>
+                      <p className="text-sm text-gray-700">{questionResult?.subject_name || 'N/A'}</p>
+                    </div>
+                    <div className="px-4 hover:bg-blue-100 transition-colors">
+                      <p className="font-semibold text-blue-600">System Name</p>
+                      <p className="text-sm text-gray-700">{questionResult?.system_name || 'N/A'}</p>
+                    </div>
+                    <div className="px-4 hover:bg-blue-100 transition-colors">
+                      <p className="font-semibold text-blue-600">Subtitle Name</p>
+                      <p className="text-sm text-gray-700">{questionResult?.subtitle_name || 'N/A'}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {questionResult &&isViewResults && currentQuestion && results[currentQuestion.id]  (
               <div className={separateView ? '' : 'mt-4'}>
                 <div className="mt-4 p-6 bg-gradient-to-r from-blue-50 to-gray-50 border border-blue-600 rounded-lg shadow-lg">
                   <h2
@@ -1167,7 +1201,7 @@ export default function Test() {
         
           {/* Right Column: Explanation */}
           <div className={separateView ? 'col-span-1' : 'mt-4'}>
-
+          
             {/* Explanation for Timed Mode */}
             {mode === 'timed' && submittedQuestions[currentQuestion?.id] && questionResult && (
               <div className="p-3 border-t w-full">
