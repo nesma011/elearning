@@ -205,6 +205,8 @@ const TestCard = () => {
           }
         }
       });
+      console.log('Results object before saving:', resultsObj);
+
   
       localStorage.setItem("selectedAnswers", JSON.stringify(selectedAnswersObj));
       localStorage.setItem("submittedQuestions", JSON.stringify(submittedQuestionsObj));
@@ -221,13 +223,8 @@ const TestCard = () => {
           mode: test.type_test === "time_mode" ? "timed" : "regular",
           totalTime: test.type_test === "time_mode" ? (parseInt(test.time) / 60) : undefined,
           resume: true ,
-          testDetails : {
-            version: question.version ? question.version.split('T')[0] : 'N/A',
-            subject_name: question.subject_name || 'N/A',
-            system_name: question.system_name || 'N/A',
-            subtitle_name: question.subtitle_name || 'N/A'
-                        }
-        }
+          results: resultsObj
+                }
       });
     } catch (error) {
       console.error('Error resuming test:', error);
