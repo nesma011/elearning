@@ -175,6 +175,7 @@ const TestCard = () => {
             subtitle_name: question.subtitle_name || 'N/A'
           };
 
+          console.log('Question for results:', question.id, question.subject_name, question.system_name, question.subtitle_name, question.version);
 
           if (question.explantions && question.explantions.length > 0) {
             const explanation = question.explantions[0];
