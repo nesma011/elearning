@@ -219,8 +219,8 @@ const TestCard = () => {
           mode: test.type_test === "time_mode" ? "timed" : "regular",
           totalTime: test.type_test === "time_mode" ? (parseInt(test.time) / 60) : undefined,
           resume: true ,
-          testDetails: testDetails
-        }
+          results: resultsObj
+                }
       });
     } catch (error) {
       console.error('Error resuming test:', error);
