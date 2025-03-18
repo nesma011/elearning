@@ -166,7 +166,15 @@ const TestCard = () => {
 
         if (userAnswerId) {
           submittedQuestionsObj[question.id] = true;
-  
+          
+          const testDetails = {
+            version: question.version ? question.version.split('T')[0] : 'N/A',
+            subject_name: question.subject_name || 'N/A',
+            system_name: question.system_name || 'N/A',
+            subtitle_name: question.subtitle_name || 'N/A'
+          };
+
+
           if (question.explantions && question.explantions.length > 0) {
             const explanation = question.explantions[0];
             resultsObj[question.id] = {
@@ -181,12 +189,7 @@ const TestCard = () => {
               text_image4: explanation.text_image4 ? `${API_BASE_URL}${explanation.text_image4}` : null,
               text_image5: explanation.text_image5 ? `${API_BASE_URL}${explanation.text_image5}` : null,
               text_image6: explanation.text_image6 ? `${API_BASE_URL}${explanation.text_image6}` : null,
-              testDetails: {
-                version: question.version ? question.version.split('T')[0] : 'N/A',
-                subject_name: question.subject_name || 'N/A',
-                system_name: question.system_name || 'N/A',
-                subtitle_name: question.subtitle_name || 'N/A'
-              }
+             testDetails: testDetails
             };
           } else {
             resultsObj[question.id] = {
@@ -195,6 +198,7 @@ const TestCard = () => {
               content: "No explanation available",
               image: null,
               rate_answer: {},
+              testDetails: testDetails
             };
           }
         }
@@ -215,12 +219,7 @@ const TestCard = () => {
           mode: test.type_test === "time_mode" ? "timed" : "regular",
           totalTime: test.type_test === "time_mode" ? (parseInt(test.time) / 60) : undefined,
           resume: true ,
-          testDetails: {
-            version: test.version ? test.version.split('T')[0] : 'N/A',
-            subject_name: test.subject_name || 'N/A',
-            system_name: test.system_name || 'N/A',
-            subtitle_name: test.subtitle_name || 'N/A'
-          }
+          testDetails: testDetails
         }
       });
     } catch (error) {
@@ -310,6 +309,12 @@ const TestCard = () => {
         const userAnswerId = question.user_answer || null;
   
         selectedAnswersObj[question.id] = userAnswerId;
+        const testDetails = {
+          version: question.version ? question.version.split('T')[0] : 'N/A',
+          subject_name: question.subject_name || 'N/A',
+          system_name: question.system_name || 'N/A',
+          subtitle_name: question.subtitle_name || 'N/A'
+        };
   
         if (question.explantions && question.explantions.length > 0) {
           resultsObj[question.id] = {
@@ -339,12 +344,7 @@ const TestCard = () => {
             text_image6: question.explantions[0].text_image6 
                       ? `${API_BASE_URL}${question.explantions[0].text_image6}` 
                       : null,
-            testDetails: {
-              version: question.version ? question.version.split('T')[0] : 'N/A',
-              subject_name: question.subject_name || 'N/A',
-              system_name: question.system_name || 'N/A',
-              subtitle_name: question.subtitle_name || 'N/A'
-            }
+                      testDetails: testDetails
           };
         } else {
           resultsObj[question.id] = {
@@ -354,6 +354,7 @@ const TestCard = () => {
             correctAnswer: correctAnswer.id,
             content: "No explanation available",
             image: null,
+            testDetails: testDetails
           };
         }
       });

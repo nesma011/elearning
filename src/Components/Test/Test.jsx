@@ -1138,20 +1138,26 @@ export default function Test() {
                     <div className="px-4 hover:bg-blue-100 transition-colors">
                       <p className="font-semibold text-blue-600">Version</p>
                       <p className="text-sm text-gray-700">
-                        {questionResult?.version ? questionResult.version.split('T')[0] : 'N/A'}
+                        {questionResult.testDetails?.version || 'N/A'}
                       </p>
                     </div>
                     <div className="px-4 hover:bg-blue-100 transition-colors">
                       <p className="font-semibold text-blue-600">Subject Name</p>
-                      <p className="text-sm text-gray-700">{questionResult?.subject_name || 'N/A'}</p>
+                      <p className="text-sm text-gray-700">
+                        {questionResult.testDetails?.subject_name || 'N/A'}
+                      </p>
                     </div>
                     <div className="px-4 hover:bg-blue-100 transition-colors">
                       <p className="font-semibold text-blue-600">System Name</p>
-                      <p className="text-sm text-gray-700">{questionResult?.system_name || 'N/A'}</p>
+                      <p className="text-sm text-gray-700">
+                        {questionResult.testDetails?.system_name || 'N/A'}
+                      </p>
                     </div>
                     <div className="px-4 hover:bg-blue-100 transition-colors">
                       <p className="font-semibold text-blue-600">Subtitle Name</p>
-                      <p className="text-sm text-gray-700">{questionResult?.subtitle_name || 'N/A'}</p>
+                      <p className="text-sm text-gray-700">
+                        {questionResult.testDetails?.subtitle_name || 'N/A'}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -1161,7 +1167,7 @@ export default function Test() {
         
           {/* Right Column: Explanation */}
           <div className={separateView ? 'col-span-1' : 'mt-4'}>
-          
+
             {/* Explanation for Timed Mode */}
             {mode === 'timed' && submittedQuestions[currentQuestion?.id] && questionResult && (
               <div className="p-3 border-t w-full">
