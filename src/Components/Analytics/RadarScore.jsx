@@ -86,41 +86,27 @@ const RadarScore = () => {
 
       <div className="flex items-center justify-center p-4">
       <RadarChart
-  cx={300}
-  cy={300}
-  outerRadius={180}
-  width={800}
-  height={800}
-  data={analytics}
-  margin={{ top: 50, right: 50, bottom: 50, left: 50 }}
->
-  <PolarGrid stroke="#e5e5e5" />
-  <PolarAngleAxis
-    dataKey="name"
-    tick={{ fill: '#333', fontSize: 12 }}
-    tickMargin={20} 
-  />
-  <PolarRadiusAxis
-    angle={90}
-    domain={[0, 100]}
-    axisLine={false}
-    tick={{ fill: '#666', fontSize: 10 }}
-  />
-  <Radar
-    name="You Used (%)"
-    dataKey="value"
-    stroke="#f43f5e"
-    fill="#f43f5e"
-    fillOpacity={0.3}
-  />
-  <Legend
-    wrapperStyle={{
-      paddingTop: '20px',
-      fontSize: '12px',
-    }}
-  />
-  <Tooltip />
-</RadarChart>
+        cx="50%"
+        cy="50%"
+        outerRadius="80%"
+        width={500}
+        height={500}
+        data={analytics}
+        margin={{ top: 50, right: 50, bottom: 50, left: 50 }}
+      >
+        <PolarGrid />
+        <PolarAngleAxis dataKey="name" tick={{ fontSize: 12 }} />
+        <PolarRadiusAxis angle={30} domain={[0, maxValue]} />
+        <Radar
+          name="Score"
+          dataKey="value"
+          stroke="#8884d8"
+          fill="#8884d8"
+          fillOpacity={0.6}
+        />
+        <Legend />
+        <Tooltip />
+      </RadarChart>
 
       </div>
     </div>

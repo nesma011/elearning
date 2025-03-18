@@ -281,7 +281,12 @@ const [incorrectCount, setIncorrectCount] = useState(0);
     setOpenSystems(prev => ({ ...prev, [systemId]: !prev[systemId] }));
   };
 
-  const handleSubtitleChange = (subtitleId) => {
+  const handleSubtitleChange = (subtitleId, systemId) => {
+    const system = systems.find(sys => sys.id === systemId);
+    if (system && system.status !== "free" && system.open_user !== true) {
+      return;
+    }
+  
     let newSelectedSubtitles;
     if (selectedSubtitles.includes(subtitleId)) {
       newSelectedSubtitles = selectedSubtitles.filter(id => id !== subtitleId);
@@ -815,24 +820,25 @@ const subtitleCountKey = showHighYield
                         {openSystems[system.id] &&
                           system.subtitles &&
                           system.subtitles.length > 0 && (
-                        
-                             <div className="mt-2 ml-6 border-l-2 pl-3 border-gray-200 dark:border-gray-700">
+                            <div className="mt-2 ml-6 border-l-2 pl-3 border-gray-200 dark:border-gray-700">
                               {system.subtitles.map((subtitle) => (
                                 <div key={subtitle.id} className="flex items-center space-x-2">
                                   <input
                                     type="checkbox"
                                     checked={selectedSubtitles.includes(subtitle.id)}
-                                    onChange={() => handleSubtitleChange(subtitle.id)}
-                                    className="w-4 h-4"
+                                    onChange={() => handleSubtitleChange(subtitle.id, system.id)}
+                                    disabled={system.status !== "free" && system.open_user !== true}
+                                    className={`w-4 h-4 ${system.status !== "free" && system.open_user !== true ? "opacity-50 cursor-not-allowed" : ""}`}
                                   />
-                                  <span className="text-sm text-gray-600 dark:text-gray-300">{subtitle.name}</span>
+                                  <span className={`text-sm ${system.status !== "free" && system.open_user !== true ? "text-gray-400 dark:text-gray-500" : "text-gray-600 dark:text-gray-300"}`}>
+                                    {subtitle.name}
+                                  </span>
                                   <span className="text-xs text-green-600 ml-2">({subtitle[subtitleCountKey] || 0})</span>
-                                  </div>
+                                </div>
                               ))}
                             </div>
-                           
-                           
-                          )}
+                          )
+                        }
                       </div>
                     ))}
                   </div>
