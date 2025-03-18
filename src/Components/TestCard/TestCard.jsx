@@ -313,16 +313,32 @@ const TestCard = () => {
   
         if (question.explantions && question.explantions.length > 0) {
           resultsObj[question.id] = {
-            status: userAnswerId ? question.answers.find(a => a.id === userAnswerId)?.is_correct || false : null,
+            status: userAnswerId 
+                      ? question.answers.find(a => a.id === userAnswerId)?.is_correct || false 
+                      : null,
             correctAnswer: correctAnswer.id,
             content: question.explantions[0].content || "No explanation available",
-            image: question.explantions[0].image ? `${API_BASE_URL}${question.explantions[0].image}` : null,
-            text_image1: question.explantions[0].text_image1 ? `${API_BASE_URL}${question.explantions[0].text_image1}` : null,
-            text_image2: question.explantions[0].text_image2 ? `${API_BASE_URL}${question.explantions[0].text_image2}` : null,
-            text_image3: question.explantions[0].text_image3 ? `${API_BASE_URL}${question.explantions[0].text_image3}` : null,
-            text_image4: question.explantions[0].text_image4 ? `${API_BASE_URL}${question.explantions[0].text_image4}` : null,
-            text_image5: question.explantions[0].text_image5 ? `${API_BASE_URL}${question.explantions[0].text_image5}` : null,
-            text_image6: question.explantions[0].text_image6 ? `${API_BASE_URL}${question.explantions[0].text_image6}` : null,
+            image: question.explantions[0].image 
+                      ? `${API_BASE_URL}${question.explantions[0].image}` 
+                      : null,
+            text_image1: question.explantions[0].text_image1 
+                      ? `${API_BASE_URL}${question.explantions[0].text_image1}` 
+                      : null,
+            text_image2: question.explantions[0].text_image2 
+                      ? `${API_BASE_URL}${question.explantions[0].text_image2}` 
+                      : null,
+            text_image3: question.explantions[0].text_image3 
+                      ? `${API_BASE_URL}${question.explantions[0].text_image3}` 
+                      : null,
+            text_image4: question.explantions[0].text_image4 
+                      ? `${API_BASE_URL}${question.explantions[0].text_image4}` 
+                      : null,
+            text_image5: question.explantions[0].text_image5 
+                      ? `${API_BASE_URL}${question.explantions[0].text_image5}` 
+                      : null,
+            text_image6: question.explantions[0].text_image6 
+                      ? `${API_BASE_URL}${question.explantions[0].text_image6}` 
+                      : null,
             testDetails: {
               version: question.version ? question.version.split('T')[0] : 'N/A',
               subject_name: question.subject_name || 'N/A',
@@ -332,7 +348,9 @@ const TestCard = () => {
           };
         } else {
           resultsObj[question.id] = {
-            status: userAnswerId ? question.answers.find(a => a.id === userAnswerId)?.is_correct || false : null,
+            status: userAnswerId 
+                      ? question.answers.find(a => a.id === userAnswerId)?.is_correct || false 
+                      : null,
             correctAnswer: correctAnswer.id,
             content: "No explanation available",
             image: null,
@@ -348,13 +366,8 @@ const TestCard = () => {
         state: {
           mode: test.type_test === "time_mode" ? "timed" : "regular",
           totalTime: test.type_test === "time_mode" ? (parseInt(test.time) / 60) : undefined,
-          viewResults: true ,
-          testDetails: {
-            version: test.version ? test.version.split('T')[0] : 'N/A',
-            subject_name: test.subject_name || 'N/A',
-            system_name: test.system_name || 'N/A',
-            subtitle_name: test.subtitle_name || 'N/A'
-          }
+          viewResults: true,
+          results: resultsObj
         }
       });
     } catch (error) {
@@ -362,6 +375,7 @@ const TestCard = () => {
       toast.error("Failed to view results. Please try again.");
     }
   };
+  
 
   
 
