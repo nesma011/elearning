@@ -32,7 +32,7 @@ const getDeviceId = () => {
   const validationSchema = yup.object().shape({
     username: yup
       .string()
-      .min(3, 'Name should be at least 3 characters')
+      .min(9, 'Name should be at least 3 characters')
       .max(40, "Name shouldn't be more than 40 characters")
       .required('Name is required'),
     email: yup
