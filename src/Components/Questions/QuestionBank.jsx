@@ -74,7 +74,7 @@ export default function QuestionBank() {
               </div>
 
              /*  <h1 className="text-2xl md:text-5xl font-semibold md:pe-20 ">
-                Ramadan Kareem 🌙🌙
+               
               </h1> */
             </div>
 
