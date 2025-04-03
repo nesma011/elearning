@@ -5,8 +5,6 @@ import { useFormik } from 'formik';
 import logo from "../../../public/logo.webp"
 import axios from 'axios';
 import * as yup from 'yup';
-/* import { useNavigate } from 'react-router-dom';
- */
 import { BallTriangle } from 'react-loader-spinner';
 import { toast } from 'react-toastify';
 import Navbar from '../../Components/Navbar/Navbar';
@@ -107,8 +105,8 @@ const getDeviceId = () => {
             position: "top-right",
             autoClose: 50000,
           });
-          localStorage.setItem("user", JSON.stringify(userData));
           navigate("/login");
+          localStorage.setItem("user", JSON.stringify(userData));
           await new Promise(resolve => setTimeout(resolve, 5000));
         }
       } catch (error) {
