@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import countryCodes from "../../../countrycodes.json"; 
 import React, { useContext, useState } from 'react';
 import { useFormik } from 'formik';
@@ -14,8 +14,8 @@ import Footer from '../../Components/Footer/Footer';
 
 
 export default function Register() {
-/*   const navigate = useNavigate();
- */  const [errorApi, setErrorApi] = useState(null);
+  const navigate = useNavigate();
+  const [errorApi, setErrorApi] = useState(null);
   const [loading, setLoading] = useState(false);
   const [selectedCode, setSelectedCode] = useState("+20");
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -103,12 +103,12 @@ const getDeviceId = () => {
         console.log('Response:', data); 
     
         if (data.message.includes("Account created successfully")) {
-          toast.success('Registration successful! Please check your email to activate your account.', {
+          toast.success('Registration successful! Please login', {
             position: "top-right",
             autoClose: 50000,
           });
           localStorage.setItem("user", JSON.stringify(userData));
-    
+          navigate("/login");
           await new Promise(resolve => setTimeout(resolve, 5000));
         }
       } catch (error) {
