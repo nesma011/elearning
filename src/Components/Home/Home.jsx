@@ -35,11 +35,11 @@ const Home = () => {
         <div className="absolute inset-0 " />
         <div className="relative z-10 text-center">
           <h1 className="text-7xl font-bold text-white mb-6">
-            Welcome to ALEX-MedLearn!
+            Welcome to Medic_Learn!
           </h1>
           <p className="text-xl text-gray-700 text-center max-w-2xl mx-auto">
             We're excited to have you on board! 🚀 
-            ALEX-MedLearn is your gateway to high-quality medical education, providing interactive Tests,
+            Medic_Learn is your gateway to high-quality medical education, providing interactive Tests,
             expert-led content, and a seamless learning experience.
           </p>
           <h2 className="text-4xl font-bold text-white mb-6">

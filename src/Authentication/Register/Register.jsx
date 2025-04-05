@@ -105,8 +105,8 @@ const getDeviceId = () => {
             position: "top-right",
             autoClose: 50000,
           });
-          navigate("/login");
           localStorage.setItem("user", JSON.stringify(userData));
+          navigate("/login");
           await new Promise(resolve => setTimeout(resolve, 5000));
         }
       } catch (error) {
