@@ -44,8 +44,8 @@ const getDeviceId = () => {
     password: yup
       .string()
       .matches(
-        /^[a-zA-Z0-9]{4,10}$/,
-        'Password should be 6-10 characters, numbers and letters'
+        /^[a-zA-Z0-9]{7,100}$/,
+        'Password should be at least 7 characters, numbers and letters'
       )
       .required('Password is required'),
     country: yup.string().required('Country is required'),
@@ -105,8 +105,8 @@ const getDeviceId = () => {
             position: "top-right",
             autoClose: 50000,
           });
-          navigate("/login");
           localStorage.setItem("user", JSON.stringify(userData));
+          navigate("/login");
           await new Promise(resolve => setTimeout(resolve, 5000));
         }
       } catch (error) {

@@ -36,8 +36,8 @@ const getDeviceId = () => {
     password: yup
       .string()
       .matches(
-        /^[a-zA-Z0-9]{6,10}$/,
-        'Password should be at least 6 characters, numbers, and not more than 10 characters'
+        /^[a-zA-Z0-9]{7,100}$/,
+        'Password should be at least 7 characters, numbers and letters only'
       )
       .required('Password is required'),
   });
