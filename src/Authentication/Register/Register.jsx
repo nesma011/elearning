@@ -78,7 +78,8 @@ const getDeviceId = () => {
       setLoading(true);
       setErrorApi(null);
       try {
-        localStorage.clear();
+/*         localStorage.clear();
+ */       
         const device_id = getDeviceId();
         const fullPhoneNumber = "+" + selectedCode.replace('+', '') + values.phone_number;
         const payload = { 
