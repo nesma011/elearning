@@ -1173,7 +1173,7 @@ export default function Test() {
                   >
                     {questionResult?.status ? 'Correct' : 'Incorrect'}
                   </h2>
-                  <div className="flex divide-x divide-blue-600 gap-10">
+                  <div className="flex flex-col md:flex-row md:divide-x divide-blue-600 gap-10">
                     <div className="px-4 hover:bg-blue-100 transition-colors">
                       <p className="font-semibold text-blue-600">Version</p>
                       <p className="text-sm text-gray-700">
