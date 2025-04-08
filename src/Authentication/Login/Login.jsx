@@ -17,16 +17,16 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-  // Function to get device ID
+// Function to get device ID
 const getDeviceId = () => {
   let deviceId = localStorage.getItem('device_id');
   if (!deviceId) {
     deviceId = crypto.randomUUID(); 
     localStorage.setItem('device_id', deviceId);
-    console.log(deviceId);
   }
   return deviceId;
 };
+
   // Form validation schema
   const validationSchema = yup.object().shape({
     email: yup

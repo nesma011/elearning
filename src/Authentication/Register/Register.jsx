@@ -20,11 +20,14 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 
 const getDeviceId = () => {
-  const newDeviceId = crypto.randomUUID();
-  localStorage.setItem('device_id', newDeviceId); 
-  return newDeviceId;
-
+  let deviceId = localStorage.getItem('device_id');
+  if (!deviceId) {
+    deviceId = crypto.randomUUID();
+    localStorage.setItem('device_id', deviceId); 
+  }
+  return deviceId;
 };
+
   
   // Form validation schema
   const validationSchema = yup.object().shape({
