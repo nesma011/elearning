@@ -126,6 +126,8 @@ const TestCard = () => {
     localStorage.removeItem("submittedQuestions");
     localStorage.removeItem("results");
     localStorage.removeItem("currentQuestionIndex");
+    console.log("Test object:", test);
+console.log("Test ID:", test.id);
   
     try {
       const response = await fetch(`${API_BASE_URL}/test/resume/${test.id}/`, {
