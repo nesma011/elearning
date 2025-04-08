@@ -1,12 +1,16 @@
 import React from "react";
+import { useRouteError } from "react-router-dom";
 
-const ErrorPage = ({ statusCode, title, message, illustration }) => {
+const ErrorPage = () => {
+  const error = useRouteError();
+  console.error(error);
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 p-4">
       <div className="bg-white rounded-lg shadow-xl p-8 max-w-md w-full text-center">
         <div className="mb-6 relative">
           <img 
-            src={illustration || "/api/placeholder/400/300"} 
+            src="/api/placeholder/400/300" 
             alt="Error illustration" 
             className="mx-auto rounded-lg" 
           />
@@ -18,12 +22,12 @@ const ErrorPage = ({ statusCode, title, message, illustration }) => {
           </div>
         </div>
         
-        {statusCode && (
-          <div className="text-4xl font-bold text-gray-300 mb-2">{statusCode}</div>
+        {error?.status && (
+          <div className="text-4xl font-bold text-gray-300 mb-2">{error.status}</div>
         )}
         
-        <h1 className="text-3xl font-bold text-red-500 mb-4">{title || "Oops!"}</h1>
-        <p className="text-xl text-gray-700 mb-6">{message || "This Page is not available now, please try again"}</p>
+        <h1 className="text-3xl font-bold text-red-500 mb-4">{error?.statusText || "Oops!"}</h1>
+        <p className="text-xl text-gray-700 mb-6">{error?.message || "This Page is not available now, please try again"}</p>
         
         <div className="flex justify-center space-x-4 mb-6">
           <span className="text-3xl animate-spin">🔄</span>
