@@ -94,7 +94,7 @@ const getDeviceId = () => {
       
       setErrorApi(errorMessage);
       
-      toast.error("you blocked , please contact us ", {
+      toast.error("Your Account blocked , please contact us ", {
         position: 'top-right',
         autoClose: 10000,
       });
