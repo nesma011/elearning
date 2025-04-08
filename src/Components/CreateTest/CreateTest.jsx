@@ -206,12 +206,20 @@ const [incorrectCount, setIncorrectCount] = useState(0);
 
   const handleChange = (e) => {
     const val = e.target.value;
+  
     if (val === "") {
       setQuestionCount("");
-    } else {
-      setQuestionCount(e.target.value);
+      return;
     }
+      const number = parseInt(val);
+  
+    if (number > 50) {
+      toast.error("Max Num is 50 questions");
+      return;
+    }
+      setQuestionCount(val);
   };
+  
   useLayoutEffect(() => {
     inputRef.current && inputRef.current.focus();
   }, [questionCount]);
@@ -858,7 +866,7 @@ const subtitleCountKey = showHighYield
       pattern="[0-9]*"      
       value={questionCount}
       onChange={handleChange}
-      placeholder="Enter number of questions"
+      placeholder="max 50 questions"
       className="w-full p-2 border rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
     />
     
