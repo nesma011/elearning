@@ -45,3 +45,10 @@
     text-decoration: underline;
     text-decoration-skip-ink: none;
 }
+
+
+.blurred * {
+  filter: blur(8px) !important;
+  pointer-events: none !important;
+  user-select: none !important;
+}

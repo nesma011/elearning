@@ -102,6 +102,47 @@ export default function Test() {
   }, [currentQuestionIndex, questions]);
 
   useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        document.body.classList.add('blurred');
+      } else {
+        document.body.classList.remove('blurred');
+      }
+    };
+  
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+  
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+  
+
+  useEffect(() => {
+    const blockDevTools = (e) => {
+      // F12 or Ctrl+Shift+I/J/C
+      if (
+        e.key === 'F12' ||
+        (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key)) ||
+        (e.metaKey && e.altKey && e.key === 'I')
+      ) {
+        e.preventDefault();
+      }
+    };
+  
+    const blockContextMenu = (e) => e.preventDefault();
+  
+    window.addEventListener('keydown', blockDevTools);
+    window.addEventListener('contextmenu', blockContextMenu);
+  
+    return () => {
+      window.removeEventListener('keydown', blockDevTools);
+      window.removeEventListener('contextmenu', blockContextMenu);
+    };
+  }, []);
+  
+
+  useEffect(() => {
     if (mode === 'timed' && totalTime) {
       setTimeLeft(Math.floor(totalTime * 60));
     }
@@ -661,10 +702,29 @@ export default function Test() {
 
   return (
     <section
-      style={{ fontSize: `${fontSize}px` }}
-      onMouseUp={handleTextSelection}
-      className="min-h-screen bg-gray-50 relative"
-    >
+  style={{ fontSize: `${fontSize}px` }}
+  className="min-h-screen bg-gray-50 relative select-none"
+  onCopy={(e) => e.preventDefault()}
+  onContextMenu={(e) => e.preventDefault()}
+  onKeyDown={(e) => {
+    if (
+      (e.ctrlKey || e.metaKey) &&
+      (e.key === 'c' || e.key === 'x' || e.key === 'a')
+    ) {
+      e.preventDefault();
+    }
+    // Prevent DevTools
+    if (
+      e.key === 'F12' ||
+      (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
+      (e.metaKey && e.altKey && e.key === 'I')
+    ) {
+      e.preventDefault();
+    }
+  }}
+  onMouseUp={(e) => e.preventDefault()}
+>
+
       <div className="fixed inset-0 flex justify-center items-center pointer-events-none z-0">
         <span className="text-[10rem] text-blue-300 font-bold opacity-20 rotate-[-30deg] select-none">
           Alex-MedLearn
