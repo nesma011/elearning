@@ -831,33 +831,9 @@ export default function Test() {
           )}
         </nav>
 
-       /*  {/* Toolbar (Highlight, Colors, More Menu) */}
+        {/* Toolbar (Highlight, Colors, More Menu) */}
         <div className="bg-blue-100 flex flex-wrap sm:flex-nowrap items-center justify-between px-4 py-2">
-          <div className="flex items-center space-x-4 mb-2 sm:mb-0">
-            <div className="flex items-center">
-              <label className="mr-2 font-semibold">Highlight</label>
-              <button
-                onClick={() => setHighlightOn(!highlightOn)}
-                className={`px-3 py-1 rounded ${
-                  highlightOn ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
-                }`}
-              >
-                {highlightOn ? 'ON' : 'OFF'}
-              </button>
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <label className="font-semibold">Color:</label>
-              {['#FFFF00', '#00FF00', '#00BFFF', '#FF4500'].map((color) => (
-                <div
-                  key={color}
-                  onClick={() => setHighlightColor(color)}
-                  className="w-6 h-6 rounded-full cursor-pointer border-2 border-gray-300"
-                  style={{ backgroundColor: color }}
-                ></div>
-              ))}
-            </div>
-          </div>
+         
 
           <div className="relative inline-block text-left">
             <button
@@ -924,7 +900,7 @@ export default function Test() {
               </div>
             )}
           </div>
-        </div> */
+        </div>
 
         {/* Main Content */}
         <div className="flex">
