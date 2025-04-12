@@ -831,67 +831,6 @@ export default function Test() {
           )}
         </nav>
 
-        {/* Toolbar (Highlight, Colors, More Menu) */}
-        <div className="bg-blue-100 flex flex-wrap sm:flex-nowrap items-center justify-between px-4 py-2">
-         
-
-          <div className="relative inline-block ms-44 text-left">
-            <button
-              onClick={() => setShowMoreMenu(!showMoreMenu)}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-            >
-              More
-            </button>
-            {showMoreMenu && (
-              <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
-                <div className="py-1">
-                  <div className="px-4 py-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Adjust Font Size: {fontSize}px
-                    </label>
-                    <input
-                      type="range"
-                      min="12"
-                      max="30"
-                      value={fontSize}
-                      onChange={(e) => setFontSize(parseInt(e.target.value))}
-                      className="w-full"
-                    />
-                  </div>
-
-                  <button
-                    onClick={reportQuestion}
-                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Report Qus
-                  </button>
-
-                 
-
-                  <div className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                    <label className="flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={separateView}
-                        onChange={() => setSeparateView(!separateView)}
-                        className="mr-2"
-                      />
-                      Separate View
-                    </label>
-                  </div>
-
-                  <button
-                    onClick={toggleFullScreen}
-                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Full screen
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
         {/* Main Content */}
         <div className="flex">
           {/* Sidebar (Question List) */}
@@ -1470,6 +1409,66 @@ export default function Test() {
             <LabValues />
           </div>
         )}
+
+        {/* Toolbar (Highlight, Colors, More Menu) */}
+         
+
+          <div className="relative inline-block ms-44 text-left">
+            <button
+              onClick={() => setShowMoreMenu(!showMoreMenu)}
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            >
+              More
+            </button>
+            {showMoreMenu && (
+              <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+                <div className="py-1">
+                  <div className="px-4 py-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Adjust Font Size: {fontSize}px
+                    </label>
+                    <input
+                      type="range"
+                      min="12"
+                      max="30"
+                      value={fontSize}
+                      onChange={(e) => setFontSize(parseInt(e.target.value))}
+                      className="w-full"
+                    />
+                  </div>
+
+                  <button
+                    onClick={reportQuestion}
+                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Report Qus
+                  </button>
+
+                 
+
+                  <div className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={separateView}
+                        onChange={() => setSeparateView(!separateView)}
+                        className="mr-2"
+                      />
+                      Separate View
+                    </label>
+                  </div>
+
+                  <button
+                    onClick={toggleFullScreen}
+                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Full screen
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+       
       </div>
     </section>
   );
