@@ -17,8 +17,8 @@ export default function Test() {
   const navigate = useNavigate();
   const { mode, totalTime } = location.state || {};
 /*   const [highlightOn, setHighlightOn] = useState(true);
-  const [highlightColor, setHighlightColor] = useState('#FFFF00');
-  const [hideHighlights, setHideHighlights] = useState(false); */
+  const [highlightColor, setHighlightColor] = useState('#FFFF00');*/
+  const [hideHighlights, setHideHighlights] = useState(false); 
   const [separateView, setSeparateView] = useState(false);
   const [fontSize, setFontSize] = useState(16);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
@@ -866,17 +866,7 @@ export default function Test() {
                     Report Qus
                   </button>
 
-                  <div className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                    <label className="flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={hideHighlights}
-                        onChange={() => setHideHighlights(!hideHighlights)}
-                        className="mr-2"
-                      />
-                      Hide Highlights
-                    </label>
-                  </div>
+                 
 
                   <div className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                     <label className="flex items-center cursor-pointer">
