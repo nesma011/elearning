@@ -16,9 +16,9 @@ export default function Test() {
   const testDetails = state?.testDetails || {};
   const navigate = useNavigate();
   const { mode, totalTime } = location.state || {};
-  const [highlightOn, setHighlightOn] = useState(true);
+/*   const [highlightOn, setHighlightOn] = useState(true);
   const [highlightColor, setHighlightColor] = useState('#FFFF00');
-  const [hideHighlights, setHideHighlights] = useState(false);
+  const [hideHighlights, setHideHighlights] = useState(false); */
   const [separateView, setSeparateView] = useState(false);
   const [fontSize, setFontSize] = useState(16);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
@@ -186,14 +186,15 @@ export default function Test() {
     }
   }, [savedAnswers, testData.questions, mode]);
 
-  useEffect(() => {
+/*   useEffect(() => {
     if (!highlightOn || hideHighlights) {
       document.querySelectorAll('span[data-highlight="true"]').forEach((span) => {
         span.outerHTML = span.innerHTML;
       });
     }
   }, [highlightOn, hideHighlights]);
-
+ */
+ 
   const formatTime = (seconds) => {
     if (seconds === null) return '';
     const m = Math.floor(seconds / 60);
@@ -631,7 +632,7 @@ export default function Test() {
     }
   };
 
-  const handleTextSelection = () => {
+  /* const handleTextSelection = () => {
     if (!highlightOn || hideHighlights) return;
     const selection = window.getSelection();
     if (!selection || selection.toString().trim() === '') return;
@@ -650,7 +651,7 @@ export default function Test() {
   
     range.insertNode(span);
     selection.removeAllRanges();
-  };
+  }; */
   
   
 
@@ -830,7 +831,7 @@ export default function Test() {
           )}
         </nav>
 
-        {/* Toolbar (Highlight, Colors, More Menu) */}
+       /*  {/* Toolbar (Highlight, Colors, More Menu) */}
         <div className="bg-blue-100 flex flex-wrap sm:flex-nowrap items-center justify-between px-4 py-2">
           <div className="flex items-center space-x-4 mb-2 sm:mb-0">
             <div className="flex items-center">
@@ -923,7 +924,7 @@ export default function Test() {
               </div>
             )}
           </div>
-        </div>
+        </div> */
 
         {/* Main Content */}
         <div className="flex">
