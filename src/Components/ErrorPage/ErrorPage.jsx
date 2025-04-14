@@ -1,9 +1,24 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useRouteError } from "react-router-dom";
 
 const ErrorPage = () => {
   const error = useRouteError();
-  console.error(error);
+  const [showFallback, setShowFallback] = useState(false);
+
+  useEffect(() => {
+    console.error("Route Error:", error);
+    const reloadCount = sessionStorage.getItem("reloadCount") || 0;
+
+    if (reloadCount < 1) {
+      sessionStorage.setItem("reloadCount", Number(reloadCount) + 1);
+      window.location.reload();
+    } else {
+      sessionStorage.removeItem("reloadCount");
+      setShowFallback(true); // خلاص جربنا الريفريش ومش نافع، نعرض الصفحة
+    }
+  }, [error]);
+
+  if (!showFallback) return null; // متعرضش حاجة خالص لحد ما نقرر fallback
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 p-4">
@@ -21,7 +36,7 @@ const ErrorPage = () => {
             <div className="text-5xl animate-pulse">🛠️</div>
           </div>
         </div>
-        
+
         {error?.status && (
           <div className="text-4xl font-bold text-gray-300 mb-2">{error.status}</div>
         )}
